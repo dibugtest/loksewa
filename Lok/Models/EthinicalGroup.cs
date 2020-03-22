@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 
 namespace Lok.Models
 {
-    public class SubService
+    public class EthinicalGroup
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
+
         public int Id { get; set; }
-        public string SubServiceName { get; set; }
+        public string Name { get; set; }
+        public string Code { get; set; }
         public string Description { get; set; }
-        public Service Service { get; set; }
-        public int ServiceId { get; set; }
     }
 }
