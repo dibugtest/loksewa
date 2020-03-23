@@ -48,7 +48,8 @@ namespace Lok.Data
         private void ConfigureMongo()
         {
             if (MongoClient != null)
-                MongoClient.GetDatabase(_configuration["MongoSettings:DatabaseName"]);
+                return;
+               // MongoClient.GetDatabase(_configuration["MongoSettings:DatabaseName"]);
 
             // Configure mongo (You can inject the config, just to simplify)
             MongoClient = new MongoClient(_configuration["MongoSettings:Connection"]);

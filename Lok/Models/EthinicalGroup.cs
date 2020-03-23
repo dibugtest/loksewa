@@ -12,7 +12,7 @@ namespace Lok.Models
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
 
-        public int Id { get; set; }
+        public ObjectId Id { get; set; }
         public string Name { get; set; }
         public string Code { get; set; }
         public string Description { get; set; }

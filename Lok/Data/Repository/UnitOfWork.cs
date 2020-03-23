@@ -11,11 +11,10 @@ namespace Lok.Data.Repository
     public class UnitOfWork:IUnitOfWork
     {
         private readonly IMangoContext _context;
-        private Disposable _myobject;
-        public UnitOfWork(IMangoContext context, Disposable myObject)
+        public UnitOfWork(IMangoContext context)
         {
             _context = context;
-            _myobject = myObject;
+           // _myobject = myObject;
         }
 
         public async Task<bool> Commit()
@@ -25,12 +24,12 @@ namespace Lok.Data.Repository
             return changeAmount > 0;
         }
 
-        public void Dispose()
-        {
-            _myobject?.Dispose();
+        //public void Dispose()
+        //{
+        //    _myobject?.Dispose();
 
 
-        }
+        //}
     }
 }
 

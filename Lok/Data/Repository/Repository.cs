@@ -56,10 +56,16 @@ namespace Lok.Data.Repository
             Context.AddCommand(() => DbSet.DeleteOneAsync(Builders<TEntity>.Filter.Eq("_id", ObjectId.Parse(id))));
         }
 
-        public void Dispose()
-        {
-            throw new NotImplementedException();
-        }
+        //public void Dispose()
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        //public void Dispose()
+        //{
+        //    throw new NotImplementedException();
+        //}
+
 
         //public void Dispose()
         //{
