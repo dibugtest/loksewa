@@ -15,6 +15,6 @@ namespace Lok.Models
         public string SubServiceName { get; set; }
         public string Description { get; set; }
         public Service Service { get; set; }
-        public int ServiceId { get; set; }
+        public string ServiceId { get; set; }
     }
 }

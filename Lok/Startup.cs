@@ -35,6 +35,7 @@ namespace Lok
             services.AddScoped<IMangoContext, MongoContext>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IServiceRepository, ServiceRepository>();
+            services.AddScoped<ISubService, SubServiceRepository>();
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
