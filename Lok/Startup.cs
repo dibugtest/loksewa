@@ -36,6 +36,10 @@ namespace Lok
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IServiceRepository, ServiceRepository>();
             services.AddScoped<ISubService, SubServiceRepository>();
+            services.AddScoped<IEthinicalGroup, EthinicalGroupRepository>();
+            services.AddScoped<IGroupRepository, GroupRepository>();
+            services.AddScoped<ISubGroupRepository, SubGroupRepository>();
+
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
