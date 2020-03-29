@@ -1,0 +1,113 @@
+﻿@model Lok.Models.Advertisiment
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h2>Create</h2>
+
+<h4>Advertisiment</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="AdvertisimentType" class="control-label"></label>
+                <input asp-for="AdvertisimentType" class="form-control" />
+                <span asp-validation-for="AdvertisimentType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SNo" class="control-label"></label>
+                <input asp-for="SNo" class="form-control" />
+                <span asp-validation-for="SNo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ServiceId" class="control-label"></label>
+                <select asp-for="ServiceId" asp-items="ViewBag.ServiceId" class="form-control"></select>
+                <span asp-validation-for="ServiceId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="GroupId" class="control-label"></label>
+                <select asp-for="GroupId" asp-items="ViewBag.GroupId" class="form-control"></select>
+                <span asp-validation-for="GroupId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SubGroupId" class="control-label"></label>
+                <select asp-for="SubGroupId" asp-items="ViewBag.SubGroupId" class="form-control"></select>
+                <span asp-validation-for="SubGroupId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DatePublished" class="control-label"></label>
+                <input asp-for="DatePublished" class="form-control" />
+                <span asp-validation-for="DatePublished" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Office" class="control-label"></label>
+                <input asp-for="Office" class="form-control" />
+                <span asp-validation-for="Office" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Marks" class="control-label"></label>
+                <input asp-for="Marks" class="form-control" />
+                <span asp-validation-for="Marks" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NoticeNo" class="control-label"></label>
+                <input asp-for="NoticeNo" class="form-control" />
+                <span asp-validation-for="NoticeNo" class="text-danger"></span>
+            </div>
+            <div class="form-control">
+                <label asp-for="EthinicalGroups" class="control-label"></label>
+
+                <label>
+                    <label asp-for="SubGroupId" asp-items="ViewBag.SubGroupId"  class="form-control"></label>
+
+                </label>
+                    @*@if (Model.SelectedFruits.Contains(item.Value))
+                    {<text> checked </text>*@
+                </div>
+            <div class="form-group">
+                <label asp-for="MinAge" class="control-label"></label>
+                <input asp-for="MinAge" class="form-control" />
+                <span asp-validation-for="MinAge" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaxAge" class="control-label"></label>
+                <input asp-for="MaxAge" class="form-control" />
+                <span asp-validation-for="MaxAge" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Examtype" class="control-label"></label>
+                <input asp-for="Examtype" class="form-control" />
+                <span asp-validation-for="Examtype" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MinEduQualification" class="control-label"></label>
+                <input asp-for="MinEduQualification" class="form-control" />
+                <span asp-validation-for="MinEduQualification" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Notice" class="control-label"></label>
+                <input asp-for="Notice" class="form-control" />
+                <span asp-validation-for="Notice" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

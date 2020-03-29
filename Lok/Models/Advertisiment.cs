@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,13 +9,19 @@ namespace Lok.Models
 {
     public class Advertisiment
     {
-        public Guid Id { get; set; }
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+
+        public ObjectId Id { get; set; }
         public string AdvertisimentType { get; set; }
         public string SNo { get; set; }
         public Service Service { get; set; }
-        public int ServiceId { get; set; }
-        public SubService SubService { get; set; }
-        public int SubServiceId { get; set; }
+        public string ServiceId { get; set; }
+        public Group Group { get; set; }
+        public string GroupId { get; set; }
+
+        public SubGroup SubGroup { get; set; }
+        public string SubGroupId { get; set; }
         public string DatePublished { get; set; }
         public string Office { get; set; }
         public string Title { get; set; }
@@ -27,5 +35,7 @@ namespace Lok.Models
 
         public string MinEduQualification { get; set; }
 
+        public string Notice { get; set; }
+        public IList<EthinicalGroup> EthinicalGroups { get; set; }
     }
 }
