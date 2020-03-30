@@ -35,6 +35,20 @@ namespace Lok
             services.AddScoped<IMangoContext, MongoContext>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IServiceRepository, ServiceRepository>();
+            services.AddScoped<IReligionRepository, ReligionRepository>();
+            services.AddScoped<IEmploymentRepository, EmploymentRepository>();
+            services.AddScoped<IEducationLevelRepository, EducationLevelRepository>();
+            services.AddScoped<IVargaRepository, VargaRepository>();
+            services.AddScoped<IBoardNameRepository, BoardNameRepository>();
+            services.AddScoped<IFacultyRepository, FacultyRepository>();
+            services.AddScoped<IVargaRepository, VargaRepository>();
+            services.AddScoped<ISewaRepository, SewaRepository>();
+            services.AddScoped<IShreniTahaRepository, ShreniTahaRepository>();
+            services.AddScoped<IAwasthaRepository, AwasthaRepository>();
+            services.AddScoped<IApplicantRepository, ApplicantRepository>();
+            services.AddScoped<IOccupationRepository, OccupationRepository>();
+            services.AddScoped<IDistrictRepository, DistrictRepository>();
+
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);

@@ -10,36 +10,36 @@ using MongoDB.Bson;
 
 namespace Lok.Controllers
 {
-    public class ServiceController : Controller
+    public class AwasthaController : Controller
     {
-        private readonly IServiceRepository _service;
+        private readonly IAwasthaRepository _Awastha;
         private readonly IUnitOfWork _uow;
 
-        public ServiceController(IServiceRepository service, IUnitOfWork uow)
+        public AwasthaController(IAwasthaRepository Awastha, IUnitOfWork uow)
         {
-            _service = service;
+            _Awastha = Awastha;
             _uow = uow;
         }
-        // GET: Service
+        // GET: Awastha
         public async Task<ActionResult> Index()
         {
-            var Services = await _service.GetAll();
-            return View(Services);
+            var Awasthas = await _Awastha.GetAll();
+            return View(Awasthas);
         }
 
-        public ActionResult<Service> Create()
+        public ActionResult<Awastha> Create()
         {
-            Service value = new Service();
+            Awastha value = new Awastha();
             return View();
         }
         [HttpPost]
-        public async Task<ActionResult<Service>> Create(Service value)
+        public async Task<ActionResult<Awastha>> Create(Awastha value)
         {
-            //Service obj = new Service(value);
-            _service.Add(value);
+            //Awastha obj = new Awastha(value);
+            _Awastha.Add(value);
 
             // it will be null
-            //var testService = await _service.GetById(value.);
+            //var testAwastha = await _Awastha.GetById(value.);
 
             // If everything is ok then:
             await _uow.Commit();
@@ -50,23 +50,23 @@ namespace Lok.Controllers
             return RedirectToAction("Index");
         }
         [HttpGet]
-        public async Task<ActionResult<Service>> Edit(string id)
+        public async Task<ActionResult<Awastha>> Edit(string id)
         {
             if (!string.IsNullOrEmpty(id))
             {
-                var Service = await _service.GetById(id);
-                return View(Service);
+                var Awastha = await _Awastha.GetById(id);
+                return View(Awastha);
             }
             else
                 return BadRequest();
 
         }
         [HttpPost]
-        public async Task<ActionResult<Service>> Edit(string id, Service value)
+        public async Task<ActionResult<Awastha>> Edit(string id, Awastha value)
         {
             // var product = new Product(value.Id);
             value.Id = ObjectId.Parse(id);
-            _service.Update(value,id);
+            _Awastha.Update(value,id);
 
             await _uow.Commit();
 
@@ -76,16 +76,16 @@ namespace Lok.Controllers
         [HttpGet]
         public async Task<ActionResult> Delete(string id)
         {
-            _service.Remove(id);
+            _Awastha.Remove(id);
 
             // it won't be null
-            var testService = await _service.GetById(id);
+           // var testAwastha = await _Awastha.GetById(id);
 
             // If everything is ok then:
             await _uow.Commit();
 
             // not it must by null
-            testService = await _service.GetById(id);
+          //  testAwastha = await _Awastha.GetById(id);
 
             return RedirectToAction("Index");
         }
