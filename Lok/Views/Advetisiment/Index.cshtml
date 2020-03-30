@@ -19,43 +19,16 @@
                 @Html.DisplayNameFor(model => model.SNo)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ServiceId)
+                Service
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.GroupId)
+                Group
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.SubGroupId)
+                Sub Group
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.DatePublished)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Office)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Marks)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NoticeNo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MinAge)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MaxAge)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Examtype)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MinEduQualification)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Notice)
+                Ethnical Group
             </th>
             <th></th>
         </tr>
@@ -70,46 +43,27 @@
                 @Html.DisplayFor(modelItem => item.SNo)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ServiceId)
+                @Html.DisplayFor(modelItem => item.Service.ServiceName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.GroupId)
+                @Html.DisplayFor(modelItem => item.Group.GroupName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.SubGroupId)
+                @Html.DisplayFor(modelItem => item.SubGroup.SubGroupName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.DatePublished)
+                @{string a = "";}
+                @if (item.EthinicalGroups != null)
+                {
+                @foreach (var items in item.EthinicalGroups)
+                {
+                    a = a + items.Name + ' ';
+                }
+                }
+                @a
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Office)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Marks)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NoticeNo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MinAge)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MaxAge)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Examtype)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MinEduQualification)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Notice)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
                 @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
                 @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
             </td>

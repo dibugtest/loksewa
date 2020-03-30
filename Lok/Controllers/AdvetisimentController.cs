@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Lok.Data.Interface;
 using Lok.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using MongoDB.Bson;
@@ -43,20 +44,39 @@ namespace Lok.Controllers
             {
                 Advertisiment value = new Advertisiment();
                 ViewBag.GroupId = new SelectList(await _Group.GetAll(), "Id", "GroupName");
-            ViewBag.ServiceId = new SelectList(await _service.GetAll(), "Id", "GroupName");
-            ViewBag.SubGroupId = new SelectList(await _SubGroup.GetAll(), "Id", "GroupName");
-            ViewBag.EthinicalGroup = new SelectList(await _ethinicalGroup.GetAll(), "Id", "GroupName");
-
+            ViewBag.ServiceId = new SelectList(await _service.GetAll(), "Id", "ServiceName");
+            ViewBag.SubGroupId = new SelectList(await _SubGroup.GetAll(), "Id", "SubGroupName");
+            IEnumerable<EthinicalGroup> a =  await _ethinicalGroup.GetAll();
+            ViewBag.EthinicalGroup = a.ToList();
 
             return View();
             }
             [HttpPost]
-            public async Task<ActionResult<Advertisiment>> Create(Advertisiment value)
+            public async Task<ActionResult<Advertisiment>> Create(Advertisiment value,IFormCollection Col)
             {
-                //Advertisiment obj = new Advertisiment(value);
-                value.Group = await _Group.GetById(value.GroupId.ToString());
+            //Advertisiment obj = new Advertisiment(value);
+            List<EthinicalGroup> eths = new List<EthinicalGroup>();
+            int i = 0;
+            foreach(string key in Col.Keys)
+            {
+                if(key== "EthinicalGroup["+i+"]")
+                {
+                 EthinicalGroup eth = await _ethinicalGroup.GetById(Col["EthinicalGroup[" + i + "]"]);
+                    eths.Add(eth);
 
-                _Advertisiment.Add(value);
+                    i++;
+
+                }
+                // if(key["EthinicalGroup['"+i+"])
+            }
+            value.EthinicalGroups = eths;
+
+                value.Group = await _Group.GetById(value.GroupId.ToString());
+            value.SubGroup = await _SubGroup.GetById(value.SubGroupId.ToString());
+            value.Service = await _service.GetById(value.ServiceId.ToString());
+
+
+                 _Advertisiment.Add(value);
 
                 // it will be null
                 //var testAdvertisiment = await _Advertisiment.GetById(value.);
@@ -75,8 +95,11 @@ namespace Lok.Controllers
                 if (!string.IsNullOrEmpty(id))
                 {
                     var Advertisiment = await _Advertisiment.GetById(id);
+               
+                IEnumerable<EthinicalGroup> a = await _ethinicalGroup.GetAll();
+                ViewBag.EthinicalGroup = a.ToList();
 
-                    if (String.IsNullOrEmpty(Advertisiment.GroupId))
+                if (String.IsNullOrEmpty(Advertisiment.GroupId))
                     {
                         ViewBag.GroupId = new SelectList(await _Group.GetAll(), "Id", "GroupName", Advertisiment.GroupId);
                     }
@@ -84,20 +107,57 @@ namespace Lok.Controllers
                     {
                         ViewBag.GroupId = new SelectList(await _Group.GetAll(), "Id", "GroupName", Advertisiment.GroupId);
                     }
-
-                    return View(Advertisiment);
+                if (String.IsNullOrEmpty(Advertisiment.SubGroupId))
+                {
+                    ViewBag.SubGroupId = new SelectList(await _service.GetAll(), "Id", "ServiceName", Advertisiment.SubGroupId);
                 }
+                else
+                {
+                    ViewBag.SubGroupId = new SelectList(await _Group.GetAll(), "Id", "GroupName", Advertisiment.SubGroupId);
+                }
+                if (String.IsNullOrEmpty(Advertisiment.ServiceId))
+                {
+                    ViewBag.ServiceId = new SelectList(await _service.GetAll(), "Id", "ServiceName",Advertisiment.ServiceId);
+                }
+                else
+                {
+                    ViewBag.ServiceId = new SelectList(await _Group.GetAll(), "Id", "GroupName", Advertisiment.ServiceId);
+                }
+
+                return View(Advertisiment);
+                }
+
                 else
                     return BadRequest();
 
             }
             [HttpPost]
-            public async Task<ActionResult<Advertisiment>> Edit(string id, Advertisiment value)
+            public async Task<ActionResult<Advertisiment>> Edit(string id, Advertisiment value,IFormCollection Col)
             {
                 value.Id = ObjectId.Parse(id);
-                value.Group = await _Group.GetById(value.GroupId.ToString());
+            List<EthinicalGroup> eths = new List<EthinicalGroup>();
+            int i = 0;
+            foreach (string key in Col.Keys)
+            {
+                if (key == "EthinicalGroup[" + i + "]")
+                {
+                    EthinicalGroup eth = await _ethinicalGroup.GetById(Col["EthinicalGroup[" + i + "]"]);
+                    eths.Add(eth);
 
-                _Advertisiment.Update(value, id);
+                    i++;
+
+                }
+                // if(key["EthinicalGroup['"+i+"])
+            }
+            value.EthinicalGroups = eths;
+
+            value.Group = await _Group.GetById(value.GroupId.ToString());
+            value.SubGroup = await _SubGroup.GetById(value.SubGroupId.ToString());
+            value.Service = await _service.GetById(value.ServiceId.ToString());
+
+
+
+            _Advertisiment.Update(value, id);
 
                 await _uow.Commit();
 

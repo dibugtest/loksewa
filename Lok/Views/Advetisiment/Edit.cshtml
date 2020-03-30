@@ -4,14 +4,15 @@
     ViewData["Title"] = "Create";
 }
 
-<h2>Create</h2>
+<h2>Edit</h2>
 
 <h4>Advertisiment</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @Html.HiddenFor(m=>m.Id)
             <div class="form-group">
                 <label asp-for="AdvertisimentType" class="control-label"></label>
                 <input asp-for="AdvertisimentType" class="form-control" />
@@ -72,7 +73,7 @@
                     i++;
                 }
                 @*@if (Model.SelectedFruits.Contains(item.Value))
-        {<text> checked </text>*@
+                    {<text> checked </text>*@
             </div>
             <div class="form-group">
                 <label asp-for="MinAge" class="control-label"></label>

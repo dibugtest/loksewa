@@ -39,7 +39,7 @@ namespace Lok
             services.AddScoped<IEthinicalGroup, EthinicalGroupRepository>();
             services.AddScoped<IGroupRepository, GroupRepository>();
             services.AddScoped<ISubGroupRepository, SubGroupRepository>();
-
+            services.AddScoped<IAdvertisiment, AdvertisimentRepository>();
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
