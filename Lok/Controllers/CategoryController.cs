@@ -13,10 +13,10 @@ namespace Lok.Controllers
     public class CategoryController : Controller
     {
        
-            private readonly ICategoryRepository _Category;
+            private readonly ICategoryInterface _Category;
             private readonly IUnitOfWork _uow;
 
-            public CategoryController(ICategoryRepository Category, IUnitOfWork uow)
+            public CategoryController(ICategoryInterface Category, IUnitOfWork uow)
             {
                 _Category = Category;
                 _uow = uow;

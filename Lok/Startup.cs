@@ -39,6 +39,8 @@ namespace Lok
             services.AddScoped<IEthinicalGroup, EthinicalGroupRepository>();
             services.AddScoped<IGroupRepository, GroupRepository>();
             services.AddScoped<ISubGroupRepository, SubGroupRepository>();
+            services.AddScoped<ICategoryInterface, ICategoryRepository>();
+
             services.AddScoped<IAdvertisiment, AdvertisimentRepository>();
 
 

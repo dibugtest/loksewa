@@ -119,36 +119,37 @@ namespace Lok.Controllers
 
                 if (String.IsNullOrEmpty(Advertisiment.GroupId))
                     {
-                        ViewBag.GroupId = new SelectList(await _Group.GetAll(), "Id", "GroupName", Advertisiment.GroupId);
+                        ViewBag.GroupId = new SelectList(await _Group.GetAll(), "Id", "GroupName");
                     }
                     else
                     {
                         ViewBag.GroupId = new SelectList(await _Group.GetAll(), "Id", "GroupName", Advertisiment.GroupId);
                     }
-                if (String.IsNullOrEmpty(Advertisiment.SubGroupId))
+                if (String.IsNullOrEmpty(Advertisiment.ServiceId))
                 {
-                    ViewBag.SubGroupId = new SelectList(await _service.GetAll(), "Id", "ServiceName", Advertisiment.SubGroupId);
+                    ViewBag.ServiceId = new SelectList(await _service.GetAll(), "Id", "ServiceName");
                 }
                 else
                 {
-                    ViewBag.SubGroupId = new SelectList(await _Group.GetAll(), "Id", "ServiceName", Advertisiment.SubGroupId);
+                    ViewBag.ServiceId = new SelectList(await _service.GetAll(), "Id", "ServiceName", Advertisiment.GroupId);
                 }
                 if (String.IsNullOrEmpty(Advertisiment.SubGroupId))
                 {
-                    ViewBag.CategoryId = new SelectList(await _category.GetAll(), "Id", "CategoryName",Advertisiment.CategoryId);
+                    ViewBag.SubGroupId = new SelectList(await _SubGroup.GetAll(), "Id", "SubGroupName");
+                }
+                else
+                {
+                    ViewBag.SubGroupId = new SelectList(await _SubGroup.GetAll(), "Id", "SubGroupName", Advertisiment.SubGroupId);
+                }
+                if (String.IsNullOrEmpty(Advertisiment.CategoryId))
+                {
+                    ViewBag.CategoryId = new SelectList(await _category.GetAll(), "Id", "CategoryName");
                 }
                 else
                 {
                     ViewBag.CategoryId = new SelectList(await _category.GetAll(), "Id", "CategoryName", Advertisiment.CategoryId);
                 }
-                if (String.IsNullOrEmpty(Advertisiment.ServiceId))
-                {
-                    ViewBag.ServiceId = new SelectList(await _service.GetAll(), "Id", "ServiceName",Advertisiment.ServiceId);
-                }
-                else
-                {
-                    ViewBag.ServiceId = new SelectList(await _Group.GetAll(), "Id", "ServiceName", Advertisiment.ServiceId);
-                }
+
 
                 return View(Advertisiment);
                 }
