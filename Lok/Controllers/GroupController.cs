@@ -25,8 +25,20 @@ namespace Lok.Controllers
                 var Groups = await _Group.GetAll();
                 return View(Groups);
             }
+        public async Task<ActionResult> Details(string id)
+        {
+            if (!string.IsNullOrEmpty(id))
+            {
+                var Service = await _Group.GetById(id);
 
-            public ActionResult<Group> Create()
+                return View(Service);
+            }
+            else
+                return BadRequest();
+
+
+        }
+        public ActionResult<Group> Create()
             {
                 Group value = new Group();
                 return View();

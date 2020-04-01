@@ -26,8 +26,20 @@ namespace Lok.Controllers
                 var EthinicalGroups = await _EthinicalGroup.GetAll();
                 return View(EthinicalGroups);
             }
+        public async Task<ActionResult> Details(string id)
+        {
+            if (!string.IsNullOrEmpty(id))
+            {
+                var Service = await _EthinicalGroup.GetById(id);
 
-            public ActionResult<EthinicalGroup> Create()
+                return View(Service);
+            }
+            else
+                return BadRequest();
+
+
+        }
+        public ActionResult<EthinicalGroup> Create()
             {
                 EthinicalGroup value = new EthinicalGroup();
                 return View();

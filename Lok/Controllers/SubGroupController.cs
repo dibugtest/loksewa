@@ -31,8 +31,21 @@ namespace Lok.Controllers
 
                 return View(SubGroups);
             }
+        public async Task<ActionResult> Details(string id)
+        {
+            if (!string.IsNullOrEmpty(id))
+            {
+                var Service = await _SubGroup.GetById(id);
 
-            public async Task<ActionResult<SubGroup>> Create()
+                return View(Service);
+            }
+            else
+                return BadRequest();
+
+
+        }
+
+        public async Task<ActionResult<SubGroup>> Create()
             {
                 SubGroup value = new SubGroup();
                 ViewBag.GroupId = new SelectList(await _Group.GetAll(), "Id", "GroupName");

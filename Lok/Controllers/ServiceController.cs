@@ -49,6 +49,18 @@ namespace PPMS.Controllers
 
             return RedirectToAction("Index");
         }
+        public async Task<ActionResult> Details(string id) {
+            if (!string.IsNullOrEmpty(id))
+            {
+                var Service = await _service.GetById(id);
+               
+                return View(Service);
+            }
+            else
+                return BadRequest();
+
+
+        }
         [HttpGet]
         public async Task<ActionResult<Service>> Edit(string id)
         {

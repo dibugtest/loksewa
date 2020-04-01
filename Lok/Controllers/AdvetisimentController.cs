@@ -89,7 +89,20 @@ namespace Lok.Controllers
 
                 return RedirectToAction("Index");
             }
-            [HttpGet]
+        public async Task<ActionResult> Details(string id)
+        {
+            if (!string.IsNullOrEmpty(id))
+            {
+                var Service = await _Advertisiment.GetById(id);
+
+                return View(Service);
+            }
+            else
+                return BadRequest();
+
+
+        }
+        [HttpGet]
             public async Task<ActionResult<Advertisiment>> Edit(string id)
             {
                 if (!string.IsNullOrEmpty(id))
