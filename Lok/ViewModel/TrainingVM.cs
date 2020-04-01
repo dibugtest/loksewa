@@ -11,6 +11,7 @@ namespace Lok.ViewModel
     public class TrainingVM
     {
         public string Id { get; set; }
+        public string TId { get; set; }
         [Required(ErrorMessage = "Organization Name is Required")]
 
         public string OrganizationName { get; set; }

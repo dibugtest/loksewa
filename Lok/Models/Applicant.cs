@@ -33,7 +33,8 @@ namespace Lok.Models
     }
         public class PersonalInfo
         {
-            public string FirstName { get; set; }
+      
+        public string FirstName { get; set; }
             public string MiddleName { get; set; }
             public string LastName { get; set; }
             public string FirstNameNep { get; set; }
@@ -62,7 +63,8 @@ namespace Lok.Models
             public bool Verified { get; set; }
     }
     
-    public class ExtraInfo { 
+    public class ExtraInfo {
+       
         public string Cast { get; set; }
         public string Religion { get; set; }
         public string OtherReligion { get; set; }
@@ -82,6 +84,7 @@ namespace Lok.Models
         public string GroupNameOther { get; set; }
     }
     public class ContactInfo {
+        public string CId { get; set; }
         public string District { get; set; }
         public string State { get; set; }
         public string MunicipalityType { get; set; }
@@ -96,6 +99,7 @@ namespace Lok.Models
 
     }
     public class EducationInfo {
+        public string EId { get; set; }
         public string BoardName { get; set; }
         public string Level { get; set; }
         public string Faculty { get; set; }
@@ -109,6 +113,7 @@ namespace Lok.Models
         public string EquivalentFileName { get; set; }
     }
     public class TrainingInfo {
+        public string TId { get; set; }
         public string OrganizationName { get; set; }
         public string TrainingName { get; set; }
         public string DivisionPercentage { get; set; }
@@ -119,6 +124,7 @@ namespace Lok.Models
         public string FileName { get; set; }
     }
     public class ProfessionalCouncil {
+        public string PId { get; set; }
         public string ProviderName { get; set; }
         public string Type { get; set; }
         public string RegistrationNo { get; set; }
@@ -130,7 +136,8 @@ namespace Lok.Models
         public string FileName { get; set; }
     }
     public class NonGovernmentExperienceInfo {
-            public string OfficeName { get; set; }
+        public string GId { get; set; }
+        public string OfficeName { get; set; }
             public string Post { get; set; }
             public string Level { get; set; }
             public string JobType { get; set; }
@@ -138,6 +145,8 @@ namespace Lok.Models
             public DateTime JobEndDate { get; set; }
     }
     public class GovernmentExperienceInfo {
+        public string GId { get; set; }
+
         public string OfficeAddress { get; set; }
         public string OfficeName { get; set; }
         public string Post { get; set; }

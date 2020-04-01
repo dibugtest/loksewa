@@ -1,35 +1,50 @@
-﻿@model Lok.ViewModel.RegistrationVM
+﻿@model Lok.ViewModel.PersonalVM
 
 @{
-    ViewData["Title"] = "RegisterApplicant";
+    ViewData["Title"] = "Personal";
 }
 
-<h2>RegisterApplicant</h2>
+<h2>Personal</h2>
 
-<h4>RegistrationVM</h4>
+<h4>PersonalVM</h4>
 <hr />
 <div class="row">
     <div class="col-md-12">
-        @if (ViewBag.Error != null)
-        {
-            <div class="alert alert-danger">
-
-                @Html.ValidationSummary()
-            </div>
-        }
         @if (TempData["Message"] != null)
         {
             <div class="alert alert-success">
-
-                @TempData["Message"].ToString()
-
+                @TempData["Message"]
+            </div>
+        }
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-danger">
+                @Html.ValidationSummary()
             </div>
         }
     </div>
     <div class="col-md-4">
-        <form asp-action="RegisterApplicant">
+        <div class="col-md-12">
+            @if (TempData["Message"] != null)
+            {
+                <div class="alert alert-success">
+                    @TempData["Message"]
+                </div>
+            }
+            @if (ViewBag.Error != null)
+            {
+                <div class="alert alert-danger">
+                    @Html.ValidationSummary()
+                </div>
+            }
+        </div>
+        <form asp-action="Personal">
 
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Id" class="control-label"></label>
+                <input asp-for="Id" class="form-control" />
+                <span asp-validation-for="Id" class="text-danger"></span>
+            </div>
             <div class="form-group">
                 <label asp-for="FirstName" class="control-label"></label>
                 <input asp-for="FirstName" class="form-control" />
@@ -79,7 +94,8 @@
                 <label asp-for="FatherFirstName" class="control-label"></label>
                 <input asp-for="FatherFirstName" class="form-control" />
                 <span asp-validation-for="FatherFirstName" class="text-danger"></span>
-            </div>            <div class="form-group">
+            </div>
+            <div class="form-group">
                 <label asp-for="FatherMiddleName" class="control-label"></label>
                 <input asp-for="FatherMiddleName" class="form-control" />
                 <span asp-validation-for="FatherMiddleName" class="text-danger"></span>
@@ -158,101 +174,6 @@
                 <label asp-for="Mobile" class="control-label"></label>
                 <input asp-for="Mobile" class="form-control" />
                 <span asp-validation-for="Mobile" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Cast" class="control-label"></label>
-                <input asp-for="Cast" class="form-control" />
-                <span asp-validation-for="Cast" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Religion" class="control-label"></label>
-                <select asp-items="Model.Religions" asp-for="Religion" class="form-control"></select>
-
-                <span asp-validation-for="Religion" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="OtherReligion" class="control-label"></label>
-                <input asp-for="OtherReligion" class="form-control" />
-                <span asp-validation-for="OtherReligion" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="MaritalStatus" class="control-label"></label>
-                <select asp-for="MaritalStatus" asp-items="Model.MaritalStatuss" class="form-control"></select>
-
-                <span asp-validation-for="MaritalStatus" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="EmploymentStatus" class="control-label"></label>
-                <select asp-items="Model.Employments" asp-for="EmploymentStatus" class="form-control"></select>
-
-                <span asp-validation-for="EmploymentStatus" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="EmploymentStatusOther" class="control-label"></label>
-                <input asp-for="EmploymentStatusOther" class="form-control" />
-                <span asp-validation-for="EmploymentStatusOther" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="MotherTongue" class="control-label"></label>
-                <input asp-for="MotherTongue" class="form-control" />
-                <span asp-validation-for="MotherTongue" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DisabilityStatus" class="control-label"></label>
-                <select asp-items="Model.Disabilities" asp-for="DisabilityStatus" class="form-control"></select>
-
-                <span asp-validation-for="DisabilityStatus" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Disability" class="control-label"></label>
-                <input asp-for="Disability" class="form-control" />
-                <span asp-validation-for="Disability" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FathersLiteracy" class="control-label"></label>
-                <select asp-items="Model.EducationLevels" asp-for="FathersLiteracy" class="form-control"></select>
-
-                <span asp-validation-for="FathersLiteracy" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="MothersLiteracy" class="control-label"></label>
-                <select asp-items="Model.EducationLevels" asp-for="MothersLiteracy" class="form-control"></select>
-
-                <span asp-validation-for="MothersLiteracy" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FamilyOccupation" class="control-label"></label>
-                <select asp-items="Model.Occupations" asp-for="FamilyOccupation" class="form-control"></select>
-
-                <span asp-validation-for="FamilyOccupation" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="OtherOccupation" class="control-label"></label>
-                <input asp-for="OtherOccupation" class="form-control" />
-                <span asp-validation-for="OtherOccupation" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NickName" class="control-label"></label>
-                <input asp-for="NickName" class="form-control" />
-                <span asp-validation-for="NickName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Goegraphy" class="control-label"></label>
-
-                <select asp-items="Model.GeographicRegions" asp-for="Goegraphy" class="form-control"></select>
-
-                <span asp-validation-for="Goegraphy" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="GroupName" class="control-label"></label>
-                <select asp-items="Model.Vargas" asp-for="GroupName" class="form-control"></select>
-
-                <span asp-validation-for="GroupName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="GroupNameOther" class="control-label"></label>
-                <input asp-for="GroupNameOther" class="form-control" />
-                <span asp-validation-for="GroupNameOther" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-default" />

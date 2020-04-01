@@ -36,7 +36,7 @@ namespace Lok.Controllers
 
         public ApplicantController(IApplicantRepository Applicant, IReligionRepository Religion
                                     , IEmploymentRepository Employment, IOccupationRepository Occupation,
-                                    IVargaRepository Varga,IDistrictRepository District, IBoardNameRepository BoardName, IEducationLevelRepository EducationLevel
+                                    IVargaRepository Varga, IDistrictRepository District, IBoardNameRepository BoardName, IEducationLevelRepository EducationLevel
                                     , IFacultyRepository Faculty, ISewaRepository Sewa,
                                     IShreniTahaRepository Shreni, IUnitOfWork uow, IMapper mapper)
         {
@@ -56,10 +56,11 @@ namespace Lok.Controllers
         }
 
 
-        // GET: Applicant
+        // GET: Applicant use authorize
         public async Task<ActionResult> Index()
         {
-            var Applicants = await _Applicant.GetAll();
+            string id = Request.Cookies["Id"].ToString();
+            var Applicants = await _Applicant.GetById(id);
             return View(Applicants);
         }
 
@@ -160,7 +161,11 @@ namespace Lok.Controllers
                         SendEMail(register.Email, "Email Verification Link.", EmailBody);
 
                         registeredApplicant.PersonalInformation = _mapper.Map<PersonalInfo>(register);
+
                         registeredApplicant.ExtraInformation = _mapper.Map<ExtraInfo>(register);
+
+                        registeredApplicant.EditedDate = DateTime.Now;
+                        registeredApplicant.CreatedBy = "Admin";//from login
                         _Applicant.Update(registeredApplicant, register.Id);
 
                         TempData["Message"] = "Successfully Registered. Please check your Email and reset your password.";
@@ -168,49 +173,54 @@ namespace Lok.Controllers
                     }
                     catch
                     {
+                        ViewBag.Error = "Error";
                         ModelState.AddModelError(string.Empty, "Failed to send mail. Please Try Again.");
                         return View(register);
                     }
                 }
-
-            }
-            else
-            {
-
-                Applicant applicant = new Applicant();
-                applicant.PersonalInformation = _mapper.Map<PersonalInfo>(register);
-                applicant.ExtraInformation = _mapper.Map<ExtraInfo>(register);
-
-                //Check if the applicant exist with email 
-                if (_Applicant.GetByEmail(register.Email) != null)
+                else
                 {
-                    string randString = RandomString(6);
-                    applicant.RandomPassword = Base64Encode(randString);
 
-                    //if not Add applicant to db
-                    _Applicant.Add(applicant);
+                    Applicant applicant = new Applicant();
+                    applicant.CreatedDate = DateTime.Now;
+                    applicant.EditedDate = DateTime.Now;
+                    applicant.CreatedBy = "Admin";
+                    applicant.PersonalInformation = _mapper.Map<PersonalInfo>(register);
 
-                    await _uow.Commit();
+                    applicant.ExtraInformation = _mapper.Map<ExtraInfo>(register);
 
-
-                    if (applicant.Id != null)
+                    //Check if the applicant exist with email 
+                    if (_Applicant.GetByEmail(register.Email) != null)
                     {
-                        //send Email for email verification
-                        string EmailBody = "Email Verification and Password Setup link." + "<a href='" + "http://localhost:5000/applicant/emailVerification/'" + applicant.Id + ">Link</a>";
-                        try
+                        string randString = RandomString(6);
+                        applicant.RandomPassword = Base64Encode(randString);
+
+                        //if not Add applicant to db
+                        _Applicant.Add(applicant);
+
+                        await _uow.Commit();
+
+
+                        if (applicant.Id != null)
                         {
-                            SendEMail(register.Email, "Email Verification Link.", EmailBody);
-                            TempData["Message"] = "Successfully Registered. Please check your Email and reset your password.";
-                            return RedirectToAction("PasswordReset", register.Id);
+                            //send Email for email verification
+                            string EmailBody = "Your Reset Password is " + Base64Decode(applicant.RandomPassword) + ".Email Verification and Password Setup link." + "<a href='" + "http://localhost:5000/applicant/emailVerification/'" + applicant.Id + ">Link</a>";
+                            try
+                            {
+                                SendEMail(register.Email, "Email Verification Link.", EmailBody);
+                                TempData["Message"] = "Successfully Registered. Please check your Email and reset your password.";
+                                return RedirectToAction("PasswordReset", new { id = register.Id });
+
+                            }
+                            catch
+                            {
+                                register.Id = applicant.Id.ToString();
+                                ViewBag.Error = "Error";
+                                ModelState.AddModelError(string.Empty, "Failed to send mail.");
+                                return View(register);
+                            }
 
                         }
-                        catch
-                        {
-                            register.Id = applicant.Id.ToString();
-                            ModelState.AddModelError(string.Empty, "Failed to send mail.");
-                            return View(register);
-                        }
-
                     }
                 }
             }
@@ -221,12 +231,14 @@ namespace Lok.Controllers
 
         public async Task<ActionResult<ResetPasswordVM>> ResetPassword(string id)
         {
-            if (string.IsNullOrEmpty(id))
+            if (!string.IsNullOrEmpty(id))
             {
                 Applicant applicant = await _Applicant.GetById(id);
                 if (applicant == null)
                 {
-                    return RedirectToAction("ApplicantLogin");
+                    ViewBag.Error = "Error";
+                    ModelState.AddModelError(string.Empty, "Please try Again!");
+                    return View();
                 }
                 else
                 {
@@ -249,13 +261,30 @@ namespace Lok.Controllers
                 Applicant applicant = await _Applicant.GetById(reset.Id);
                 if (applicant != null)
                 {
-                    applicant.EmailVerification = true;
-                    applicant.RandomPassword = "";
-                    applicant.Password.Hash = reset.Password;
-                    TempData["Message"] = "Successfully Reset Password";
-                    return View();
+                    if (applicant.RandomPassword == Base64Encode(reset.RandPassword))
+                    {
+                        applicant.EmailVerification = true;
+                        applicant.RandomPassword = "";
+
+                        applicant.Password = new Passwords { Hash = reset.Password, Salt = reset.Password };
+
+                        applicant.QuestionAnswer = _mapper.Map<SecurityQA>(reset);
+
+                        _Applicant.Update(applicant, reset.Id);
+                        await _uow.Commit();
+
+                        TempData["Message"] = "Successfully Reset Password. Login using new password.";
+                        return View(reset);
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "Reset Password doesnot match.");
+                        ViewBag.Error = "Error";
+                        return View();
+                    }
                 }
             }
+            ViewBag.Error = "Error";
             ModelState.AddModelError(string.Empty, "Please try Again!");
             return View(reset);
         }
@@ -295,6 +324,7 @@ namespace Lok.Controllers
                         }
                         else
                         {
+                            ViewBag.Error = "Error";
                             ModelState.AddModelError(string.Empty, "Email and Password not Matched.");
                             return View(login);
                         }
@@ -302,12 +332,16 @@ namespace Lok.Controllers
                     }
                     else
                     {
-                        TempData["ErrorMessage"] = "Check your mail and reset your password.";
-                        return RedirectToAction("ResetPassword", applicant.Id.ToString());
+                        ViewBag.Error = "Error";
+                        ModelState.AddModelError(String.Empty, "Check your mail and reset your password");
+                        return View(login);
+                        // TempData["ErrorMessage"] = "Check your mail and reset your password.";
+                        //  return RedirectToAction("ResetPassword",new { Id = applicant.Id.ToString() });
                     }
                 }
                 else
                 {
+                    ViewBag.Error = "Error";
                     ModelState.AddModelError(string.Empty, "Please try Again.");
                     return View(login);
                 }
@@ -323,6 +357,7 @@ namespace Lok.Controllers
                 Applicant applicant = await _Applicant.GetById(id);
                 PersonalVM personalVM = _mapper.Map<PersonalVM>(applicant.PersonalInformation);
                 personalVM.Id = applicant.Id.ToString();
+
                 return View(personalVM);
             }
             else
@@ -338,13 +373,17 @@ namespace Lok.Controllers
             {
                 Applicant applicant = await _Applicant.GetById(personalVM.Id);
                 applicant.PersonalInformation = _mapper.Map<PersonalInfo>(personalVM);
+                applicant.EditedDate = DateTime.Now;
                 _Applicant.Update(applicant, personalVM.Id);
-                TempData["Message"] = "Success";
-                return View();
+                await _uow.Commit();
+                TempData["Message"] = "Successfully Updated Personal Information.";
+                return RedirectToAction("Index");
+                //return View();
 
             }
             else
             {
+                ViewBag.Error = "Error";
                 ModelState.AddModelError(string.Empty, "Error");
                 return View(personalVM);
             }
@@ -383,12 +422,12 @@ namespace Lok.Controllers
             Occupations.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
             Employments.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
             Vargas.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
-           
+
             string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
-                ExtraVM extraVM = _mapper.Map<ExtraVM>(applicant.PersonalInformation);
+                ExtraVM extraVM = _mapper.Map<ExtraVM>(applicant.ExtraInformation);
                 extraVM.Id = applicant.Id.ToString();
 
                 extraVM.Religions = new SelectList(Religions, "Id", "Name");
@@ -447,13 +486,17 @@ namespace Lok.Controllers
             {
                 Applicant applicant = await _Applicant.GetById(extraVM.Id);
                 applicant.ExtraInformation = _mapper.Map<ExtraInfo>(extraVM);
+                applicant.EditedDate = DateTime.Now;
                 _Applicant.Update(applicant, extraVM.Id);
-                TempData["Message"] = "Success";
-                return View();
+                await _uow.Commit();
+                TempData["Message"] = "Successfully updated the extra informartion.";
+                return RedirectToAction("Index");
+                // return View();
 
             }
             else
             {
+                ViewBag.Error = "Error";
                 ModelState.AddModelError(string.Empty, "Error");
                 return View(extraVM);
             }
@@ -462,22 +505,26 @@ namespace Lok.Controllers
         public async Task<ActionResult<ContactVM>> Contact()
         {
             List<DropDownItem> Districts = (from r in await _District.GetAll()
-                                         select new DropDownItem
-                                         {
-                                             Id = r.Id.ToString(),
-                                             Name = r.Name
-                                         }).ToList();
+                                            select new DropDownItem
+                                            {
+                                                Id = r.Id.ToString(),
+                                                Name = r.Name
+                                            }).ToList();
 
 
             Districts.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
 
-            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            string id = Request.Cookies != null ? Request.Cookies["Id"].ToString() : null;
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
-                ContactVM contactVM = _mapper.Map<ContactVM>(applicant.ContactInformation);
+
+                ContactVM contactVM = applicant.ContactInformation != null ? _mapper.Map<ContactVM>(applicant.ContactInformation) : new ContactVM();
                 contactVM.Id = applicant.Id.ToString();
                 contactVM.Districts = new SelectList(Districts, "Id", "Name");
+                contactVM.Email = applicant.PersonalInformation.Email;
+                contactVM.MobileNo = applicant.PersonalInformation.Mobile;
+
                 return View(contactVM);
             }
             else
@@ -504,66 +551,35 @@ namespace Lok.Controllers
                 Applicant applicant = await _Applicant.GetById(contactVM.Id);
                 applicant.ContactInformation = _mapper.Map<ContactInfo>(contactVM);
                 _Applicant.Update(applicant, contactVM.Id);
-                TempData["Message"] = "Success";
-                return View();
+                await _uow.Commit();
+                TempData["Message"] = "Successfully updated the contact information.";
+                return RedirectToAction("Index");
+                //return View();
 
             }
             else
             {
+                ViewBag.Error = "Error";
                 ModelState.AddModelError(string.Empty, "Error");
                 return View(contactVM);
             }
         }
-
-
-        public async Task<ActionResult<EducationVM>> Education()
+        public async Task<ActionResult> EducationIndex()
         {
-            List<DropDownItem> BoardNames = (from r in await _BoardName.GetAll()
-                                            select new DropDownItem
-                                            {
-                                                Id = r.Id.ToString(),
-                                                Name = r.Name
-                                            }).ToList();
-            List<DropDownItem> EducationLevels = (from r in await _EducationLevel.GetAll()
-                                                  select new DropDownItem
-                                                  {
-                                                      Id = r.Id.ToString(),
-                                                      Name = r.Name
-                                                  }).ToList();
-             List<DropDownItem> Faculties = (from r in await _Faculty.GetAll()
-                                                  select new DropDownItem
-                                                  {
-                                                      Id = r.Id.ToString(),
-                                                      Name = r.Name
-                                                  }).ToList();
-
-            
-
-
-            BoardNames.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
-            EducationLevels.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
-            Faculties.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
-
-
             string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
-                EducationVM educationVM = new EducationVM();
-                educationVM.Id = applicant.Id.ToString();
-                educationVM.BoardNames = new SelectList(BoardNames, "Id", "Name");
-                educationVM.EducationLevels = new SelectList(EducationLevels, "Id", "Name");
-                educationVM.Faculties = new SelectList(Faculties, "Id", "Name");
-                return View(educationVM);
+                IEnumerable<EducationVM> edus = applicant.EducationInfos != null ? _mapper.Map<IEnumerable<EducationVM>>(applicant.EducationInfos) : null;
+                return View(edus);
             }
             else
             {
-                return RedirectToAction("Login");
+                return RedirectToAction("login");
             }
         }
 
-        [HttpPost]
-        public async Task<ActionResult<ContactVM>> Education(EducationVM educationVM)
+        public async Task<ActionResult<EducationVM>> Education(string EId)
         {
             List<DropDownItem> BoardNames = (from r in await _BoardName.GetAll()
                                              select new DropDownItem
@@ -590,17 +606,108 @@ namespace Lok.Controllers
             BoardNames.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
             EducationLevels.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
             Faculties.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
-           
 
-            
+
+            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            if (id != null)
+            {
+                Applicant applicant = await _Applicant.GetById(id);
+                EducationVM educationVM = new EducationVM();
+                educationVM.EId = EId;
+                if (EId != null)
+                {
+                    if (applicant.EducationInfos != null)
+                    {
+                        EducationInfo eduInfo = applicant.EducationInfos.FirstOrDefault(m => m.EId == EId);
+                        if (eduInfo != null)
+                        {
+                            educationVM = _mapper.Map<EducationVM>(eduInfo);
+                        }
+                     }
+                }
+                educationVM.Id = applicant.Id.ToString();
+                educationVM.BoardNames = new SelectList(BoardNames, "Id", "Name");
+                educationVM.EducationLevels = new SelectList(EducationLevels, "Id", "Name");
+                educationVM.Faculties = new SelectList(Faculties, "Id", "Name");
+                return View(educationVM);
+
+            }
+            else
+            {
+                return RedirectToAction("Login");
+            }
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<EducationVM>> Education(EducationVM educationVM, IFormFile FileMain, IFormFile FileEquivalent)
+        {
+            List<DropDownItem> BoardNames = (from r in await _BoardName.GetAll()
+                                             select new DropDownItem
+                                             {
+                                                 Id = r.Id.ToString(),
+                                                 Name = r.Name
+                                             }).ToList();
+            List<DropDownItem> EducationLevels = (from r in await _EducationLevel.GetAll()
+                                                  select new DropDownItem
+                                                  {
+                                                      Id = r.Id.ToString(),
+                                                      Name = r.Name
+                                                  }).ToList();
+            List<DropDownItem> Faculties = (from r in await _Faculty.GetAll()
+                                            select new DropDownItem
+                                            {
+                                                Id = r.Id.ToString(),
+                                                Name = r.Name
+                                            }).ToList();
+
+
+
+
+            BoardNames.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
+            EducationLevels.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
+            Faculties.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
+
             if (ModelState.IsValid)
             {
-                Applicant applicant = await _Applicant.GetById(educationVM.Id);
-                EducationInfo eduInfo = _mapper.Map<EducationInfo>(educationVM);
-                _Applicant.UpdateEducationInfo(eduInfo, educationVM.Id);
-               
-                TempData["Message"] = "Success";
-                return View();
+                if (FileMain != null || FileEquivalent != null)
+                {
+                    Applicant applicant = await _Applicant.GetById(educationVM.Id);
+                    List<EducationInfo> eduList = new List<EducationInfo>();
+                    EducationInfo eduInfo = _mapper.Map<EducationInfo>(educationVM);
+                    eduList.Add(eduInfo);
+                    if (educationVM.EId == null)
+                    {
+                        eduInfo.EId = applicant.EducationInfos != null ? (applicant.EducationInfos.ToList().Count + 1).ToString() : "1";
+                    }
+                    applicant.EditedDate = DateTime.Now;
+                    if (applicant.EducationInfos == null)
+                    {
+                        applicant.EducationInfos = eduList.AsEnumerable();
+                        _Applicant.Update(applicant, educationVM.Id);
+                    }
+                    else
+                    {
+                        _Applicant.UpdateEducationInfo(eduInfo, educationVM.Id,educationVM.EId);
+
+                    }
+                    await _uow.Commit();
+
+                    //File Upload
+
+
+
+                    TempData["Message"] = "Successfully Added education Information.";
+                    return RedirectToAction("EducationIndex");
+                }
+                else
+                {
+                    educationVM.BoardNames = new SelectList(BoardNames, "Id", "Name");
+                    educationVM.EducationLevels = new SelectList(EducationLevels, "Id", "Name");
+                    educationVM.Faculties = new SelectList(Faculties, "Id", "Name");
+                    ViewBag.Error = "Error";
+                    ModelState.AddModelError(string.Empty, "File is necessary.");
+                    return View(educationVM);
+                }
 
             }
             else
@@ -608,11 +715,12 @@ namespace Lok.Controllers
                 educationVM.BoardNames = new SelectList(BoardNames, "Id", "Name");
                 educationVM.EducationLevels = new SelectList(EducationLevels, "Id", "Name");
                 educationVM.Faculties = new SelectList(Faculties, "Id", "Name");
-
+                ViewBag.Error = "Error";
                 ModelState.AddModelError(string.Empty, "Error");
                 return View(educationVM);
             }
         }
+
 
 
 

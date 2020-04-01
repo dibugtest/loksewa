@@ -12,6 +12,8 @@ namespace Lok.ViewModel
     public class ExtraVM
     {
         public string Id { get; set; }
+
+        public string EId { get; set; }
         [Required(ErrorMessage = "Cast is Required.")]
 
         public string Cast { get; set; }

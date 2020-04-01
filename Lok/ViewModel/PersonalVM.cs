@@ -12,6 +12,7 @@ namespace Lok.ViewModel
     public class PersonalVM
     {
         public string Id { get; set; }
+        public string PId { get; set; }
         [Required(ErrorMessage = "First Name is Required.")]
         public string FirstName { get; set; }
 

@@ -13,6 +13,8 @@ namespace Lok.ViewModel
     {
 
         public string Id { get; set; }
+
+        public string PId { get; set; }
         [Required(ErrorMessage = "Council's Name is Required")]
 
         public string ProviderName { get; set; }

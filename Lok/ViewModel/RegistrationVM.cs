@@ -10,6 +10,8 @@ namespace Lok.ViewModel
     public class RegistrationVM
     {
         public string Id { get; set; }
+
+       
         [Required(ErrorMessage = "First Name is Required.")]
         public string FirstName { get; set; }
 
@@ -141,7 +143,8 @@ namespace Lok.ViewModel
                                                                                 new SelectListItem {Text="Himalayan",Value="Himalayan" },
                                                                                 new SelectListItem {Text="Mountain",Value="Mountain" },
                                                                                  new SelectListItem {Text="Backward",Value="Backward" },
-                                                                                  new SelectListItem {Text="Terai",Value="Terai" }
+                                                                                  new SelectListItem {Text="Terai",Value="Terai" },
+                                                                                  new SelectListItem {Text="Other",Value="Other" }
                                                                           };
 
 

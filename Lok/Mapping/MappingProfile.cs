@@ -25,6 +25,7 @@ namespace Lok.Mapping
             CreateMap<TrainingVM, TrainingInfo>();
 
             CreateMap<EducationInfo, EducationVM>();
+            CreateMap<IEnumerable<EducationVM>, IEnumerable<EducationInfo>>();
             CreateMap<EducationVM, EducationInfo>();
 
             CreateMap<GovernmentExperienceInfo, GovernmentExperienceVM>();
@@ -43,6 +44,9 @@ namespace Lok.Mapping
 
             CreateMap<RegistrationVM, ExtraInfo>();
             CreateMap<ExtraInfo, RegistrationVM>();
+            
+            CreateMap<ResetPasswordVM, SecurityQA>();
+
 
         }
     }

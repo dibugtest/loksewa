@@ -1,0 +1,32 @@
+﻿@model Lok.Models.Applicant
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Index</h2>
+<div class="row">
+    <div class="col-md-12">
+        @if (TempData["Message"] != null)
+        {
+            <div class="alert alert-success">
+                @TempData["Message"]
+            </div>
+        }
+    </div>
+    Name: <label>@("First:"+Model.PersonalInformation.FirstName + " Middle:" + Model.PersonalInformation.MiddleName + " Last:" + Model.PersonalInformation.LastName)</label>
+
+</div>
+<div class="row">
+    <a asp-controller="applicant" asp-action="Personal">Personal</a>|
+    <a asp-controller="applicant" asp-action="Extra">Extra</a>|
+    <a asp-controller="applicant" asp-action="Contact">Contact</a>|
+    <a asp-controller="applicant" asp-action="Education">Educatoin</a>|
+    <a asp-controller="applicant" asp-action="Training">Training</a>|
+    <a asp-controller="applicant" asp-action="Professional">Professional Council</a>|
+    <a asp-controller="applicant" asp-action="Government">Government Experience</a>|
+    <a asp-controller="applicant" asp-action="NonGovernment">Non-Government Experience</a>|
+    <a asp-controller="applicant" asp-action="Upload">Upload</a>|
+    <a asp-controller="applicant" asp-action="Submit">Submit</a>
+
+</div>
+

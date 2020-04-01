@@ -10,7 +10,7 @@ namespace Lok.Data.Interface
     public interface IApplicantRepository : IRepository<Applicant>
     {
         Task<Applicant> GetByEmail(string Email);
-        void UpdateEducationInfo(EducationInfo edu, string id);
+        void UpdateEducationInfo(EducationInfo edu, string id,string EId);
         void UpdateTrainingInfo(TrainingInfo train, string id);
         void UpdateProfessionalCouncil(ProfessionalCouncil obj, string id);
         void UpdateGovernmentInfo(GovernmentExperienceInfo obj, string id);

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Http.Internal;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -11,6 +12,9 @@ namespace Lok.ViewModel
     {
        
         public string Id { get; set; }
+
+        public string EId { get; set; }
+
         [Required(ErrorMessage ="Board Name is Required")]
         public string BoardName { get; set; }
         [Required(ErrorMessage = "Education Level is Required")]
@@ -40,6 +44,9 @@ namespace Lok.ViewModel
 
         public SelectList BoardNames { get; set; }
         public SelectList EducationLevels { get; set; }
+        
+        public FormFile FileMain { get; set; }
+        public FormFile FileEquivalent { get; set; }
 
         public SelectList Faculties { get; set; }
         public List<SelectListItem> EducationTypes = new List<SelectListItem> {new SelectListItem{Text="--Select--",Value="" },

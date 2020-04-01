@@ -18,6 +18,8 @@ namespace Lok.ViewModel
     public class GovernmentExperienceVM
     {
         public string Id { get; set; }
+        public string GId { get; set; }
+
         [Required(ErrorMessage = "Office Address is Required")]
         public string OfficeAddress { get; set; }
         [Required(ErrorMessage = "Office Name is Required")]
@@ -69,6 +71,8 @@ namespace Lok.ViewModel
     public class NonGovernmentExperienceVM
     {
         public string Id { get; set; }
+        public string GId { get; set; }
+
         [Required(ErrorMessage = "Office Name is Required")]
 
         public string OfficeName { get; set; }

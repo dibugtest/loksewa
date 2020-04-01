@@ -10,6 +10,7 @@ namespace Lok.ViewModel
     public class ContactVM
     {
         public string Id { get; set; }
+        public string CId { get; set; }
         [Required(ErrorMessage ="District is Required.")]
         public string District { get; set; }
         [Required(ErrorMessage = "District is Required.")]
