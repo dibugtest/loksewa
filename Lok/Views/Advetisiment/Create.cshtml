@@ -48,6 +48,14 @@
                 <span asp-validation-for="SubGroupId" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="CategoryId" class="control-label"></label>
+                <select asp-for="CategoryId" asp-items="ViewBag.CategoryId" class="form-control">
+                    <option disabled selected>--- Select ---</option>
+
+                </select>
+                <span asp-validation-for="SubGroupId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="DatePublished" class="control-label"></label>
                 <input asp-for="DatePublished" class="form-control" />
                 <span asp-validation-for="DatePublished" class="text-danger"></span>
@@ -82,7 +90,7 @@
                     i++;
                 }
                 @*@if (Model.SelectedFruits.Contains(item.Value))
-        {<text> checked </text>*@
+            {<text> checked </text>*@
             </div>
             <div class="form-group">
                 <label asp-for="MinAge" class="control-label"></label>

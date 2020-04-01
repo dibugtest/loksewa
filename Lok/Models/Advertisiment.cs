@@ -19,6 +19,8 @@ namespace Lok.Models
         public string ServiceId { get; set; }
         public Group Group { get; set; }
         public string GroupId { get; set; }
+        public Category Category { get; set; }
+        public string CategoryId { get; set; }
 
         public SubGroup SubGroup { get; set; }
         public string SubGroupId { get; set; }
