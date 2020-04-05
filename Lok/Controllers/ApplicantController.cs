@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using AutoMapper;
 using Lok.Data.Interface;
 using Lok.Models;
@@ -12,6 +14,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using MongoDB.Bson;
+using System.IO;
 
 namespace Lok.Controllers
 {
@@ -623,12 +626,43 @@ namespace Lok.Controllers
                         {
                             educationVM = _mapper.Map<EducationVM>(eduInfo);
                         }
-                     }
+                    }
                 }
                 educationVM.Id = applicant.Id.ToString();
                 educationVM.BoardNames = new SelectList(BoardNames, "Id", "Name");
                 educationVM.EducationLevels = new SelectList(EducationLevels, "Id", "Name");
                 educationVM.Faculties = new SelectList(Faculties, "Id", "Name");
+
+                //Check File Exists
+                if (EId != null)
+                {
+                    if (educationVM.FileName != null)
+                    {
+                        string mainFile = Path.Combine(
+                                            Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                            "applicant", applicant.Id.ToString(), "Education", "Main", educationVM.FileName
+                                            );
+
+                        if (System.IO.File.Exists(mainFile))
+                        {
+                            educationVM.FileMainLink = "~/images/applicant/" + educationVM.Id + "/Education/Main/" + educationVM.FileName;
+                        }
+                    }
+                    if (educationVM.EquivalentFileName != null)
+                    {
+                        string EquivalentFile = Path.Combine(
+                                           Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                           "applicant", applicant.Id.ToString(), "Education", "Equivalent", educationVM.EquivalentFileName
+                                           );
+
+                        if (System.IO.File.Exists(EquivalentFile))
+                        {
+                            educationVM.FileEquivalentLink = "~/images/applicant/" + educationVM.Id + "/Education/Equivalent/" + educationVM.EquivalentFileName;
+                        }
+                    }
+                }
+
+
                 return View(educationVM);
 
             }
@@ -661,8 +695,6 @@ namespace Lok.Controllers
                                             }).ToList();
 
 
-
-
             BoardNames.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
             EducationLevels.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
             Faculties.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
@@ -679,6 +711,8 @@ namespace Lok.Controllers
                     {
                         eduInfo.EId = applicant.EducationInfos != null ? (applicant.EducationInfos.ToList().Count + 1).ToString() : "1";
                     }
+                    eduInfo.FileName = eduInfo.EId + ".pdf";
+                    eduInfo.EquivalentFileName = eduInfo.EId + ".pdf";
                     applicant.EditedDate = DateTime.Now;
                     if (applicant.EducationInfos == null)
                     {
@@ -687,14 +721,55 @@ namespace Lok.Controllers
                     }
                     else
                     {
-                        _Applicant.UpdateEducationInfo(eduInfo, educationVM.Id,educationVM.EId);
+                        _Applicant.UpdateEducationInfo(eduInfo, educationVM.Id, educationVM.EId);
 
                     }
                     await _uow.Commit();
 
+
+
                     //File Upload
 
+                    string directoryMain = Path.Combine(
+                                    Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                    "applicant", applicant.Id.ToString(), "Education", "Main"
+                                    );
 
+                    string directoryEquivalent = Path.Combine(
+                                    Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                    "applicant", applicant.Id.ToString(), "Education", "Equivalent"
+                                    );
+
+                    Directory.CreateDirectory(directoryMain); // no need to check if it exists
+                    Directory.CreateDirectory(directoryEquivalent); // no need to check if it exists
+
+
+
+                    if (FileMain != null)
+                    {
+                        var path = Path.Combine(
+                                    Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                    "applicant", applicant.Id.ToString(), "Education", "Main",
+                                    eduInfo.FileName);
+
+                        using (var stream = new FileStream(path, FileMode.Create))
+                        {
+                            await FileMain.CopyToAsync(stream);
+                        }
+                    }
+
+                    if (FileEquivalent != null)
+                    {
+                        var path = Path.Combine(
+                                   Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                   "applicant", applicant.Id.ToString(), "Education", "Equivalent",
+                                   eduInfo.EquivalentFileName);
+
+                        using (var stream = new FileStream(path, FileMode.Create))
+                        {
+                            await FileEquivalent.CopyToAsync(stream);
+                        }
+                    }
 
                     TempData["Message"] = "Successfully Added education Information.";
                     return RedirectToAction("EducationIndex");
@@ -722,7 +797,438 @@ namespace Lok.Controllers
         }
 
 
+        public async Task<ActionResult<TrainingVM>> TrainingIndex()
+        {
+            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            if (id != null)
+            {
+                Applicant applicant = await _Applicant.GetById(id);
+                IEnumerable<TrainingVM> training = applicant.TrainingInfos != null ? _mapper.Map<IEnumerable<TrainingVM>>(applicant.TrainingInfos) : null;
+                return View(training);
+            }
+            else
+            {
+                return RedirectToAction("login");
+            }
 
+        }
+
+        public async Task<ActionResult<TrainingVM>> TrainingCreate()
+        {
+
+            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            if (id != null)
+            {
+                Applicant applicant = await _Applicant.GetById(id);
+                TrainingVM trainVM = new TrainingVM();
+                trainVM.Id = applicant.Id.ToString();
+                return View(trainVM);
+
+            }
+            else
+            {
+                return RedirectToAction("Login");
+            }
+        }
+        [HttpPost]
+        public async Task<ActionResult<TrainingVM>> TrainingCreate(TrainingVM trainVM, IFormFile FileMain)
+        {
+            if (ModelState.IsValid)
+            {
+                if (FileMain != null)
+                {
+                    Applicant applicant = await _Applicant.GetById(trainVM.Id);
+                    List<TrainingInfo> TrainList = new List<TrainingInfo>();
+                    TrainingInfo trainInfo = _mapper.Map<TrainingInfo>(trainVM);
+                    TrainList.Add(trainInfo);
+                    trainInfo.TId = applicant.TrainingInfos != null ? (applicant.TrainingInfos.ToList().Count + 1).ToString() : "1";
+
+                    trainInfo.FileName = trainInfo.TId + ".pdf";
+
+                    applicant.EditedDate = DateTime.Now;
+                    if (applicant.TrainingInfos == null)
+                    {
+                        applicant.TrainingInfos = TrainList.AsEnumerable();
+                        _Applicant.Update(applicant, trainVM.Id);
+                    }
+                    else
+                    {
+                        _Applicant.UpdateTrainingInfo(trainInfo, trainVM.Id, null);
+
+                    }
+                    await _uow.Commit();
+
+
+
+                    //File Upload
+
+                    string directoryMain = Path.Combine(
+                                    Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                    "applicant", applicant.Id.ToString(), "Training", "File"
+                                    );
+
+                    Directory.CreateDirectory(directoryMain); // no need to check if it exists
+
+
+                    if (FileMain != null)
+                    {
+                        var path = Path.Combine(
+                                    Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                    "applicant", applicant.Id.ToString(), "Training", "File",
+                                    trainInfo.FileName);
+
+                        using (var stream = new FileStream(path, FileMode.Create))
+                        {
+                            await FileMain.CopyToAsync(stream);
+                        }
+                    }
+
+
+
+                    TempData["Message"] = "Successfully Added Training Information.";
+                    return RedirectToAction("TrainingIndex");
+                }
+                else
+                {
+                    ViewBag.Error = "Error";
+                    ModelState.AddModelError(string.Empty, "File is Required.");
+                    return View(trainVM);
+                }
+
+            }
+            else
+            {
+
+                ViewBag.Error = "Error";
+                ModelState.AddModelError(string.Empty, "Error");
+                return View(trainVM);
+            }
+        }
+        public async Task<ActionResult<TrainingVM>> TrainingEdit(string TId)
+        {
+            if (TId==null)
+            {
+                return RedirectToAction("TrainingIndex");
+            }
+            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            if (id != null)
+            {
+                Applicant applicant = await _Applicant.GetById(id);
+                TrainingVM trainVM = new TrainingVM();
+                trainVM.TId = TId;
+                    if (applicant.EducationInfos != null)
+                    {
+                        TrainingInfo trainInfo = applicant.TrainingInfos.FirstOrDefault(m => m.TId == TId);
+                        if (trainInfo != null)
+                        {
+                            trainVM = _mapper.Map<TrainingVM>(trainInfo);
+                        }
+                    }
+                
+                trainVM.Id = applicant.Id.ToString();
+                
+                //Check File Exists
+               
+                    if (trainVM.FileName != null)
+                    {
+                        string mainFile = Path.Combine(
+                                            Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                            "applicant", applicant.Id.ToString(), "Training", "File", trainVM.FileName
+                                            );
+
+                        if (System.IO.File.Exists(mainFile))
+                        {
+                            trainVM.FileMainLink = "~/images/applicant/" + trainVM.Id + "/Training/File/" + trainVM.FileName;
+                        }
+                    }
+                   
+
+
+                return View(trainVM);
+
+            }
+            else
+            {
+                return RedirectToAction("Login");
+            }
+
+        }
+        [HttpPost]
+        public async Task<ActionResult<TrainingVM>> TrainingEdit(TrainingVM trainVM, IFormFile FileMain)
+        {
+            if (ModelState.IsValid)
+            {
+                    Applicant applicant = await _Applicant.GetById(trainVM.Id);
+                   TrainingInfo trainInfo = _mapper.Map<TrainingInfo>(trainVM);
+                    trainInfo.FileName = trainInfo.TId + ".pdf";
+                    applicant.EditedDate = DateTime.Now;
+                   _Applicant.UpdateTrainingInfo(trainInfo, trainVM.Id, trainVM.TId);
+                    
+                    await _uow.Commit();
+
+
+
+                    //File Upload
+                   
+                    string directoryMain = Path.Combine(
+                                    Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                    "applicant", applicant.Id.ToString(), "Training", "File"
+                                    );
+
+                    Directory.CreateDirectory(directoryMain); // no need to check if it exists
+                   
+
+                    if (FileMain != null)
+                    {
+                        var path = Path.Combine(
+                                    Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                    "applicant", applicant.Id.ToString(), "Training", "File",
+                                    trainInfo.FileName);
+
+                        using (var stream = new FileStream(path, FileMode.Create))
+                        {
+                            await FileMain.CopyToAsync(stream);
+                        }
+                    }
+
+                    TempData["Message"] = "Successfully Updated Training Information.";
+                    return RedirectToAction("TrainingIndex");
+                }
+                else
+                {
+                   
+                    ViewBag.Error = "Error";
+                    ModelState.AddModelError(string.Empty, "Error.");
+                    return View(trainVM);
+                }
+
+            }
+
+        public async Task<ActionResult<ProfessionalCouncilVM>> CouncilIndex()
+        {
+            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            if (id != null)
+            {
+                Applicant applicant = await _Applicant.GetById(id);
+                IEnumerable<ProfessionalCouncilVM> councils = applicant.ProfessionalCouncils != null ? _mapper.Map<IEnumerable<ProfessionalCouncilVM>>(applicant.ProfessionalCouncils) : null;
+                return View(councils);
+            }
+            else
+            {
+                return RedirectToAction("login");
+            }
+
+        }
+
+        public async Task<ActionResult<ProfessionalCouncilVM>> CouncilCreate()
+        {
+            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            if (id != null)
+            {
+                Applicant applicant = await _Applicant.GetById(id);
+                ProfessionalCouncilVM councilVM = new ProfessionalCouncilVM();
+                councilVM.Id = applicant.Id.ToString();
+                return View(councilVM);
+            }
+            else
+            {
+                return RedirectToAction("Login");
+            }
+        }
+        [HttpPost]
+        public async Task<ActionResult<ProfessionalCouncilVM>> CouncilCreate(ProfessionalCouncilVM councilVM, IFormFile FileMain)
+        {
+            if (ModelState.IsValid)
+            {
+                if (FileMain != null)
+                {
+                    Applicant applicant = await _Applicant.GetById(councilVM.Id);
+                    List<ProfessionalCouncil> councilList = new List<ProfessionalCouncil>();
+                    ProfessionalCouncil council = _mapper.Map<ProfessionalCouncil>(councilVM);
+                    councilList.Add(council);
+                    council.PId = applicant.ProfessionalCouncils != null ? (applicant.ProfessionalCouncils.ToList().Count + 1).ToString() : "1";
+
+                    council.FileName = council.PId + ".pdf";
+
+                    applicant.EditedDate = DateTime.Now;
+                    if (applicant.ProfessionalCouncils == null)
+                    {
+                        applicant.ProfessionalCouncils = councilList.AsEnumerable();
+                        _Applicant.Update(applicant, councilVM.Id);
+                    }
+                    else
+                    {
+                        _Applicant.UpdateProfessionalCouncil(council, councilVM.Id, null);
+
+                    }
+                    await _uow.Commit();
+
+
+
+                    //File Upload
+
+                    string directoryMain = Path.Combine(
+                                    Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                    "applicant", applicant.Id.ToString(), "Council", "File"
+                                    );
+
+                    Directory.CreateDirectory(directoryMain); // no need to check if it exists
+
+
+                    if (FileMain != null)
+                    {
+                        var path = Path.Combine(
+                                    Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                    "applicant", applicant.Id.ToString(), "Council", "File",
+                                    council.FileName);
+
+                        using (var stream = new FileStream(path, FileMode.Create))
+                        {
+                            await FileMain.CopyToAsync(stream);
+                        }
+                    }
+
+
+
+                    TempData["Message"] = "Successfully Added Professional Council Information.";
+                    return RedirectToAction("CouncilIndex");
+                }
+                else
+                {
+                    ViewBag.Error = "Error";
+                    ModelState.AddModelError(string.Empty, "File is Required.");
+                    return View(councilVM);
+                }
+
+            }
+            else
+            {
+
+                ViewBag.Error = "Error";
+                ModelState.AddModelError(string.Empty, "Error");
+                return View(councilVM);
+            }
+        }
+        public async Task<ActionResult<ProfessionalCouncilVM>> CouncilEdit(string PId)
+        {
+            if (PId == null)
+            {
+                return RedirectToAction("CouncilIndex");
+            }
+            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            if (id != null)
+            {
+                Applicant applicant = await _Applicant.GetById(id);
+                ProfessionalCouncilVM councilVM = new ProfessionalCouncilVM();
+                councilVM.PId = PId;
+                if (applicant.ProfessionalCouncils != null)
+                {
+                    ProfessionalCouncil council = applicant.ProfessionalCouncils.FirstOrDefault(m => m.PId == PId);
+                    if (council != null)
+                    {
+                        councilVM = _mapper.Map<ProfessionalCouncilVM>(council);
+                    }
+                }
+
+                councilVM.Id = applicant.Id.ToString();
+
+                //Check File Exists
+
+                if (councilVM.FileName != null)
+                {
+                    string mainFile = Path.Combine(
+                                        Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                        "applicant", applicant.Id.ToString(), "Council", "File", councilVM.FileName
+                                        );
+
+                    if (System.IO.File.Exists(mainFile))
+                    {
+                        councilVM.FileMainLink = "~/images/applicant/" + councilVM.Id + "/Council/File/" + councilVM.FileName;
+                    }
+                }
+
+                return View(councilVM);
+
+            }
+            else
+            {
+                return RedirectToAction("Login");
+            }
+
+        }
+        [HttpPost]
+        public async Task<ActionResult<ProfessionalCouncilVM>> CouncilEdit(ProfessionalCouncilVM councilVM, IFormFile FileMain)
+        {
+            if (ModelState.IsValid)
+            {
+                Applicant applicant = await _Applicant.GetById(councilVM.Id);
+                ProfessionalCouncil council = _mapper.Map<ProfessionalCouncil>(councilVM);
+                council.FileName = council.PId + ".pdf";
+                applicant.EditedDate = DateTime.Now;
+                _Applicant.UpdateProfessionalCouncil(council, councilVM.Id, councilVM.PId);
+
+                await _uow.Commit();
+
+                //File Upload
+
+                string directoryMain = Path.Combine(
+                                Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                "applicant", applicant.Id.ToString(), "Council", "File"
+                                );
+
+                Directory.CreateDirectory(directoryMain); // no need to check if it exists
+
+
+                if (FileMain != null)
+                {
+                    var path = Path.Combine(
+                                Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                "applicant", applicant.Id.ToString(), "Council", "File",
+                                council.FileName);
+
+                    using (var stream = new FileStream(path, FileMode.Create))
+                    {
+                        await FileMain.CopyToAsync(stream);
+                    }
+                }
+
+                TempData["Message"] = "Successfully Updated Professional Council Information.";
+                return RedirectToAction("CouncilIndex");
+            }
+            else
+            {
+
+                ViewBag.Error = "Error";
+                ModelState.AddModelError(string.Empty, "Error.");
+                return View(councilVM);
+            }
+
+        }
+
+
+        public async Task<ActionResult<ExperienceVM>> ExperienceIndex()
+        {
+            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            if (id != null)
+            {
+                Applicant applicant = await _Applicant.GetById(id);
+                IEnumerable<GovernmentExperienceVM> government = applicant.GovernmentInfos != null ? _mapper.Map<IEnumerable<GovernmentExperienceVM>>(applicant.GovernmentInfos) : null;
+                IEnumerable<NonGovernmentExperienceVM> NonGovernment = applicant.NonGovernmentInfos != null ? _mapper.Map<IEnumerable<NonGovernmentExperienceVM>>(applicant.NonGovernmentInfos) : null;
+                ExperienceVM exp = new ExperienceVM();
+                exp.GovernmentExperience = government;
+                exp.NonGovernmentExperience = NonGovernment;
+                return View(exp);
+            }
+            else
+            {
+                return RedirectToAction("login");
+            }
+
+        }
+        //Government Experience
+
+
+        //Non Government Experience
 
 
         public ActionResult<Applicant> Create()

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http.Internal;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
@@ -44,9 +45,12 @@ namespace Lok.ViewModel
 
         public SelectList BoardNames { get; set; }
         public SelectList EducationLevels { get; set; }
-        
+
         public FormFile FileMain { get; set; }
         public FormFile FileEquivalent { get; set; }
+        
+        public string FileMainLink { get; set; }
+        public string FileEquivalentLink { get; set; }
 
         public SelectList Faculties { get; set; }
         public List<SelectListItem> EducationTypes = new List<SelectListItem> {new SelectListItem{Text="--Select--",Value="" },

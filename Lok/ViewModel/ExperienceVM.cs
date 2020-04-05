@@ -12,8 +12,8 @@ namespace Lok.ViewModel
 {
     public class ExperienceVM
     {
-        public GovernmentExperienceInfo GovernmentExperience { get; set; }
-        public NonGovernmentExperienceInfo NonGovernmentExperience { get; set; }
+        public IEnumerable<GovernmentExperienceVM> GovernmentExperience { get; set; }
+        public IEnumerable<NonGovernmentExperienceVM> NonGovernmentExperience { get; set; }
     }
     public class GovernmentExperienceVM
     {

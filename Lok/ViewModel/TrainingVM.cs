@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson;
+﻿using Microsoft.AspNetCore.Http.Internal;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
@@ -19,7 +20,6 @@ namespace Lok.ViewModel
 
         public string TrainingName { get; set; }
         public string DivisionPercentage { get; set; }
-        
 
         public DateTime StartDate { get; set; }
        
@@ -27,6 +27,9 @@ namespace Lok.ViewModel
         public string StartDateNep { get; set; }
         public string EndDateNep { get; set; }
         public string FileName { get; set; }
+
+        public FormFile FileMain { get; set; }
+        public string FileMainLink { get; set; }
 
     }
 }

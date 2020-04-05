@@ -127,4 +127,8 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\images\applicant\5e8322c1472c2746ecc39b51\Education\" />
+  </ItemGroup>
+
 </Project>

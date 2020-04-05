@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Http.Internal;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using System;
@@ -33,6 +34,8 @@ namespace Lok.ViewModel
         public string ValidateFromNep { get; set; }
         public string RenewDateNep { get; set; }
         public string FileName { get; set; }
+        public FormFile FileMain { get; set; }
+        public string FileMainLink { get; set; }
 
         public List<SelectListItem> Types = new List<SelectListItem> {new SelectListItem{Text="--Select--",Value="" },
                                                                         new SelectListItem {Text="Permanent",Value="Permanent" },
