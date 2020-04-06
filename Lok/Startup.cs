@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Lok.Data;
 using Lok.Data.Interface;
 using Lok.Data.Repository;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -42,10 +43,54 @@ namespace Lok
             services.AddScoped<ICategoryInterface, ICategoryRepository>();
 
             services.AddScoped<IAdvertisiment, AdvertisimentRepository>();
-
-
+            services.AddScoped<IPostRepository, PostRepository>();
+            services.AddScoped<ILoginInterface, LoginRepository>();
+            services.AddScoped<IRoleInterface, RoleRepository>();
+            services.AddScoped<IAuthinterface, AuthRepository>();
+            services.Configure<CookieTempDataProviderOptions>(options =>
+            {
+                options.Cookie.IsEssential = true;
+            });
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromDays(1);
+            });
+            services.AddAuthentication("Cookie")
+                .AddCookie("Cookie",
+                    options =>
+                    {
+                        options.LoginPath = new PathString("/Account/Login/");
+                        options.AccessDeniedPath = new PathString("/Account/Forbidden/");
+                    });
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Admin",
+                    policy => policy.RequireRole("Admin"));
+
+                //options.AddPolicy(,
+                //    policy =>
+                //    {
+                //        policy.RequireAuthenticatedUser();
+                //        policy.RequireRole("Administrator");
+                //        policy.Requirements.Add(new AlbumOwnerRequirement());
+                //    }
+                //);
+
+            });
+
         }
+
+        //services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+        //   .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme,
+        //       options =>
+        //       {
+        //           options.LoginPath = new PathString("/Account/Login/");
+        //           options.AccessDeniedPath = new PathString("/Account/Forbidden/");
+        //       });
+
+
+        //}
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -60,7 +105,10 @@ namespace Lok
             }
 
             app.UseStaticFiles();
+            app.UseSession();
+
             app.UseCookiePolicy();
+            app.UseAuthentication();
 
             app.UseMvc(routes =>
             {

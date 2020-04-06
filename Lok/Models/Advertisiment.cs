@@ -13,18 +13,23 @@ namespace Lok.Models
         [BsonRepresentation(BsonType.ObjectId)]
 
         public ObjectId Id { get; set; }
-        public string AdvertisimentType { get; set; }
         public string SNo { get; set; }
+
+        public string AdvertisimentNo { get; set; }
+        public string AdvertisimentType { get; set; }
+        public Post Post { get; set; }
+        public string PostId { get; set; }
         public Service Service { get; set; }
         public string ServiceId { get; set; }
         public Group Group { get; set; }
         public string GroupId { get; set; }
+        public SubGroup SubGroup { get; set; }
+        public string SubGroupId { get; set; }
         public Category Category { get; set; }
         public string CategoryId { get; set; }
 
-        public SubGroup SubGroup { get; set; }
-        public string SubGroupId { get; set; }
         public string DatePublished { get; set; }
+        public  string TimePublished { get; set; }
         public string Office { get; set; }
         public string Title { get; set; }
 
@@ -39,5 +44,6 @@ namespace Lok.Models
 
         public string Notice { get; set; }
         public IList<EthinicalGroup> EthinicalGroups { get; set; }
+        public String CreatedDate { get; set; }
     }
 }

@@ -22,9 +22,10 @@ namespace Lok.Controllers
         private readonly IServiceRepository _service;
         private readonly IEthinicalGroup _ethinicalGroup;
         private readonly ICategoryInterface _category;
+        private readonly IPostRepository _post;
 
 
-        public AdvetisimentController(IAdvertisiment Advertisiment, IUnitOfWork uow, IGroupRepository Group,ISubGroupRepository subGroup,IServiceRepository service,IEthinicalGroup ethinicalGroup,ICategoryInterface Category)
+        public AdvetisimentController(IAdvertisiment Advertisiment, IUnitOfWork uow, IGroupRepository Group,ISubGroupRepository subGroup,IServiceRepository service,IEthinicalGroup ethinicalGroup,ICategoryInterface Category,IPostRepository post)
             {
                 _Advertisiment = Advertisiment;
                 _uow = uow;
@@ -32,6 +33,7 @@ namespace Lok.Controllers
             _service = service;
             _SubGroup = subGroup;
             _ethinicalGroup = ethinicalGroup;
+            _post = post;
             _category = Category;
             }
             // GET: Advertisiment
@@ -49,6 +51,7 @@ namespace Lok.Controllers
             ViewBag.ServiceId = new SelectList(await _service.GetAll(), "Id", "ServiceName");
             ViewBag.SubGroupId = new SelectList(await _SubGroup.GetAll(), "Id", "SubGroupName");
             ViewBag.CategoryId = new SelectList(await _category.GetAll(), "Id", "CategoryName");
+            ViewBag.PostId = new SelectList(await _post.GetAll(), "Id", "PostName");
 
             IEnumerable<EthinicalGroup> a =  await _ethinicalGroup.GetAll();
             ViewBag.EthinicalGroup = a.ToList();
@@ -79,6 +82,7 @@ namespace Lok.Controllers
             value.SubGroup = await _SubGroup.GetById(value.SubGroupId.ToString());
             value.Service = await _service.GetById(value.ServiceId.ToString());
             value.Category = await _category.GetById(value.CategoryId.ToString());
+            value.Post = await _post.GetById(value.PostId.ToString());
 
 
             _Advertisiment.Add(value);
@@ -125,6 +129,14 @@ namespace Lok.Controllers
                     {
                         ViewBag.GroupId = new SelectList(await _Group.GetAll(), "Id", "GroupName", Advertisiment.GroupId);
                     }
+                if (String.IsNullOrEmpty(Advertisiment.PostId))
+                {
+                    ViewBag.PostId = new SelectList(await _post.GetAll(), "Id", "PosTName");
+                }
+                else
+                {
+                    ViewBag.PostId = new SelectList(await _post.GetAll(), "Id", "PostName", Advertisiment.PostId);
+                }
                 if (String.IsNullOrEmpty(Advertisiment.ServiceId))
                 {
                     ViewBag.ServiceId = new SelectList(await _service.GetAll(), "Id", "ServiceName");
@@ -182,6 +194,7 @@ namespace Lok.Controllers
             value.SubGroup = await _SubGroup.GetById(value.SubGroupId.ToString());
             value.Service = await _service.GetById(value.ServiceId.ToString());
             value.Category = await _category.GetById(value.CategoryId.ToString());
+            value.Post = await _post.GetById(value.PostId.ToString());
 
 
 

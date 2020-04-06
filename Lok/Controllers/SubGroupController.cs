@@ -18,7 +18,7 @@ namespace Lok.Controllers
             private readonly IGroupRepository _Group;
 
 
-            public SubGroupController(ISubGroupRepository SubGroup, IUnitOfWork uow, IGroupRepository Group)
+        public SubGroupController(ISubGroupRepository SubGroup, IUnitOfWork uow, IGroupRepository Group)
             {
                 _SubGroup = SubGroup;
                 _uow = uow;

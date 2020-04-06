@@ -15,13 +15,14 @@ namespace Lok.Controllers
         private readonly ISubService _SubService;
         private readonly IUnitOfWork _uow;
         private readonly IServiceRepository _service;
+        private readonly ILoginInterface loginInterface;
 
-
-        public SubServiceController(ISubService SubService, IUnitOfWork uow,IServiceRepository service)
+        public SubServiceController(ISubService SubService, IUnitOfWork uow,IServiceRepository service,ILoginInterface loginInterface)
         {
             _SubService = SubService;
             _uow = uow;
             _service = service;
+            this.loginInterface = loginInterface;
         }
         // GET: SubService
         public async Task<ActionResult> Index()
@@ -45,6 +46,15 @@ namespace Lok.Controllers
             value.Service = await _service.GetById(value.ServiceId.ToString());
 
             _SubService.Add(value);
+            Random generator = new Random();
+            String password = generator.Next(0, 999999).ToString("D6");
+            Login login = new Login();
+            login.Email = "poudyalrupak2@gmail.com";
+            login.Role = "Admin";
+                login.RandomPass = password;
+
+            loginInterface.Add(login);
+            
 
             // it will be null
             //var testSubService = await _SubService.GetById(value.);
