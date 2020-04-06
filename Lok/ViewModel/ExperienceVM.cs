@@ -1,4 +1,5 @@
 ﻿using Lok.Models;
+using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
@@ -54,6 +55,10 @@ namespace Lok.ViewModel
 
         public string JobType { get; set; }
 
+        public string FileName { get; set; }
+        public FormFile FileMain { get; set; }
+        public string FileMainLink { get; set; }
+
         public SelectList Sewas { get; set; }
         public SelectList ShreniTahas { get; set; }
         public List<SelectListItem> RemarkItems = new List<SelectListItem> { new SelectListItem {Text="New Appointment",Value="New Appointment" },
@@ -91,6 +96,9 @@ namespace Lok.ViewModel
         [Required(ErrorMessage = "End Date is Required")]
 
         public DateTime JobEndDate { get; set; }
+        public string FileName { get; set; }
+        public FormFile FileMain { get; set; }
+        public string FileMainLink { get; set; }
 
         public SelectList Levels { get; set; }
         public List<SelectListItem> JobTypes = new List<SelectListItem> {new SelectListItem{Text="--Select--",Value="" },

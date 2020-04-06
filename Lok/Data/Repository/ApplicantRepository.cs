@@ -68,20 +68,37 @@ namespace Lok.Data.Repository
                                                               Builders<Applicant>.Update.Set(x => x.ProfessionalCouncils.ElementAt(-1), obj)));
 
             }
-
+                
         }
-
-        public virtual void UpdateGovernmentInfo(GovernmentExperienceInfo obj, string id)
+       
+        public virtual void UpdateGovernmentInfo(GovernmentExperienceInfo obj, string id,string GId)
         {
-            DbSet.UpdateOneAsync(Builders<Applicant>.Filter.Eq("_id", ObjectId.Parse(id)), Builders<Applicant>.Update.Push("GovernmentInfos", obj));
+            if (GId == null)
+            {
+                Context.AddCommand(() => DbSet.UpdateOneAsync(Builders<Applicant>.Filter.Eq("_id", ObjectId.Parse(id)), Builders<Applicant>.Update.Push("GovernmentInfos", obj)));
+            }
+            else
+            {
+                ObjectId OId = ObjectId.Parse(id);
+                Context.AddCommand(() => DbSet.UpdateOneAsync(Builders<Applicant>.Filter.Where(x => x.Id == OId && x.GovernmentInfos.Any(m => m.GId == GId)),
+                                                              Builders<Applicant>.Update.Set(x => x.GovernmentInfos.ElementAt(-1), obj)));
 
+            }
         }
 
-        public virtual void UpdateNonGovernmentInfo(NonGovernmentExperienceInfo obj, string id)
+        public virtual void UpdateNonGovernmentInfo(NonGovernmentExperienceInfo obj, string id,string GId)
         {
-            DbSet.UpdateOneAsync(Builders<Applicant>.Filter.Eq("_id", ObjectId.Parse(id)), Builders<Applicant>.Update.Push("NonGovernmentInfos", obj));
+            if (GId == null)
+            {
+                Context.AddCommand(() => DbSet.UpdateOneAsync(Builders<Applicant>.Filter.Eq("_id", ObjectId.Parse(id)), Builders<Applicant>.Update.Push("NonGovernmentInfos", obj)));
+            }
+            else
+            {
+                ObjectId OId = ObjectId.Parse(id);
+                Context.AddCommand(() => DbSet.UpdateOneAsync(Builders<Applicant>.Filter.Where(x => x.Id == OId && x.NonGovernmentInfos.Any(m => m.GId == GId)),
+                                                              Builders<Applicant>.Update.Set(x => x.NonGovernmentInfos.ElementAt(-1), obj)));
 
+            }
         }
-
     }
 }

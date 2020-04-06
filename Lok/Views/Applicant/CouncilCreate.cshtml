@@ -1,0 +1,81 @@
+﻿@model Lok.ViewModel.ProfessionalCouncilVM
+
+@{
+    ViewData["Title"] = "CouncilCreate";
+}
+
+<h2>CouncilCreate</h2>
+
+<h4>ProfessionalCouncilVM</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="CouncilCreate">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Id" class="control-label"></label>
+                <input asp-for="Id" class="form-control" />
+                <span asp-validation-for="Id" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PId" class="control-label"></label>
+                <input asp-for="PId" class="form-control" />
+                <span asp-validation-for="PId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ProviderName" class="control-label"></label>
+                <input asp-for="ProviderName" class="form-control" />
+                <span asp-validation-for="ProviderName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Type" class="control-label"></label>
+                <select asp-for="Type" asp-items="Model.Types"></select>
+                <span asp-validation-for="Type" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RegistrationNo" class="control-label"></label>
+                <input asp-for="RegistrationNo" class="form-control" />
+                <span asp-validation-for="RegistrationNo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ValidateFrom" class="control-label"></label>
+                <input asp-for="ValidateFrom" class="form-control" />
+                <span asp-validation-for="ValidateFrom" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RenewDate" class="control-label"></label>
+                <input asp-for="RenewDate" class="form-control" />
+                <span asp-validation-for="RenewDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Validity" class="control-label"></label>
+                <input asp-for="Validity" class="form-control" />
+                <span asp-validation-for="Validity" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ValidateFromNep" class="control-label"></label>
+                <input asp-for="ValidateFromNep" class="form-control" />
+                <span asp-validation-for="ValidateFromNep" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RenewDateNep" class="control-label"></label>
+                <input asp-for="RenewDateNep" class="form-control" />
+                <span asp-validation-for="RenewDateNep" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FileName" class="control-label"></label>
+                <input asp-for="FileMain" class="form-control" />
+                <span asp-validation-for="FileName" class="text-danger"></span>
+            </div>
+           
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

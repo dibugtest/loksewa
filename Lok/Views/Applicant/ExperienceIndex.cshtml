@@ -1,0 +1,96 @@
+﻿@model Lok.ViewModel.ExperienceVM
+
+@{
+    ViewData["Title"] = "ExperienceIndex";
+}
+
+<h2>ExperienceIndex</h2>
+
+<div>
+    <h4>Government ExperienceVM</h4>
+    <hr />
+    <a asp-action="GovernmentCreate">Add New</a>
+    <table class="table table-bordered table-responsive">
+        <thead>
+            <tr>
+                <th>Office</th>
+                <th>Office Address</th>
+                <th>Post</th>
+                <th>Sewa</th>
+                <th>Shreni</th>
+                <th>Awastha</th>
+                <th>Start</th>
+                <th>End</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.GovernmentExperience != null)
+            {
+                foreach (var item in Model.GovernmentExperience)
+                {
+            <tr>
+                <td>@item.OfficeName</td>
+                <td>@item.OfficeAddress</td>
+                <td>@item.Post</td>
+                <td>@item.Sewa</td>
+                <td>@item.TahaShreni</td>
+                <td>@item.Awastha</td>
+                <td>@item.StartDate</td>
+                <td>@item.EndDate</td>
+                <td><a href="@Url.Action("GovernmentEdit","Applicant")?GId=@item.GId">
+                    Edit</a></td>
+            </tr>
+                }
+                
+            }
+            else
+            {
+                <tr>No Records found.</tr>
+            }
+
+        </tbody>
+    </table>
+   
+</div>
+<div class="row">
+    <h4>Non Government ExperienceVM</h4>
+    <hr />
+    <a asp-action="NonGovernmentCreate">Add New</a>
+    <table class="table table-bordered table-responsive">
+        <thead>
+            <tr>
+                <th>Office</th>
+                <th>Post</th>
+                <th>Job Type</th>               
+                <th>Start</th>
+                <th>End</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.GovernmentExperience != null)
+            {
+                foreach (var item in Model.GovernmentExperience)
+                {
+                    <tr>
+                        <td>@item.OfficeName</td>
+                       <td>@item.Post</td>
+                      <td>@item.JobType</td>
+                        <td>@item.StartDate</td>
+                        <td>@item.EndDate</td>
+                        <td><a href="@Url.Action("NonGovernmentEdit","Applicant")?GId=@item.GId">Edit</a></td>
+                    </tr>
+                }
+
+            }
+            else
+            {
+                <tr>No Records found.</tr>
+            }
+
+        </tbody>
+    </table>
+
+</div>
+

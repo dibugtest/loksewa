@@ -26,6 +26,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="Views\Applicant\EducationEdit.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Employment\Create.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

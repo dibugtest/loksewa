@@ -26,7 +26,7 @@
         </div>
  
     <div class="col-md-4">
-        <form asp-action="Education" enctype="multipart/form-data">
+        <form asp-action="EducationCreate" enctype="multipart/form-data">
 
             <div class="form-group">
                 <label asp-for="Id" class="control-label"></label>
@@ -87,12 +87,7 @@
                 <label asp-for="FileName" class="control-label"></label>
                 <input asp-for="FileMain" />
                 <span asp-validation-for="FileName" class="text-danger"></span>
-                @if (Model.FileMainLink != null)
-                {
-                        <a href="@Url.Content(Model.FileMainLink)" target="_blank"><i class="fa fa-file-pdf"></i>@Model.FileName</a>
-
-
-                }
+               
             </div>
 
            
@@ -102,12 +97,7 @@
 
                 <input asp-for="FileEquivalent" />
                 <span asp-validation-for="EquivalentFileName" class="text-danger"></span>
-                @if (Model.FileEquivalentLink != null)
-                {
-                   
-                        <a href="@Url.Content(Model.FileEquivalentLink)" target="_blank"><i class="fa fa-file"></i>@Model.EquivalentFileName</a>
-                   
-                }
+              
             </div>
            
             <div class="form-group">

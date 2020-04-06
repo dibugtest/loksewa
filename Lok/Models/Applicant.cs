@@ -143,6 +143,7 @@ namespace Lok.Models
             public string JobType { get; set; }
             public DateTime JobStartDate { get; set; }
             public DateTime JobEndDate { get; set; }
+        public string FileName { get; set; }
     }
     public class GovernmentExperienceInfo {
         public string GId { get; set; }
@@ -159,13 +160,14 @@ namespace Lok.Models
         public DateTime EndDate { get; set; }
         public string Awastha { get; set; }
         public string JobType { get; set; }
+        public string FileName { get; set; }
     }
     public class Upload {
         public string Photograph { get; set; }
         public string Signature { get; set; }
         public string Citizenship { get; set; }
-        public string InclusionGroupp { get; set; }
-        public string ExperienceDocument { get; set; }
+        public string InclusionGroup { get; set; }
+       // public string ExperienceDocument { get; set; }
     }
     public class Passwords {
         public string Hash { get; set; }

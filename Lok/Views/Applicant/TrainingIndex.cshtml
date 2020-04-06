@@ -7,14 +7,12 @@
 <h2>TrainingIndex</h2>
 
 <p>
-    <a asp-action="TrainCreate">Create New</a>
+    <a asp-action="TrainingCreate">Create New</a>
 </p>
 <table class="table table-bordered table-responsive">
     <thead>
-        <tr>  
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
+        <tr>
+          
             <th>
                 @Html.DisplayNameFor(model => model.TId)
             </th>
@@ -27,35 +25,41 @@
             <th>
                 @Html.DisplayNameFor(model => model.DivisionPercentage)
             </th>
-           
+
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.OrganizationName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TrainingName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DivisionPercentage)
-            </td>
-            
-            <td>
-             <a href="@Url.Action("TrainingEdit","Applicant")?TId=@item.TId"><i class="fa fa-edit"></i>Edit</a>
-                @*@Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ })*@ 
-                
-            </td>
-        </tr>
-}
+        @if (Model != null)
+        {
+            @foreach (var item in Model)
+            {
+                <tr>
+                 
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OrganizationName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TrainingName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DivisionPercentage)
+                    </td>
+
+                    <td>
+                        <a href="@Url.Action("TrainingEdit", "Applicant")?TId=@item.TId"><i class="fa fa-edit"></i>Edit</a>
+                       
+
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr><td colspan="6">No Record found.</td></tr>
+        }
     </tbody>
 </table>

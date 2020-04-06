@@ -13,7 +13,7 @@ namespace Lok.Data.Interface
         void UpdateEducationInfo(EducationInfo edu, string id,string EId);
         void UpdateTrainingInfo(TrainingInfo train, string id,string TId);
         void UpdateProfessionalCouncil(ProfessionalCouncil obj, string id,string PId);
-        void UpdateGovernmentInfo(GovernmentExperienceInfo obj, string id);
-        void UpdateNonGovernmentInfo(NonGovernmentExperienceInfo obj, string id);
+        void UpdateGovernmentInfo(GovernmentExperienceInfo obj, string id,string GId);
+        void UpdateNonGovernmentInfo(NonGovernmentExperienceInfo obj, string id,string GId);
     }
 }

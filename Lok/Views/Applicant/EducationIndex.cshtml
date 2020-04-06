@@ -7,7 +7,7 @@
 <h2>EducationIndex</h2>
 
 <p>
-    <a asp-action="Education">Add Education</a>
+    <a asp-action="EducationCreate">Add Education</a>
 </p>
 <div class="row">
     <div class="col-md-12">
@@ -28,9 +28,7 @@
 <table class="table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
+           
             <th>
                 @Html.DisplayNameFor(model => model.EId)
             </th>
@@ -55,18 +53,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.EducationType)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CompletedDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DateType)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FileName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EquivalentFileName)
-            </th>
+          
             <th></th>
         </tr>
     </thead>
@@ -76,9 +63,7 @@
 @foreach (var item in Model)
 {
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
+           
             <td>
                 @Html.DisplayFor(modelItem => item.EId)
             </td>
@@ -103,20 +88,9 @@
             <td>
                 @Html.DisplayFor(modelItem => item.EducationType)
             </td>
+            
             <td>
-                @Html.DisplayFor(modelItem => item.CompletedDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateType)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FileName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EquivalentFileName)
-            </td>
-            <td>
-             <a href='@Url.Action("Education", "Applicant")?EId=@item.EId'>Edit</a>
+             <a href='@Url.Action("EducationEdit", "Applicant")?EId=@item.EId'>Edit</a>
             </td>
         </tr>
 }

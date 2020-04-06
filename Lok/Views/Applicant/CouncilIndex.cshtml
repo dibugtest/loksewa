@@ -1,0 +1,99 @@
+﻿@model IEnumerable<Lok.ViewModel.ProfessionalCouncilVM>
+
+@{
+    ViewData["Title"] = "CouncilIndex";
+}
+
+<h2>CouncilIndex</h2>
+
+<p>
+    <a asp-action="CouncilCreate">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProviderName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Type)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RegistrationNo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ValidateFrom)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RenewDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Validity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ValidateFromNep)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RenewDateNep)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FileName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FileMainLink)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProviderName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Type)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RegistrationNo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ValidateFrom)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RenewDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Validity)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ValidateFromNep)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RenewDateNep)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FileName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FileMainLink)
+            </td>
+            <td>
+              <a href="@Url.Action("CouncilEdit","Applicant")?Pid=@item.PId">Edit</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
