@@ -21,12 +21,13 @@ namespace Lok.Mapping
             CreateMap<ContactInfo, ContactVM>();
             CreateMap<ContactVM, ContactInfo>();
 
+            CreateMap<IEnumerable<TrainingInfo>, IEnumerable<TrainingVM>>();
             CreateMap<TrainingInfo, TrainingVM>();
             CreateMap<TrainingVM, TrainingInfo>();
-            CreateMap<IEnumerable<TrainingInfo>, IEnumerable<TrainingVM>>();
-
+            
+           
             CreateMap<EducationInfo, EducationVM>();
-            CreateMap<IEnumerable<EducationVM>, IEnumerable<EducationInfo>>();
+            CreateMap<IEnumerable<EducationInfo>, IEnumerable<EducationVM>>();
             CreateMap<EducationVM, EducationInfo>();
 
             CreateMap<GovernmentExperienceInfo, GovernmentExperienceVM>();
@@ -37,10 +38,12 @@ namespace Lok.Mapping
             CreateMap<NonGovernmentExperienceInfo ,NonGovernmentExperienceVM>();
             CreateMap<NonGovernmentExperienceVM, NonGovernmentExperienceInfo>();
 
-            CreateMap<ProfessionalCouncil, ProfessionalCouncilVM>();
-            CreateMap<ProfessionalCouncilVM, ProfessionalCouncil>();
-            CreateMap<IEnumerable<ProfessionalCouncil>, IEnumerable<ProfessionalCouncilVM>>();
 
+            CreateMap<IEnumerable<ProfessionalCouncil>, IEnumerable<ProfessionalCouncilVM>>();
+            CreateMap<IEnumerable<ProfessionalCouncilVM>, IEnumerable<ProfessionalCouncil>>();
+             CreateMap<ProfessionalCouncil, ProfessionalCouncilVM>();
+            CreateMap<ProfessionalCouncilVM, ProfessionalCouncil>();
+            
             
             CreateMap<RegistrationVM , PersonalInfo>();
             CreateMap<PersonalInfo ,RegistrationVM>();
@@ -50,6 +53,7 @@ namespace Lok.Mapping
             CreateMap<ExtraInfo, RegistrationVM>();
             
             CreateMap<ResetPasswordVM, SecurityQA>();
+            CreateMap<Upload, UploadVM>();
 
 
         }

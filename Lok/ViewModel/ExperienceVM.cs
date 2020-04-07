@@ -61,12 +61,14 @@ namespace Lok.ViewModel
 
         public SelectList Sewas { get; set; }
         public SelectList ShreniTahas { get; set; }
-        public List<SelectListItem> RemarkItems = new List<SelectListItem> { new SelectListItem {Text="New Appointment",Value="New Appointment" },
+        public List<SelectListItem> RemarkItems = new List<SelectListItem> {new SelectListItem{Text="--Select--",Value="" },
+            new SelectListItem {Text="New Appointment",Value="New Appointment" },
                                                                                 new SelectListItem {Text="Promotion",Value="Promotion" },
                                                                                 new SelectListItem {Text="Transfer",Value="Transfer" }
         };
         public SelectList Awasthas { get; set; }
-        public List<SelectListItem> JobTypes = new List<SelectListItem> { new SelectListItem {Text="Permanent",Value="Permanent" },
+        public List<SelectListItem> JobTypes = new List<SelectListItem> {new SelectListItem{Text="--Select--",Value="" },
+            new SelectListItem {Text="Permanent",Value="Permanent" },
                                                                                 new SelectListItem {Text="Temporary",Value="Temporary" },
                                                                                 new SelectListItem {Text="Contract",Value="Contract" }
         };

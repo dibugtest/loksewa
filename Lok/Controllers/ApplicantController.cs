@@ -592,8 +592,11 @@ namespace Lok.Controllers
                                                     Id = r.Id.ToString(),
                                                     Name = r.Name
                                                 }).ToList();
-                IEnumerable<EducationVM> edus = applicant.EducationInfos != null ? _mapper.Map<IEnumerable<EducationVM>>(applicant.EducationInfos) : null;
-                edus = (from e in edus
+
+               // IEnumerable<EducationVM> edus = applicant.EducationInfos != null ? _mapper.Map<IEnumerable<EducationVM>>(applicant.EducationInfos) : null;
+               
+
+                IEnumerable<EducationVM> edus = (from e in applicant.EducationInfos
                         from b in BoardNames
                         where b.Id == e.BoardName
                         from l in EducationLevels
@@ -1243,14 +1246,32 @@ namespace Lok.Controllers
 
             }
 
-        public async Task<ActionResult<ProfessionalCouncilVM>> CouncilIndex()
+        public async Task<ActionResult> CouncilIndex()
         {
             string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
-                IEnumerable<ProfessionalCouncilVM> councils = applicant.ProfessionalCouncils != null ? _mapper.Map<IEnumerable<ProfessionalCouncilVM>>(applicant.ProfessionalCouncils) : null;
-                return View(councils);
+                // IEnumerable<ProfessionalCouncilVM> councils = applicant.ProfessionalCouncils != null ? _mapper.Map<IEnumerable<ProfessionalCouncilVM>>(applicant.ProfessionalCouncils) : null;
+                if (applicant.ProfessionalCouncils != null)
+                {
+                    IEnumerable<ProfessionalCouncilVM> councils = (from c in applicant.ProfessionalCouncils
+                                                                   select new ProfessionalCouncilVM
+                                                                   {
+                                                                       PId = c.PId,
+                                                                       ProviderName = c.ProviderName,
+                                                                       RegistrationNo = c.RegistrationNo,
+                                                                       RenewDate = c.RenewDate,
+                                                                       ValidateFrom = c.ValidateFrom,
+                                                                       Validity = c.Validity,
+                                                                       Type = c.Type
+                                                                   }).AsEnumerable();
+                    return View(councils);
+                }
+                else
+                {
+                    return View();
+                }
             }
             else
             {
@@ -1451,11 +1472,68 @@ namespace Lok.Controllers
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
-                IEnumerable<GovernmentExperienceVM> government = applicant.GovernmentInfos != null ? _mapper.Map<IEnumerable<GovernmentExperienceVM>>(applicant.GovernmentInfos) : null;
-                IEnumerable<NonGovernmentExperienceVM> NonGovernment = applicant.NonGovernmentInfos != null ? _mapper.Map<IEnumerable<NonGovernmentExperienceVM>>(applicant.NonGovernmentInfos) : null;
+                List<DropDownItem> Sewas = (from r in await _Sewa.GetAll()
+                                            select new DropDownItem
+                                            {
+                                                Id = r.Id.ToString(),
+                                                Name = r.Name
+                                            }).ToList();
+
+                List<DropDownItem> Shrenis = (from r in await _Shreni.GetAll()
+                                              select new DropDownItem
+                                              {
+                                                  Id = r.Id.ToString(),
+                                                  Name = r.Name
+                                              }).ToList();
+                List<DropDownItem> Awasthas = (from r in await _Awastha.GetAll()
+                                               select new DropDownItem
+                                               {
+                                                   Id = r.Id.ToString(),
+                                                   Name = r.Name
+                                               }).ToList();
                 ExperienceVM exp = new ExperienceVM();
-                exp.GovernmentExperience = government;
-                exp.NonGovernmentExperience = NonGovernment;
+
+                if (applicant.GovernmentInfos != null)
+                {
+                    IEnumerable<GovernmentExperienceVM> government = (from g in applicant.GovernmentInfos
+                                                                      from s in Sewas where s.Id == g.Sewa
+                                                                      from a in Awasthas where a.Id == g.Awastha
+                                                                      from t in Shrenis where t.Id == g.TahaShreni
+                                                                      select new GovernmentExperienceVM
+                                                                      {
+                                                                          GId=g.GId,                                                                    
+                                                                          OfficeName=g.OfficeName,
+                                                                          Sewa=s.Name,
+                                                                          Awastha=a.Name,
+                                                                          TahaShreni=t.Name,
+                                                                          OfficeAddress=g.OfficeAddress,
+                                                                          JobType=g.JobType,
+                                                                          Post=g.Post,
+                                                                          StartDate=g.StartDate,
+                                                                          EndDate=g.EndDate
+                                                                      }
+                                                                    ).AsEnumerable();
+                    exp.GovernmentExperience = government;
+                }
+                if (applicant.NonGovernmentInfos != null)
+                {
+                    IEnumerable<NonGovernmentExperienceVM> nonGovernment = (from g in applicant.NonGovernmentInfos
+                                                                      from s in Shrenis where s.Id==g.Level
+                                                                      select new NonGovernmentExperienceVM
+                                                                      {
+                                                                          GId=g.GId,
+                                                                         OfficeName=g.OfficeName,
+                                                                         Post=g.Post,
+                                                                         JobType=g.JobType,
+                                                                         JobStartDate=g.JobStartDate,
+                                                                         JobEndDate=g.JobEndDate
+                                                                      }
+                                                                    ).AsEnumerable();
+                    exp.NonGovernmentExperience = nonGovernment;
+                }
+                // IEnumerable<GovernmentExperienceVM> government = applicant.GovernmentInfos != null ? _mapper.Map<IEnumerable<GovernmentExperienceVM>>(applicant.GovernmentInfos) : null;
+                // IEnumerable<NonGovernmentExperienceVM> NonGovernment = applicant.NonGovernmentInfos != null ? _mapper.Map<IEnumerable<NonGovernmentExperienceVM>>(applicant.NonGovernmentInfos) : null;
+               // exp.NonGovernmentExperience = NonGovernment;
                 return View(exp);
             }
             else
@@ -1476,6 +1554,7 @@ namespace Lok.Controllers
                                         }).ToList();
 
             List<DropDownItem> Shrenis = (from r in await _Shreni.GetAll()
+                                          where r.Type == "Government"
                                           select new DropDownItem
                                           {
                                               Id = r.Id.ToString(),
@@ -1522,6 +1601,7 @@ namespace Lok.Controllers
                                         }).ToList();
 
             List<DropDownItem> Shrenis = (from r in await _Shreni.GetAll()
+                                          where r.Type == "Government"
                                           select new DropDownItem
                                           {
                                               Id = r.Id.ToString(),
@@ -1629,6 +1709,7 @@ namespace Lok.Controllers
                                         }).ToList();
 
             List<DropDownItem> Shrenis = (from r in await _Shreni.GetAll()
+                                          where r.Type=="Government"
                                           select new DropDownItem
                                           {
                                               Id = r.Id.ToString(),
@@ -1705,6 +1786,7 @@ namespace Lok.Controllers
                                         }).ToList();
 
             List<DropDownItem> Shrenis = (from r in await _Shreni.GetAll()
+                                          where r.Type == "Government"
                                           select new DropDownItem
                                           {
                                               Id = r.Id.ToString(),
@@ -1723,8 +1805,7 @@ namespace Lok.Controllers
 
             if (ModelState.IsValid)
             {
-                if (FileMain != null)
-                {
+               
                     Applicant applicant = await _Applicant.GetById(governmentVM.Id);
 
                     GovernmentExperienceInfo govInfo = _mapper.Map<GovernmentExperienceInfo>(governmentVM);
@@ -1763,18 +1844,8 @@ namespace Lok.Controllers
 
 
                     TempData["Message"] = "Successfully Updated Government Experience Information.";
-                    return RedirectToAction("ExperienceInfo");
-                }
-                else
-                {
-                    governmentVM.ShreniTahas = new SelectList(Shrenis, "Id", "Name");
-                    governmentVM.Sewas = new SelectList(Sewas, "Id", "Name");
-                    governmentVM.Awasthas = new SelectList(Awasthas, "Id", "Name");
-                    ViewBag.Error = "Error";
-                    ModelState.AddModelError(string.Empty, "File is necessary.");
-                    return View(governmentVM);
-                }
-
+                    return RedirectToAction("ExperienceIndex");
+               
             }
             else
             {
@@ -1792,7 +1863,7 @@ namespace Lok.Controllers
         {
           
             List<DropDownItem> Levels = (from r in await _Shreni.GetAll()
-                                         where r.Type=="NonGovernment"
+                                         where r.Type=="Non-Government"
                                           select new DropDownItem
                                           {
                                               Id = r.Id.ToString(),
@@ -1823,7 +1894,7 @@ namespace Lok.Controllers
         public async Task<ActionResult<GovernmentExperienceVM>> NonGovernment(NonGovernmentExperienceVM nonGovVM, IFormFile FileMain)
         {
             List<DropDownItem> Levels = (from r in await _Shreni.GetAll()
-                                          where r.Type == "NonGovernment"
+                                          where r.Type == "Non-Government"
                                           select new DropDownItem
                                           {
                                               Id = r.Id.ToString(),
@@ -1912,7 +1983,7 @@ namespace Lok.Controllers
         public async Task<ActionResult<NonGovernmentExperienceVM>> NonGovernmentEdit(string GId)
         {
             List<DropDownItem> Levels = (from r in await _Shreni.GetAll()
-                                         where r.Type=="NonGovernment"
+                                         where r.Type=="Non-Government"
                                            select new DropDownItem
                                            {
                                                Id = r.Id.ToString(),
@@ -1972,7 +2043,7 @@ namespace Lok.Controllers
         public async Task<ActionResult<NonGovernmentExperienceVM>> NonGovernmentEdit(NonGovernmentExperienceVM nonGovVM, IFormFile FileMain)
         {
             List<DropDownItem> Levels = (from r in await _Shreni.GetAll()
-                                         where r.Type=="NonGovernment"
+                                         where r.Type=="Non-Government"
                                         select new DropDownItem
                                         {
                                             Id = r.Id.ToString(),
@@ -1984,8 +2055,7 @@ namespace Lok.Controllers
            
             if (ModelState.IsValid)
             {
-                if (FileMain != null)
-                {
+               
                     Applicant applicant = await _Applicant.GetById(nonGovVM.Id);
 
                     NonGovernmentExperienceInfo nonGovInfo = _mapper.Map<NonGovernmentExperienceInfo>(nonGovVM);
@@ -2024,16 +2094,8 @@ namespace Lok.Controllers
 
 
                     TempData["Message"] = "Successfully Updated NonGovernment Experience Information.";
-                    return RedirectToAction("ExperienceInfo");
-                }
-                else
-                {
-                    nonGovVM.Levels = new SelectList(Levels, "Id", "Name");
-                    
-                    ViewBag.Error = "Error";
-                    ModelState.AddModelError(string.Empty, "File is necessary.");
-                    return View(nonGovVM);
-                }
+                    return RedirectToAction("ExperienceIndex");
+               
 
             }
             else
@@ -2052,17 +2114,18 @@ namespace Lok.Controllers
             {
                 Applicant applicant = await _Applicant.GetById(id);
                 UploadVM uploadVM = new UploadVM();
-
+                Upload upload = new Upload();
                 if (applicant.Uploads != null)
                 {
-                    Upload upload = applicant.Uploads;
+                    upload = applicant.Uploads;
                     uploadVM = _mapper.Map<UploadVM>(upload);
                     uploadVM.PhotographLink = upload.Photograph != null ? "~/images/Applicant/" + applicant.Id.ToString() + "/Upload/"+ upload.Photograph : "";
                     uploadVM.CitizenshipLink = upload.Citizenship != null ? "~/images/Applicant/" + applicant.Id.ToString() + "/Upload/" + upload.Citizenship : "";
                     uploadVM.SignatureLink = upload.Signature != null ? "~/images/Applicant/" + applicant.Id.ToString() + "/Upload/" + upload.Signature : "";
                     uploadVM.InclusionGroupLink = upload.InclusionGroup != null ? "~/images/Applicant/" + applicant.Id.ToString() + "/Upload/" + upload.InclusionGroup : "";
-
                 }
+                uploadVM.Id = applicant.Id.ToString();
+
                 return View(uploadVM);
             }
             else
@@ -2082,7 +2145,12 @@ namespace Lok.Controllers
                     Applicant applicant = await _Applicant.GetById(uploadVM.Id);
                     if (applicant != null)
                     {
-                        Upload upload = applicant.Uploads;
+
+                        Upload upload = new Upload();
+                        if (applicant.Uploads!=null)
+                        {
+                            upload = applicant.Uploads;
+                        }
                         string directoryUpload = Path.Combine(
                                        Directory.GetCurrentDirectory(), "wwwroot", "images",
                                        "applicant", applicant.Id.ToString(), "Upload"
@@ -2144,6 +2212,9 @@ namespace Lok.Controllers
                             }
                         }
 
+                        applicant.Uploads = upload;
+                         _Applicant.Update(applicant, applicant.Id.ToString());
+                        await _uow.Commit();
                     }
                     else
                     {
@@ -2164,68 +2235,265 @@ namespace Lok.Controllers
         }
 
 
-        public ActionResult<Applicant> Create()
+        public async Task<ActionResult<PreviewVM>> Preview()
         {
-            Applicant value = new Applicant();
-            return View();
-        }
-        [HttpPost]
-        public async Task<ActionResult<Applicant>> Create(Applicant value)
-        {
-            //Applicant obj = new Applicant(value);
-            _Applicant.Add(value);
-
-            // it will be null
-            //var testApplicant = await _Applicant.GetById(value.);
-
-            // If everything is ok then:
-            await _uow.Commit();
-
-            // The product will be added only after commit
-            // testProduct = await _productRepository.GetById(product.Id);
-
-            return RedirectToAction("Index");
-        }
-        [HttpGet]
-        public async Task<ActionResult<Applicant>> Edit(string id)
-        {
-            if (!string.IsNullOrEmpty(id))
+            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            if (id != null)
             {
-                var Applicant = await _Applicant.GetById(id);
-                return View(Applicant);
+                PreviewVM preview = new PreviewVM();
+                Applicant applicant = await _Applicant.GetById(id);
+
+                if (applicant != null)
+                {
+                    List<DropDownItem> Religions = (from r in await _Religion.GetAll()
+                                                    select new DropDownItem
+                                                    {
+                                                        Id = r.Id.ToString(),
+                                                        Name = r.Name
+                                                    }).ToList();
+
+                    List<DropDownItem> Occupations = (from r in await _Occupation.GetAll()
+                                                      select new DropDownItem
+                                                      {
+                                                          Id = r.Id.ToString(),
+                                                          Name = r.Name
+                                                      }).ToList();
+                    List<DropDownItem> Employments = (from r in await _Employment.GetAll()
+                                                      select new DropDownItem
+                                                      {
+                                                          Id = r.Id.ToString(),
+                                                          Name = r.Name
+                                                      }).ToList();
+                    List<DropDownItem> Vargas = (from r in await _Varga.GetAll()
+                                                 select new DropDownItem
+                                                 {
+                                                     Id = r.Id.ToString(),
+                                                     Name = r.Name
+                                                 }).ToList();
+                    List<DropDownItem> Districts = (from r in await _District.GetAll()
+                                                    select new DropDownItem
+                                                    {
+                                                        Id = r.Id.ToString(),
+                                                        Name = r.Name
+                                                    }).ToList();
+
+                    List<DropDownItem> BoardNames = (from r in await _BoardName.GetAll()
+                                                     select new DropDownItem
+                                                     {
+                                                         Id = r.Id.ToString(),
+                                                         Name = r.Name
+                                                     }).ToList();
+                    List<DropDownItem> EducationLevels = (from r in await _EducationLevel.GetAll()
+                                                          select new DropDownItem
+                                                          {
+                                                              Id = r.Id.ToString(),
+                                                              Name = r.Name
+                                                          }).ToList();
+                    List<DropDownItem> Faculties = (from r in await _Faculty.GetAll()
+                                                    select new DropDownItem
+                                                    {
+                                                        Id = r.Id.ToString(),
+                                                        Name = r.Name
+                                                    }).ToList();
+
+                    List<DropDownItem> Sewas = (from r in await _Sewa.GetAll()
+                                                select new DropDownItem
+                                                {
+                                                    Id = r.Id.ToString(),
+                                                    Name = r.Name
+                                                }).ToList();
+
+                    List<DropDownItem> Shrenis = (from r in await _Shreni.GetAll()
+                                                  select new DropDownItem
+                                                  {
+                                                      Id = r.Id.ToString(),
+                                                      Name = r.Name
+                                                  }).ToList();
+                    List<DropDownItem> Awasthas = (from r in await _Awastha.GetAll()
+                                                   select new DropDownItem
+                                                   {
+                                                       Id = r.Id.ToString(),
+                                                       Name = r.Name
+                                                   }).ToList();
+
+                    preview.Personal = _mapper.Map<PersonalVM>(applicant.PersonalInformation);
+                    preview.Extra = _mapper.Map<ExtraVM>(applicant.ExtraInformation);
+                    preview.Contact = _mapper.Map<ContactVM>(applicant.ContactInformation);
+
+                    //Uploaded documents
+                    preview.Upload = _mapper.Map<UploadVM>(applicant.Uploads);
+                    preview.Upload.PhotographLink = "~/images/applicant/" + applicant.Id.ToString() + "/upload/photo.jpg";
+                    preview.Upload.SignatureLink = "~/images/applicant/" + applicant.Id.ToString() + "/upload/signature.jpg";
+
+                    //education Informations
+                    if (applicant.EducationInfos != null)
+                    {
+                        preview.Educations = (from e in applicant.EducationInfos
+                                              from b in BoardNames
+                                              where b.Id == e.BoardName
+                                              from l in EducationLevels
+                                              where l.Id == e.Level
+                                              from f in Faculties
+                                              where f.Id == e.Faculty
+                                              select new EducationVM
+                                              {
+                                                  EId = e.EId,
+                                                  BoardName = b.Name,
+                                                  Level = l.Name,
+                                                  Faculty = f.Name,
+                                                  DivisionPercentage = e.DivisionPercentage,
+                                                  MainSubject = e.MainSubject,
+                                                  DegreeName = e.DegreeName,
+                                                  EducationType = e.EducationType
+
+                                              }).AsEnumerable();
+
+                    }
+
+                    //TrainingInfos 
+                    if (applicant.TrainingInfos != null)
+                    {
+                        preview.Trainings = (from t in applicant.TrainingInfos
+                                             select new TrainingVM
+                                             {
+                                                 TId = t.TId,
+                                                 DivisionPercentage = t.DivisionPercentage,
+                                                 OrganizationName = t.OrganizationName,
+                                                 TrainingName = t.TrainingName,
+                                                 StartDate = t.StartDate,
+                                                 EndDate = t.EndDate
+                                             }).AsEnumerable();
+                    }
+
+                    //Council Infos
+                    if (applicant.ProfessionalCouncils != null)
+                    {
+                        preview.Councils = (from c in applicant.ProfessionalCouncils
+                                            select new ProfessionalCouncilVM
+                                            {
+                                                PId = c.PId,
+                                                ProviderName = c.ProviderName,
+                                                RegistrationNo = c.RegistrationNo,
+                                                RenewDate = c.RenewDate,
+                                                ValidateFrom = c.ValidateFrom,
+                                                Validity = c.Validity,
+                                                Type = c.Type
+                                            }).AsEnumerable();
+                    }
+
+                    if (applicant.GovernmentInfos != null)
+                    {
+                        preview.Governments = (from g in applicant.GovernmentInfos
+                                               from s in Sewas
+                                               where s.Id == g.Sewa
+                                               from a in Awasthas
+                                               where a.Id == g.Awastha
+                                               from t in Shrenis
+                                               where t.Id == g.TahaShreni
+                                               select new GovernmentExperienceVM
+                                               {
+                                                   GId = g.GId,
+                                                   OfficeName = g.OfficeName,
+                                                   Sewa = s.Name,
+                                                   Awastha = a.Name,
+                                                   TahaShreni = t.Name,
+                                                   OfficeAddress = g.OfficeAddress,
+                                                   JobType = g.JobType,
+                                                   Post = g.Post,
+                                                   StartDate = g.StartDate,
+                                                   EndDate = g.EndDate
+                                               }
+                                                                        ).AsEnumerable();
+                    }
+
+                    //Non Government Infos
+                    if (applicant.NonGovernmentInfos != null)
+                    {
+                        preview.NonGovernments = (from g in applicant.NonGovernmentInfos
+                                                  from s in Shrenis
+                                                  where s.Id == g.Level
+                                                  select new NonGovernmentExperienceVM
+                                                  {
+                                                      GId = g.GId,
+                                                      OfficeName = g.OfficeName,
+                                                      Post = g.Post,
+                                                      JobType = g.JobType,
+                                                      JobStartDate = g.JobStartDate,
+                                                      JobEndDate = g.JobEndDate
+                                                  }
+                                                                        ).AsEnumerable();
+                    }
+
+                    return View(preview);
+                }
             }
-            else
-                return BadRequest();
-
+           
+               return RedirectToAction("Login");
+            
         }
-        [HttpPost]
-        public async Task<ActionResult<Applicant>> Edit(string id, Applicant value)
-        {
-            // var product = new Product(value.Id);
-            value.Id = ObjectId.Parse(id);
-            _Applicant.Update(value, id);
+       
+        //public ActionResult<Applicant> Create()
+        //{
+        //    Applicant value = new Applicant();
+        //    return View();
+        //}
+        //[HttpPost]
+        //public async Task<ActionResult<Applicant>> Create(Applicant value)
+        //{
+        //    //Applicant obj = new Applicant(value);
+        //    _Applicant.Add(value);
 
-            await _uow.Commit();
+        //    // it will be null
+        //    //var testApplicant = await _Applicant.GetById(value.);
 
-            return RedirectToAction("Index");
-        }
+        //    // If everything is ok then:
+        //    await _uow.Commit();
 
-        [HttpGet]
-        public async Task<ActionResult> Delete(string id)
-        {
-            _Applicant.Remove(id);
+        //    // The product will be added only after commit
+        //    // testProduct = await _productRepository.GetById(product.Id);
 
-            // it won't be null
-            // var testApplicant = await _Applicant.GetById(id);
+        //    return RedirectToAction("Index");
+        //}
+        //[HttpGet]
+        //public async Task<ActionResult<Applicant>> Edit(string id)
+        //{
+        //    if (!string.IsNullOrEmpty(id))
+        //    {
+        //        var Applicant = await _Applicant.GetById(id);
+        //        return View(Applicant);
+        //    }
+        //    else
+        //        return BadRequest();
 
-            // If everything is ok then:
-            await _uow.Commit();
+        //}
+        //[HttpPost]
+        //public async Task<ActionResult<Applicant>> Edit(string id, Applicant value)
+        //{
+        //    // var product = new Product(value.Id);
+        //    value.Id = ObjectId.Parse(id);
+        //    _Applicant.Update(value, id);
 
-            // not it must by null
-            //  testApplicant = await _Applicant.GetById(id);
+        //    await _uow.Commit();
 
-            return RedirectToAction("Index");
-        }
+        //    return RedirectToAction("Index");
+        //}
+
+        //[HttpGet]
+        //public async Task<ActionResult> Delete(string id)
+        //{
+        //    _Applicant.Remove(id);
+
+        //    // it won't be null
+        //    // var testApplicant = await _Applicant.GetById(id);
+
+        //    // If everything is ok then:
+        //    await _uow.Commit();
+
+        //    // not it must by null
+        //    //  testApplicant = await _Applicant.GetById(id);
+
+        //    return RedirectToAction("Index");
+        //}
 
 
 

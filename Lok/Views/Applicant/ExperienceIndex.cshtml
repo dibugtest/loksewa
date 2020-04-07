@@ -9,7 +9,7 @@
 <div>
     <h4>Government ExperienceVM</h4>
     <hr />
-    <a asp-action="GovernmentCreate">Add New</a>
+    <a asp-action="Government">Add New</a>
     <table class="table table-bordered table-responsive">
         <thead>
             <tr>
@@ -46,7 +46,7 @@
             }
             else
             {
-                <tr>No Records found.</tr>
+                <tr><td colspan="9">No Records found.</td></tr>
             }
 
         </tbody>
@@ -56,7 +56,7 @@
 <div class="row">
     <h4>Non Government ExperienceVM</h4>
     <hr />
-    <a asp-action="NonGovernmentCreate">Add New</a>
+    <a asp-action="NonGovernment">Add New</a>
     <table class="table table-bordered table-responsive">
         <thead>
             <tr>
@@ -69,24 +69,28 @@
             </tr>
         </thead>
         <tbody>
-            @if (Model.GovernmentExperience != null)
+            @if (Model.NonGovernmentExperience != null)
             {
-                foreach (var item in Model.GovernmentExperience)
+                foreach (var item in Model.NonGovernmentExperience)
                 {
-                    <tr>
-                        <td>@item.OfficeName</td>
-                       <td>@item.Post</td>
-                      <td>@item.JobType</td>
-                        <td>@item.StartDate</td>
-                        <td>@item.EndDate</td>
-                        <td><a href="@Url.Action("NonGovernmentEdit","Applicant")?GId=@item.GId">Edit</a></td>
-                    </tr>
+            <tr>
+                <td>@item.OfficeName</td>
+                <td>@item.Post</td>
+                <td>@item.JobType</td>
+                <td>@item.JobStartDate</td>
+                <td>@item.JobEndDate</td>
+                <td>
+                    <a href="@Url.Action("NonGovernmentEdit","Applicant")?GId=@item.GId">
+                        Edit
+                    </a>
+                </td>
+            </tr>
                 }
 
             }
             else
             {
-                <tr>No Records found.</tr>
+                <tr><td colspan="6">No Records found.</td></tr>
             }
 
         </tbody>
