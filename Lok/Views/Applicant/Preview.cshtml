@@ -7,10 +7,6 @@
 <h2>Preview</h2>
 
 <div class="row">
-    <h4>Lok Sewa Aayog</h4>
-    <hr />
-</div>
-<div id="A9782:myform:jj_content" class="ui-panel-content ui-widget-content">
 
     <table width="100%">
         <tbody>
@@ -20,15 +16,14 @@
                         <tbody>
                             <tr>
                                 <td valign="top">
-                                    <img id="A9782:myform:j_idt2858" src="/ApplicationFormFillingProcess-portlet/images/nepal_logo.png" alt="" width="200" height="160">
+                                    <img  src="@Url.Content("~/images/nepal_logo.png")" alt="" width="200" height="160">
                                 </td>
                                 <td align="left" valign="top">
-                                    <h1>लोक सेवा आयोग</h1>
-
+                                    <h4>Lok Sewa Aayog</h4>
                                 </td>
                                 <td align="center">
-                                    <img id="A9782:myform:j_idt2860" src="http://psconline.psc.gov.np/Document/e711bce4-05dc-4ee9-92df-e0d6c4cf1a0f701505.jpeg" alt="" width="190" height="180">
-                                    <br><img id="A9782:myform:j_idt2862" src="http://psconline.psc.gov.np/Document/1f39df1f-3f9d-4135-a088-bb4ef9d72d17701505.jpeg" alt="" width="190" height="60">
+                                    <img  src="@Url.Content(Model.Upload.PhotographLink)" alt="" width="190" height="180">
+                                    <br><img src="@Url.Content(Model.Upload.SignatureLink)" alt="" width="190" height="60">
 
                                 </td>
                             </tr>
@@ -51,7 +46,7 @@
             <tr>
                 <td colspan="3">
                     मास्टर आईडी : <label>
-                        701505
+                        000000
                     </label>
                 </td>
             </tr>
@@ -60,30 +55,32 @@
 
             <tr>
                 <td colspan="3">
-                    <br>Name(English)<hr id="A9782:myform:j_idt2868" class="ui-separator ui-state-default ui-corner-all">
+                    <br>Name(English)<hr>
                 </td>
             </tr>
             <tr>
 
                 <td>
                     <br>First :<label>
-                        SAGAR
+                        @Model.Personal.FirstName
                     </label>
                 </td>
                 <td>
+                    @Model.Personal.MiddleName
                     <br>Middle :<label>
                     </label>
                 </td>
                 <td>
                     <br>Last :<label>
-                        MAHARJAN
+                        @Model.Personal.LastName
+
                     </label>
                 </td>
             </tr>
             <tr>
 
                 <td colspan="3">
-                    <br>नाम (नेपालीमा)<hr id="A9782:myform:j_idt2880" class="ui-separator ui-state-default ui-corner-all">
+                    <br>नाम (नेपालीमा)<hr>
                 </td>
             </tr>
 
@@ -91,16 +88,20 @@
 
                 <td>
                     <br>पहिलो :<label>
-                        सागर
+                        @Model.Personal.FirstNameNep
+
                     </label>
                 </td>
                 <td>
                     <br>बीचको :<label>
+                        @Model.Personal.MiddleName
+
                     </label>
                 </td>
                 <td>
                     <br>अन्तिम  अर्थात् थर :<label>
-                        महर्जन
+                        @Model.Personal.LastNameNep
+
                     </label>
                 </td>
             </tr>
@@ -108,7 +109,7 @@
             <tr>
 
                 <td colspan="3">
-                    <br>जन्म मिति<hr id="A9782:myform:j_idt2892" class="ui-separator ui-state-default ui-corner-all">
+                    <br>जन्म मिति<hr >
                 </td>
             </tr>
 
@@ -116,15 +117,15 @@
 
             <tr>
                 <td>
-                    <br>वि.सं.मा :10/8/2050
+                    <br>वि.सं.मा :@Model.Personal.DOBNep
 
                 </td>
                 <td>
-                    <br>ईस्वी सम्वत्  :25/11/1993
+                    <br>ईस्वी सम्वत्  :@Model.Personal.DOB
                 </td>
                 <td>
                     <br>
-                    <br>लिङ्ग :Male
+                    <br>लिङ्ग :@Model.Personal.Sex
 
                 </td>
             </tr>
@@ -136,7 +137,7 @@
             <tr>
 
                 <td colspan="3">
-                    <br>बाबुको नाम  <hr id="A9782:myform:j_idt2906" class="ui-separator ui-state-default ui-corner-all">
+                    <br>बाबुको नाम  <hr >
                 </td>
             </tr>
 
@@ -145,17 +146,19 @@
             <tr>
                 <td>
                     <br>पहिलो :<label>
-                        राम
+                        @Model.Personal.FatherFirstName
                     </label>
                 </td>
                 <td>
                     <br>बीचको :<label>
-                        गोबिन्द
+                        @Model.Personal.FatherMiddleName
+
                     </label>
                 </td>
                 <td>
                     <br>अन्तिम  अर्थात् थर  :<label>
-                        महर्जन
+                        @Model.Personal.FatherLastName
+
                     </label>
                 </td>
             </tr>
@@ -163,7 +166,7 @@
             <tr>
 
                 <td colspan="3">
-                    <br>आमाको नाम<hr id="A9782:myform:j_idt2920" class="ui-separator ui-state-default ui-corner-all">
+                    <br>आमाको नाम<hr>
                 </td>
             </tr>
 
@@ -172,17 +175,20 @@
             <tr>
                 <td>
                     <br>पहिलो :<label>
-                        मन
+                        @Model.Personal.MotherFirstName
+
                     </label>
                 </td>
                 <td>
                     <br>बीचको :<label>
-                        माया
+                        @Model.Personal.MotherMiddleName
+
                     </label>
                 </td>
                 <td>
                     <br>अन्तिम  अर्थात् थर  :<label>
-                        महर्जन
+                        @Model.Personal.MotherLastName
+
                     </label>
                 </td>
             </tr>
@@ -190,7 +196,7 @@
             <tr>
 
                 <td colspan="3">
-                    <br>बाजेको नाम<hr id="A9782:myform:j_idt2935" class="ui-separator ui-state-default ui-corner-all">
+                    <br>बाजेको नाम<hr >
                 </td>
             </tr>
 
@@ -199,17 +205,20 @@
             <tr>
                 <td>
                     <br>पहिलो :<label>
-                        ज्ञान
+                        @Model.Personal.GrandFatherFirstName
+
                     </label>
                 </td>
                 <td>
                     <br>बीचको  :<label>
-                        बहादुर
+                        @Model.Personal.GrandFatherMiddleName
+
                     </label>
                 </td>
                 <td>
                     अन्तिम  अर्थात् थर  :<label>
-                        महर्जन
+                        @Model.Personal.GrandFatherLastName
+
                     </label>
                 </td>
             </tr>
@@ -217,7 +226,7 @@
             <tr>
 
                 <td colspan="3">
-                    <br>पति/पत्नीको नाम<hr id="A9782:myform:j_idt2950" class="ui-separator ui-state-default ui-corner-all">
+                    <br>पति/पत्नीको नाम<hr>
                 </td>
             </tr>
 
@@ -226,14 +235,20 @@
             <tr>
                 <td>
                     <br>पहिलो :<label>
+                        @Model.Personal.SpouseFirstName
+
                     </label>
                 </td>
                 <td>
                     <br>बीचको :<label>
+                        @Model.Personal.SpouseMiddleName
+
                     </label>
                 </td>
                 <td>
                     <br>अन्तिम  अर्थात् थर : <label>
+                        @Model.Personal.SpouseLastName
+
                     </label>
                 </td>
             </tr>
@@ -242,24 +257,27 @@
 
             <tr>
                 <td colspan="3">
-                    <br>नागरिकता <hr id="A9782:myform:j_idt2971" class="ui-separator ui-state-default ui-corner-all">
+                    <br>नागरिकता <hr >
 
                 </td>
             </tr>
             <tr>
                 <td>
                     <br>नागरिकता नं. :<label>
-                        28-01-069-03175
+                        @Model.Personal.CitizenshipNo
+
                     </label>
                 </td>
                 <td>
                     <br>जारी गर्ने जिल्ला : <label>
-                        Lalitpur
+                        @Model.Personal.CitizenshipValidDistrict
+
                     </label>
                 </td>
                 <td>
                     <br>जारी  मिति : <label>
-                        5/5/2069
+                        @Model.Personal.CitizenshipValidDate
+
                     </label>
 
 
@@ -270,7 +288,58 @@
             <tr>
                 <td colspan="3">
                     <br>
-                    <br><fieldset id="A9782:myform:j_idt2986" class="ui-fieldset ui-widget ui-widget-content ui-corner-all ui-fieldset-toggleable"><legend class="ui-fieldset-legend ui-corner-all ui-state-default"><span class="ui-fieldset-toggler ui-icon ui-icon-minusthick"></span>शैक्षिक योग्यता</legend><div class="ui-fieldset-content"><div id="A9782:myform:j_idt2987" class="ui-datatable ui-widget" style="text-align:center;width:98%"><table role="grid"><thead><tr role="row"><th id="A9782:myform:j_idt2987:j_idt2988" class="ui-state-default" role="columnheader" style="background-color:#EAF0F8"><div class="ui-dt-c"><span>विश्वविद्यालय/बोर्डको नाम</span></div></th><th id="A9782:myform:j_idt2987:j_idt2990" class="ui-state-default" role="columnheader" style="background-color:#EAF0F8"><div class="ui-dt-c"><span>शैक्षिक उपाधि</span></div></th><th id="A9782:myform:j_idt2987:j_idt2992" class="ui-state-default" role="columnheader" style="background-color:#EAF0F8"><div class="ui-dt-c"><span>संकाय</span></div></th><th id="A9782:myform:j_idt2987:j_idt2994" class="ui-state-default" role="columnheader" style="background-color:#EAF0F8"><div class="ui-dt-c"><span>श्रेणी/प्रतिशत</span></div></th><th id="A9782:myform:j_idt2987:j_idt2996" class="ui-state-default" role="columnheader" style="background-color:#EAF0F8"><div class="ui-dt-c"><span>मूल</span></div></th><th id="A9782:myform:j_idt2987:j_idt2998" class="ui-state-default" role="columnheader" style="background-color:#EAF0F8"><div class="ui-dt-c"><span>TYpe of education</span></div></th><th id="A9782:myform:j_idt2987:j_idt3000" class="ui-state-default" role="columnheader" style="background-color:#EAF0F8"><div class="ui-dt-c"><span>उत्तीर्ण गरेको साल</span></div></th><th id="A9782:myform:j_idt2987:j_idt3002" class="ui-state-default" role="columnheader" style="background-color:#EAF0F8"><div class="ui-dt-c"><span>शैक्षिक योग्यताको उपाधिको विवरण </span></div></th></tr></thead><tfoot></tfoot><tbody id="A9782:myform:j_idt2987_data" class="ui-datatable-data ui-widget-content"><tr data-ri="0" class="ui-widget-content ui-datatable-even" role="row"><td role="gridcell" style="background-color:#EAF0F8"><div class="ui-dt-c">SLC Board</div></td><td role="gridcell" style="background-color:#EAF0F8"><div class="ui-dt-c">SLC</div></td><td role="gridcell" style="background-color:#EAF0F8"><div class="ui-dt-c">Other</div></td><td role="gridcell" style="background-color:#EAF0F8"><div class="ui-dt-c">First Division/81.88</div></td><td role="gridcell" style="background-color:#EAF0F8"><div class="ui-dt-c">Optional mathematics</div></td><td role="gridcell" style="background-color:#EAF0F8"><div class="ui-dt-c"></div></td><td role="gridcell" style="background-color:#EAF0F8"><div class="ui-dt-c">null/null/2066</div></td><td role="gridcell" style="background-color:#EAF0F8"><div class="ui-dt-c">SLC</div></td></tr><tr data-ri="1" class="ui-widget-content ui-datatable-odd" role="row"><td role="gridcell" style="background-color:#EAF0F8"><div class="ui-dt-c">Tribhuvan University</div></td><td role="gridcell" style="background-color:#EAF0F8"><div class="ui-dt-c">Bachelors</div></td><td role="gridcell" style="background-color:#EAF0F8"><div class="ui-dt-c">Engineering</div></td><td role="gridcell" style="background-color:#EAF0F8"><div class="ui-dt-c">First Division</div></td><td role="gridcell" style="background-color:#EAF0F8"><div class="ui-dt-c">Electronics and Communication</div></td><td role="gridcell" style="background-color:#EAF0F8"><div class="ui-dt-c"></div></td><td role="gridcell" style="background-color:#EAF0F8"><div class="ui-dt-c">null/null/2073</div></td><td role="gridcell" style="background-color:#EAF0F8"><div class="ui-dt-c">Bachelor in Electronics and Communication Engineering</div></td></tr></tbody></table></div></div><input type="hidden" id="A9782:myform:j_idt2986_collapsed" name="A9782:myform:j_idt2986_collapsed" value="false"></fieldset>
+                    <br><fieldset >
+                        <legend><span></span>शैक्षिक योग्यता</legend>
+                        <div class="row">
+                            <div  style="text-align:center;width:98%">
+
+                                <table class="table table-bordered table-responsive">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                विश्वविद्यालय/बोर्डको नाम
+                                            </th>
+                                            <th>शैक्षिक उपाधि</th>
+                                            <th>संकाय</th>
+                                            <th>श्रेणी/प्रतिशत</th>
+                                            <th>मूल</th>
+                                            <th>TYpe of education</th>
+                                            <th>उत्तीर्ण गरेको साल</th>
+                                            <th>शैक्षिक योग्यताको उपाधिको विवरण</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.Educations != null)
+                                        {
+                                            foreach (var item in Model.Educations)
+                                            {
+                                                <tr>
+                                                    <td>@item.BoardName</td>
+                                                    <td>@item.Level</td>
+                                                    <td>@item.Faculty</td>
+                                                    <td>@item.DivisionPercentage</td>
+                                                    <td>@item.MainSubject</td>
+                                                    <td>@item.EducationType</td>
+                                                    <td>@item.CompletedDate</td>
+                                                    <td>@item.DegreeName</td>
+
+                                                </tr>
+                                            }
+
+                                        }
+                                        else
+                                        {
+                                            <tr><td colspan="8">No Records Found.</td></tr>
+                                        }
+
+                                    </tbody>
+                                </table>
+
+
+                            </div>
+                        </div><input type="hidden" name="j_idt2986_collapsed" value="false">
+                    </fieldset>
                 </td>
 
             </tr>
@@ -280,40 +349,178 @@
 
             <tr>
                 <td colspan="3">
-                    <br><fieldset id="A9782:myform:j_idt3005" class="ui-fieldset ui-widget ui-widget-content ui-corner-all ui-fieldset-toggleable"><legend class="ui-fieldset-legend ui-corner-all ui-state-default"><span class="ui-fieldset-toggler ui-icon ui-icon-minusthick"></span>तालिम</legend><div class="ui-fieldset-content"><div id="A9782:myform:j_idt3006" class="ui-datatable ui-widget" style="text-align:center;width:98%"><table role="grid"><thead><tr role="row"><th id="A9782:myform:j_idt3006:j_idt3007" class="ui-state-default" role="columnheader" style="background-color:#EAF0F8"><div class="ui-dt-c"><span>तालिम दिने संस्था</span></div></th><th id="A9782:myform:j_idt3006:j_idt3009" class="ui-state-default" role="columnheader" style="background-color:#EAF0F8"><div class="ui-dt-c"><span>तालिम</span></div></th><th id="A9782:myform:j_idt3006:j_idt3011" class="ui-state-default" role="columnheader" style="background-color:#EAF0F8"><div class="ui-dt-c"><span>श्रेणी/प्रतिशत</span></div></th><th id="A9782:myform:j_idt3006:j_idt3013" class="ui-state-default" role="columnheader" style="background-color:#EAF0F8"><div class="ui-dt-c"><span>अवधि देखि</span></div></th><th id="A9782:myform:j_idt3006:j_idt3015" class="ui-state-default" role="columnheader" style="background-color:#EAF0F8"><div class="ui-dt-c"><span>अवधि सम्म</span></div></th></tr></thead><tfoot></tfoot><tbody id="A9782:myform:j_idt3006_data" class="ui-datatable-data ui-widget-content"><tr class="ui-widget-content ui-datatable-empty-message"><td colspan="5"><div class="ui-dt-c">No records found.</div></td></tr></tbody></table></div></div><input type="hidden" id="A9782:myform:j_idt3005_collapsed" name="A9782:myform:j_idt3005_collapsed" value="false"></fieldset>
+                    <br><fieldset>
+                        <legend><span></span>तालिम</legend>
+                        <div class="row">
+                            <div style="text-align:center;width:98%">
+                                <table class="table table-bordered table-responsive">
+                                    <thead>
+                                        <tr role="row">
+                                            <th>
+                                                तालिम दिने संस्था
+                                            </th>
+                                            <th>तालिम</th>
+                                            <th>श्रेणी/प्रतिशत</th>
+                                            <th>अवधि देखि</th>
+                                            <th>अवधि सम्म</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.Trainings != null)
+                                        {
+                                            foreach (var item in Model.Trainings)
+                                            {
+                                                <tr>
+                                                    <td>@item.OrganizationName</td>
+                                                    <td>@item.TrainingName</td>
+                                                    <td>@item.DivisionPercentage</td>
+                                                    <td>@item.StartDateNep</td>
+                                                    <td>@item.EndDateNep</td>
+                                                </tr>
+                                            }
+                                        }
+                                        else
+
+                                        {
+                                            <tr><td colspan="5">No Records found.</td></tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div><input type="hidden" value="false">
+                    </fieldset>
                 </td>
 
             </tr>
             <tr>
                 <td colspan="3">
-                    <br><fieldset id="A9782:myform:j_idt3018" class="ui-fieldset ui-widget ui-widget-content ui-corner-all ui-fieldset-toggleable"><legend class="ui-fieldset-legend ui-corner-all ui-state-default"><span class="ui-fieldset-toggler ui-icon ui-icon-minusthick"></span>चिकित्सा परिषद सूचना </legend><div class="ui-fieldset-content"><div id="A9782:myform:j_idt3019" class="ui-datatable ui-widget" style="text-align:center;width:98%"><table role="grid"><thead><tr role="row"><th id="A9782:myform:j_idt3019:j_idt3020" class="ui-state-default" role="columnheader" style="background-color:#EAF0F8"><div class="ui-dt-c"><span>प्रमाणपत्र दिने काउन्सिलको नाम</span></div></th><th id="A9782:myform:j_idt3019:j_idt3022" class="ui-state-default" role="columnheader" style="background-color:#EAF0F8"><div class="ui-dt-c"><span>किसिम</span></div></th><th id="A9782:myform:j_idt3019:j_idt3024" class="ui-state-default" role="columnheader" style="background-color:#EAF0F8"><div class="ui-dt-c"><span>दर्ता नं.</span></div></th><th id="A9782:myform:j_idt3019:j_idt3026" class="ui-state-default" role="columnheader" style="background-color:#EAF0F8"><div class="ui-dt-c"><span>जारि मिति</span></div></th><th id="A9782:myform:j_idt3019:j_idt3028" class="ui-state-default" role="columnheader" style="background-color:#EAF0F8"><div class="ui-dt-c"><span>नविकरण मिति</span></div></th></tr></thead><tfoot></tfoot><tbody id="A9782:myform:j_idt3019_data" class="ui-datatable-data ui-widget-content"><tr class="ui-widget-content ui-datatable-empty-message"><td colspan="5"><div class="ui-dt-c">No records found.</div></td></tr></tbody></table></div></div><input type="hidden" id="A9782:myform:j_idt3018_collapsed" name="A9782:myform:j_idt3018_collapsed" value="false"></fieldset>
+                    <br><fieldset>
+                        <legend><span></span>चिकित्सा परिषद सूचना </legend><div class="row">
+                            <div style="text-align:center;width:98%">
+                                <table class="table table-responsive table-bordered">
+                                    <thead>
+                                        <tr role="row">
+                                            <th>प्रमाणपत्र दिने काउन्सिलको नाम</th>
+                                            <th>किसिम</th>
+                                            <th>दर्ता नं.</th>
+                                            <th>जारि मिति</th>
+                                            <th>नविकरण मिति</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.Councils != null)
+                                        {
+                                            foreach (var item in Model.Councils)
+                                            {
+                                                <tr>
+                                                    <td>@item.ProviderName</td>
+                                                    <td>@item.Type</td>
+                                                    <td>@item.RegistrationNo</td>
+                                                    <td>@item.ValidateFrom</td>
+                                                    <td>@item.RenewDate</td>
+                                                </tr>
+                                            }
+                                        }
+                                        else
+
+                                        {
+                                            <tr><td colspan="5">No Records found.</td></tr>
+                                        }
+                                    </tbody>
+
+                                </table>
+                            </div>
+                        </div><input type="hidden" value="false">
+                    </fieldset>
 
                     <br>
 
                 </td>
             </tr>
-
-
-
-
-
-
-
-
-
-
-
-
             <tr>
                 <td colspan="3">
                     <br>
-                    <br><fieldset id="A9782:myform:j_idt3031" class="ui-fieldset ui-widget ui-widget-content ui-corner-all ui-fieldset-toggleable">
-                        <legend class="ui-fieldset-legend ui-corner-all ui-state-default"><span class="ui-fieldset-toggler ui-icon ui-icon-minusthick"></span>अनुभव  सम्बन्धी विवरण </legend><div class="ui-fieldset-content">
-                            <div id="A9782:myform:j_idt3032" class="ui-datatable ui-widget" style="text-align:center;width:98%"><table role="grid"><thead><tr role="row"><th id="A9782:myform:j_idt3032:j_idt3033" class="ui-state-default" role="columnheader" style="background-color:#EAF0F8"><div class="ui-dt-c"><span>कार्यालय </span></div></th><th id="A9782:myform:j_idt3032:j_idt3035" class="ui-state-default" role="columnheader" style="background-color:#EAF0F8"><div class="ui-dt-c"><span>कार्यालयको ठेगाना</span></div></th><th id="A9782:myform:j_idt3032:j_idt3037" class="ui-state-default" role="columnheader" style="background-color:#EAF0F8"><div class="ui-dt-c"><span>पद </span></div></th><th id="A9782:myform:j_idt3032:j_idt3039" class="ui-state-default" role="columnheader" style="background-color:#EAF0F8"><div class="ui-dt-c"><span>सेवा/समूह/उपसमूह </span></div></th><th id="A9782:myform:j_idt3032:j_idt3041" class="ui-state-default" role="columnheader" style="background-color:#EAF0F8"><div class="ui-dt-c"><span>श्रेणी/तह</span></div></th><th id="A9782:myform:j_idt3032:j_idt3043" class="ui-state-default" role="columnheader" style="background-color:#EAF0F8"><div class="ui-dt-c"><span>स्थायी/अस्थायी/करार</span></div></th><th id="A9782:myform:j_idt3032:j_idt3045" class="ui-state-default" role="columnheader" style="background-color:#EAF0F8"><div class="ui-dt-c"><span>अवधि देखि</span></div></th><th id="A9782:myform:j_idt3032:j_idt3047" class="ui-state-default" role="columnheader" style="background-color:#EAF0F8"><div class="ui-dt-c"><span>अवधि सम्म</span></div></th></tr></thead><tfoot></tfoot><tbody id="A9782:myform:j_idt3032_data" class="ui-datatable-data ui-widget-content"><tr class="ui-widget-content ui-datatable-empty-message"><td colspan="8"><div class="ui-dt-c">No records found.</div></td></tr></tbody></table></div>
+                    <br><fieldset>
+                        <legend><span></span>अनुभव  सम्बन्धी विवरण </legend><div class="row">
+                            <div style="text-align:center;width:98%">
+                                <table class="table table-responsive table-bordered">
+                                    <thead>
+                                        <tr >
+                                            <th>
+                                                कार्यालय
+                                            </th>
+                                            <th>कार्यालयको ठेगाना</th>
+                                            <th>पद </th>
+                                            <th>सेवा/समूह/उपसमूह </th>
+                                            <th>श्रेणी/तह</th>
+                                            <th>स्थायी/अस्थायी/करार</th>
+                                            <th>अवधि देखि</th>
+                                            <th>अवधि सम्म</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.Governments != null)
+                                        {
+                                            foreach (var item in Model.Governments)
+                                            {
+                                                <tr>
+                                                    <td>@item.OfficeName</td>
+                                                    <td>@item.OfficeAddress</td>
+                                                    <td>@item.Post</td>
+                                                    <td>@item.Sewa</td>
+                                                    <td>@item.TahaShreni</td>
+                                                    <td>@item.JobType</td>
+                                                    <td>@item.StartDate</td>
+                                                    <td>@item.EndDate</td>
+                                                </tr>
+                                            }
+                                        }
+                                        else
+
+                                        {
+                                            <tr><td colspan="8">No Records found.</td></tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
 
 
-                            <br><div id="A9782:myform:j_idt3050" class="ui-datatable ui-widget" style="text-align:center;width:98%"><table role="grid"><thead><tr role="row"><th id="A9782:myform:j_idt3050:j_idt3051" class="ui-state-default" role="columnheader" style="background-color:#EAF0F8"><div class="ui-dt-c"><span>कार्यालय </span></div></th><th id="A9782:myform:j_idt3050:j_idt3053" class="ui-state-default" role="columnheader" style="background-color:#EAF0F8"><div class="ui-dt-c"><span>पद </span></div></th><th id="A9782:myform:j_idt3050:j_idt3056" class="ui-state-default" role="columnheader" style="background-color:#EAF0F8"><div class="ui-dt-c"><span>श्रेणी/तह</span></div></th><th id="A9782:myform:j_idt3050:j_idt3059" class="ui-state-default" role="columnheader" style="background-color:#EAF0F8"><div class="ui-dt-c"><span>स्थायी/अस्थायी/करार</span></div></th><th id="A9782:myform:j_idt3050:j_idt3061" class="ui-state-default" role="columnheader" style="background-color:#EAF0F8"><div class="ui-dt-c"><span>अवधि देखि</span></div></th><th id="A9782:myform:j_idt3050:j_idt3064" class="ui-state-default" role="columnheader" style="background-color:#EAF0F8"><div class="ui-dt-c"><span>अवधि सम्म</span></div></th></tr></thead><tfoot></tfoot><tbody id="A9782:myform:j_idt3050_data" class="ui-datatable-data ui-widget-content"><tr class="ui-widget-content ui-datatable-empty-message"><td colspan="6"><div class="ui-dt-c">No records found.</div></td></tr></tbody></table></div>
-                        </div><input type="hidden" id="A9782:myform:j_idt3031_collapsed" name="A9782:myform:j_idt3031_collapsed" value="false">
+                            <br><div style="text-align:center;width:98%">
+                                <table class="table table-responsive table-bordered">
+                                    <thead>
+                                        <tr role="row">
+                                            <th>कार्यालय </th>
+                                            <th>पद </th>
+                                            <th>श्रेणी/तह</th>
+                                            <th>स्थायी/अस्थायी/करार</th>
+                                            <th>अवधि देखि</th>
+                                            <th>अवधि सम्म</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.NonGovernments != null)
+                                        {
+                                            foreach (var item in Model.NonGovernments)
+                                            {
+                                                <tr>
+                                                    <td>@item.OfficeName</td>
+                                                    <td>@item.Post</td>
+                                                    <td>@item.Level</td>
+                                                    <td>@item.JobType</td>
+                                                    <td>@item.JobStartDate</td>
+                                                    <td>@item.JobEndDate</td>
+                                                </tr>
+                                            }
+                                        }
+                                        else
+
+                                        {
+                                            <tr><td colspan="6">No Records found.</td></tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div><input type="hidden" value="false">
                     </fieldset>
                 </td>
 
@@ -322,13 +529,13 @@
             <tr>
 
                 <td colspan="3">
-                    <br><fieldset id="A9782:myform:j_idt3069" class="ui-fieldset ui-widget ui-widget-content ui-corner-all ui-fieldset-toggleable">
+                    <br><fieldset id="j_idt3069" class="ui-fieldset ui-widget ui-widget-content ui-corner-all ui-fieldset-toggleable">
                         <legend class="ui-fieldset-legend ui-corner-all ui-state-default"><span class="ui-fieldset-toggler ui-icon ui-icon-minusthick"></span>ठेगाना विवरण </legend><div class="ui-fieldset-content">
-                            <div id="A9782:myform:j_idt3070" class="ui-panel ui-widget ui-widget-content ui-corner-all" style="border:0px">
-                                <div id="A9782:myform:j_idt3070_content" class="ui-panel-content ui-widget-content">
+                            <div id="j_idt3070" class="ui-panel ui-widget ui-widget-content ui-corner-all" style="border:0px">
+                                <div id="j_idt3070_content" class="ui-panel-content ui-widget-content">
                                     <label>
                                         स्थायी ठेगाना
-                                    </label><hr id="A9782:myform:j_idt3073" class="ui-separator ui-state-default ui-corner-all">
+                                    </label><hr id="j_idt3073" class="ui-separator ui-state-default ui-corner-all">
 
 
                                     <table width="100%">
@@ -339,30 +546,35 @@
                                                 <td>
                                                     जिल्ला
                                                     <br><label onblur="value=value.toUpperCase()" onkeyup="value=value.toUpperCase()">
-                                                        Lalitpur
+                                                        @Model.Contact.District
                                                     </label>
                                                 </td>
                                                 <td>
                                                     स्थानिय तहको प्रकार
                                                     <br><label onblur="value=value.toUpperCase()" onkeyup="value=value.toUpperCase()">
-                                                        महानगरपालिका
+                                                        @Model.Contact.MunicipalityType
+
                                                     </label>
                                                 </td>
                                                 <td>
                                                     न.पा/गा.वि.स.
                                                     <br><label onblur="value=value.toUpperCase()" onkeyup="value=value.toUpperCase()">
-                                                        Lalitpur
+                                                        @Model.Contact.MunicipalityName
+
                                                     </label>
                                                 </td>
                                                 <td>
                                                     वडा नं
                                                     <br><label onblur="value=value.toUpperCase()" onkeyup="value=value.toUpperCase()">
-                                                        21
+                                                        @Model.Contact.WardNo
+
                                                     </label>
                                                 </td>
                                                 <td>
                                                     प्रदेश
                                                     <br><label onblur="value=value.toUpperCase()" onkeyup="value=value.toUpperCase()">
+                                                        @Model.Contact.WardNo
+
                                                     </label>
                                                 </td>
 
@@ -370,33 +582,41 @@
                                                 <td>
                                                     टोल
                                                     <br><label onblur="value=value.toUpperCase()" onkeyup="value=value.toUpperCase()">
-                                                        tajhya
+                                                        @Model.Contact.Tole
+
                                                     </label>
                                                 </td>
                                                 <td>
                                                     मार्ग
                                                     <br><label onblur="value=value.toUpperCase()" onkeyup="value=value.toUpperCase()">
+                                                        @Model.Contact.Marga
                                                     </label>
                                                 </td>
                                                 <td>
                                                     घर नं.
                                                     <br><label onblur="value=value.toUpperCase()" onkeyup="value=value.toUpperCase()">
+
+                                                        @Model.Contact.HouseNo
                                                     </label>
                                                 </td>
                                                 <td>
                                                     फोन नम्बर
                                                     <br><label>
+                                                        @Model.Contact.PhoneNo
                                                     </label>
                                                 </td>
                                                 <td>
                                                     मोबाइल नम्बर
-                                                    <br>9843608738
+                                                    <br><label>
+                                                        @Model.Contact.MobileNo
+                                                    </label>
                                                 </td>
 
                                                 <td>
                                                     ईमेल
                                                     <br><label>
-                                                        maharjanakancha@gmail.com
+                                                        @Model.Contact.Email
+
                                                     </label>
 
                                                 </td>
@@ -408,11 +628,12 @@
 
                                     <br><label>
                                         पत्राचार गर्ने ठेगाना
-                                    </label><hr id="A9782:myform:j_idt3136" class="ui-separator ui-state-default ui-corner-all"><textarea id="A9782:myform:j_idt3137" name="A9782:myform:j_idt3137" cols="70" rows="3" disabled="disabled" class="ui-inputfield ui-inputtextarea ui-widget ui-state-default ui-corner-all ui-state-disabled ui-inputtextarea-resizable" role="textbox" aria-disabled="true" aria-readonly="false" aria-multiline="true">tajhya,khokana,lalitpur</textarea>
+                                    </label><hr id="j_idt3136" class="ui-separator ui-state-default ui-corner-all"><textarea id="j_idt3137" name="j_idt3137" cols="70" rows="3" disabled="disabled" class="ui-inputfield ui-inputtextarea ui-widget ui-state-default ui-corner-all ui-state-disabled ui-inputtextarea-resizable" role="textbox" aria-disabled="true" aria-readonly="false" aria-multiline="true">    @Model.Contact.Address
+</textarea>
                                     <br>
                                 </div>
                             </div>
-                        </div><input type="hidden" id="A9782:myform:j_idt3069_collapsed" name="A9782:myform:j_idt3069_collapsed" value="false">
+                        </div><input type="hidden" id="j_idt3069_collapsed" name="j_idt3069_collapsed" value="false">
                     </fieldset>
                 </td>
 

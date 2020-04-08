@@ -100,5 +100,34 @@ namespace Lok.Data.Repository
 
             }
         }
+
+        public void DeleteEducationInfo( string id, string EId)
+        {
+            ObjectId OId = ObjectId.Parse(id);
+            var update = Builders<Applicant>.Update.PullFilter(x => x.EducationInfos, Builders<EducationInfo>.Filter.Eq(x => x.EId, EId));
+            Context.AddCommand(() => DbSet.UpdateOneAsync(Builders<Applicant>.Filter.Where(x => x.Id ==OId),
+                                                             update));
+           
+        }
+
+        public void DeleteTrainingInfo( string id, string TId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeleteProfessionalCouncil( string id, string PId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeleteGovernmentInfo(string id, string GId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeleteNonGovernmentInfo(string id, string GId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -16,7 +16,7 @@ namespace Lok.Controllers
         private readonly IUnitOfWork _uow;
 
         public DistrictController(IDistrictRepository District, IUnitOfWork uow)
-        {
+        {   
             _District = District;
             _uow = uow;
         }

@@ -40,7 +40,7 @@ namespace Lok.Controllers
         public ApplicantController(IApplicantRepository Applicant, IReligionRepository Religion
                                     , IEmploymentRepository Employment, IOccupationRepository Occupation,
                                     IVargaRepository Varga, IDistrictRepository District, IBoardNameRepository BoardName, IEducationLevelRepository EducationLevel
-                                    , IFacultyRepository Faculty, ISewaRepository Sewa,IAwasthaRepository Awastha,
+                                    , IFacultyRepository Faculty, ISewaRepository Sewa, IAwasthaRepository Awastha,
                                     IShreniTahaRepository Shreni, IUnitOfWork uow, IMapper mapper)
         {
             _Applicant = Applicant;
@@ -593,30 +593,30 @@ namespace Lok.Controllers
                                                     Name = r.Name
                                                 }).ToList();
 
-               // IEnumerable<EducationVM> edus = applicant.EducationInfos != null ? _mapper.Map<IEnumerable<EducationVM>>(applicant.EducationInfos) : null;
-               
+                // IEnumerable<EducationVM> edus = applicant.EducationInfos != null ? _mapper.Map<IEnumerable<EducationVM>>(applicant.EducationInfos) : null;
+
 
                 IEnumerable<EducationVM> edus = (from e in applicant.EducationInfos
-                        from b in BoardNames
-                        where b.Id == e.BoardName
-                        from l in EducationLevels
-                        where l.Id == e.Level
-                        from f in Faculties
-                        where f.Id == e.Faculty
-                        select new EducationVM
-                        {
-                            EId = e.EId,
-                            BoardName = b.Name,
-                            Level = l.Name,
-                            Faculty = f.Name,
-                            DivisionPercentage=e.DivisionPercentage,
-                            MainSubject=e.MainSubject,
-                            DegreeName=e.DegreeName,
-                            EducationType=e.EducationType
+                                                 from b in BoardNames
+                                                 where b.Id == e.BoardName
+                                                 from l in EducationLevels
+                                                 where l.Id == e.Level
+                                                 from f in Faculties
+                                                 where f.Id == e.Faculty
+                                                 select new EducationVM
+                                                 {
+                                                     EId = e.EId,
+                                                     BoardName = b.Name,
+                                                     Level = l.Name,
+                                                     Faculty = f.Name,
+                                                     DivisionPercentage = e.DivisionPercentage,
+                                                     MainSubject = e.MainSubject,
+                                                     DegreeName = e.DegreeName,
+                                                     EducationType = e.EducationType
 
-                        }).AsEnumerable();
+                                                 }).AsEnumerable();
 
-                    return View(edus);
+                return View(edus);
             }
             else
             {
@@ -832,47 +832,47 @@ namespace Lok.Controllers
                 Applicant applicant = await _Applicant.GetById(id);
                 EducationVM educationVM = new EducationVM();
                 educationVM.EId = EId;
-               
-                    if (applicant.EducationInfos != null)
+
+                if (applicant.EducationInfos != null)
+                {
+                    EducationInfo eduInfo = applicant.EducationInfos.FirstOrDefault(m => m.EId == EId);
+                    if (eduInfo != null)
                     {
-                        EducationInfo eduInfo = applicant.EducationInfos.FirstOrDefault(m => m.EId == EId);
-                        if (eduInfo != null)
-                        {
-                            educationVM = _mapper.Map<EducationVM>(eduInfo);
-                        }
+                        educationVM = _mapper.Map<EducationVM>(eduInfo);
                     }
-                
+                }
+
                 educationVM.Id = applicant.Id.ToString();
                 educationVM.BoardNames = new SelectList(BoardNames, "Id", "Name");
                 educationVM.EducationLevels = new SelectList(EducationLevels, "Id", "Name");
                 educationVM.Faculties = new SelectList(Faculties, "Id", "Name");
 
                 //Check File Exists
-               
-                    if (educationVM.FileName != null)
-                    {
-                        string mainFile = Path.Combine(
-                                            Directory.GetCurrentDirectory(), "wwwroot", "images",
-                                            "applicant", applicant.Id.ToString(), "Education", "Main", educationVM.FileName
-                                            );
 
-                        if (System.IO.File.Exists(mainFile))
-                        {
-                            educationVM.FileMainLink = "~/images/applicant/" + educationVM.Id + "/Education/Main/" + educationVM.FileName;
-                        }
-                    }
-                    if (educationVM.EquivalentFileName != null)
-                    {
-                        string EquivalentFile = Path.Combine(
-                                           Directory.GetCurrentDirectory(), "wwwroot", "images",
-                                           "applicant", applicant.Id.ToString(), "Education", "Equivalent", educationVM.EquivalentFileName
-                                           );
+                if (educationVM.FileName != null)
+                {
+                    string mainFile = Path.Combine(
+                                        Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                        "applicant", applicant.Id.ToString(), "Education", "Main", educationVM.FileName
+                                        );
 
-                        if (System.IO.File.Exists(EquivalentFile))
-                        {
-                            educationVM.FileEquivalentLink = "~/images/applicant/" + educationVM.Id + "/Education/Equivalent/" + educationVM.EquivalentFileName;
-                        }
+                    if (System.IO.File.Exists(mainFile))
+                    {
+                        educationVM.FileMainLink = "~/images/applicant/" + educationVM.Id + "/Education/Main/" + educationVM.FileName;
                     }
+                }
+                if (educationVM.EquivalentFileName != null)
+                {
+                    string EquivalentFile = Path.Combine(
+                                       Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                       "applicant", applicant.Id.ToString(), "Education", "Equivalent", educationVM.EquivalentFileName
+                                       );
+
+                    if (System.IO.File.Exists(EquivalentFile))
+                    {
+                        educationVM.FileEquivalentLink = "~/images/applicant/" + educationVM.Id + "/Education/Equivalent/" + educationVM.EquivalentFileName;
+                    }
+                }
 
                 return View(educationVM);
 
@@ -1035,18 +1035,18 @@ namespace Lok.Controllers
                 IEnumerable<TrainingVM> training = null;
                 if (applicant.TrainingInfos != null)
                 {
-                   training  = (from t in applicant.TrainingInfos
-                                                        select new TrainingVM
-                                                        {
-                                                            TId = t.TId,
-                                                            DivisionPercentage = t.DivisionPercentage,
-                                                            OrganizationName = t.OrganizationName,
-                                                            TrainingName = t.TrainingName,
-                                                            StartDate = t.StartDate,
-                                                            EndDate = t.EndDate
-                                                        }).AsEnumerable();
+                    training = (from t in applicant.TrainingInfos
+                                select new TrainingVM
+                                {
+                                    TId = t.TId,
+                                    DivisionPercentage = t.DivisionPercentage,
+                                    OrganizationName = t.OrganizationName,
+                                    TrainingName = t.TrainingName,
+                                    StartDate = t.StartDate,
+                                    EndDate = t.EndDate
+                                }).AsEnumerable();
                 }
-               // IEnumerable<TrainingVM> training = applicant.TrainingInfos != null ? _mapper.Map<IEnumerable<TrainingInfo>, IEnumerable<TrainingVM>>(applicant.TrainingInfos.AsEnumerable()) : null;
+                // IEnumerable<TrainingVM> training = applicant.TrainingInfos != null ? _mapper.Map<IEnumerable<TrainingInfo>, IEnumerable<TrainingVM>>(applicant.TrainingInfos.AsEnumerable()) : null;
                 return View(training);
             }
             else
@@ -1148,7 +1148,7 @@ namespace Lok.Controllers
         }
         public async Task<ActionResult<TrainingVM>> TrainingEdit(string TId)
         {
-            if (TId==null)
+            if (TId == null)
             {
                 return RedirectToAction("TrainingIndex");
             }
@@ -1158,32 +1158,32 @@ namespace Lok.Controllers
                 Applicant applicant = await _Applicant.GetById(id);
                 TrainingVM trainVM = new TrainingVM();
                 trainVM.TId = TId;
-                    if (applicant.TrainingInfos != null)
+                if (applicant.TrainingInfos != null)
+                {
+                    TrainingInfo trainInfo = applicant.TrainingInfos.FirstOrDefault(m => m.TId == TId);
+                    if (trainInfo != null)
                     {
-                        TrainingInfo trainInfo = applicant.TrainingInfos.FirstOrDefault(m => m.TId == TId);
-                        if (trainInfo != null)
-                        {
-                            trainVM = _mapper.Map<TrainingVM>(trainInfo);
-                        }
+                        trainVM = _mapper.Map<TrainingVM>(trainInfo);
                     }
-                
-                trainVM.Id = applicant.Id.ToString();
-                
-                //Check File Exists
-               
-                    if (trainVM.FileName != null)
-                    {
-                        string mainFile = Path.Combine(
-                                            Directory.GetCurrentDirectory(), "wwwroot", "images",
-                                            "applicant", applicant.Id.ToString(), "Training", "File", trainVM.FileName
-                                            );
+                }
 
-                        if (System.IO.File.Exists(mainFile))
-                        {
-                            trainVM.FileMainLink = "~/images/applicant/" + trainVM.Id + "/Training/File/" + trainVM.FileName;
-                        }
+                trainVM.Id = applicant.Id.ToString();
+
+                //Check File Exists
+
+                if (trainVM.FileName != null)
+                {
+                    string mainFile = Path.Combine(
+                                        Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                        "applicant", applicant.Id.ToString(), "Training", "File", trainVM.FileName
+                                        );
+
+                    if (System.IO.File.Exists(mainFile))
+                    {
+                        trainVM.FileMainLink = "~/images/applicant/" + trainVM.Id + "/Training/File/" + trainVM.FileName;
                     }
-                   
+                }
+
 
 
                 return View(trainVM);
@@ -1200,51 +1200,51 @@ namespace Lok.Controllers
         {
             if (ModelState.IsValid)
             {
-                    Applicant applicant = await _Applicant.GetById(trainVM.Id);
-                   TrainingInfo trainInfo = _mapper.Map<TrainingInfo>(trainVM);
-                    trainInfo.FileName = trainInfo.TId + ".pdf";
-                    applicant.EditedDate = DateTime.Now;
-                   _Applicant.UpdateTrainingInfo(trainInfo, trainVM.Id, trainVM.TId);
-                    
-                    await _uow.Commit();
+                Applicant applicant = await _Applicant.GetById(trainVM.Id);
+                TrainingInfo trainInfo = _mapper.Map<TrainingInfo>(trainVM);
+                trainInfo.FileName = trainInfo.TId + ".pdf";
+                applicant.EditedDate = DateTime.Now;
+                _Applicant.UpdateTrainingInfo(trainInfo, trainVM.Id, trainVM.TId);
+
+                await _uow.Commit();
 
 
 
-                    //File Upload
-                   
-                    string directoryMain = Path.Combine(
-                                    Directory.GetCurrentDirectory(), "wwwroot", "images",
-                                    "applicant", applicant.Id.ToString(), "Training", "File"
-                                    );
+                //File Upload
 
-                    Directory.CreateDirectory(directoryMain); // no need to check if it exists
-                   
+                string directoryMain = Path.Combine(
+                                Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                "applicant", applicant.Id.ToString(), "Training", "File"
+                                );
 
-                    if (FileMain != null)
-                    {
-                        var path = Path.Combine(
-                                    Directory.GetCurrentDirectory(), "wwwroot", "images",
-                                    "applicant", applicant.Id.ToString(), "Training", "File",
-                                    trainInfo.FileName);
+                Directory.CreateDirectory(directoryMain); // no need to check if it exists
 
-                        using (var stream = new FileStream(path, FileMode.Create))
-                        {
-                            await FileMain.CopyToAsync(stream);
-                        }
-                    }
 
-                    TempData["Message"] = "Successfully Updated Training Information.";
-                    return RedirectToAction("TrainingIndex");
-                }
-                else
+                if (FileMain != null)
                 {
-                   
-                    ViewBag.Error = "Error";
-                    ModelState.AddModelError(string.Empty, "Error.");
-                    return View(trainVM);
+                    var path = Path.Combine(
+                                Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                "applicant", applicant.Id.ToString(), "Training", "File",
+                                trainInfo.FileName);
+
+                    using (var stream = new FileStream(path, FileMode.Create))
+                    {
+                        await FileMain.CopyToAsync(stream);
+                    }
                 }
 
+                TempData["Message"] = "Successfully Updated Training Information.";
+                return RedirectToAction("TrainingIndex");
             }
+            else
+            {
+
+                ViewBag.Error = "Error";
+                ModelState.AddModelError(string.Empty, "Error.");
+                return View(trainVM);
+            }
+
+        }
 
         public async Task<ActionResult> CouncilIndex()
         {
@@ -1496,21 +1496,24 @@ namespace Lok.Controllers
                 if (applicant.GovernmentInfos != null)
                 {
                     IEnumerable<GovernmentExperienceVM> government = (from g in applicant.GovernmentInfos
-                                                                      from s in Sewas where s.Id == g.Sewa
-                                                                      from a in Awasthas where a.Id == g.Awastha
-                                                                      from t in Shrenis where t.Id == g.TahaShreni
+                                                                      from s in Sewas
+                                                                      where s.Id == g.Sewa
+                                                                      from a in Awasthas
+                                                                      where a.Id == g.Awastha
+                                                                      from t in Shrenis
+                                                                      where t.Id == g.TahaShreni
                                                                       select new GovernmentExperienceVM
                                                                       {
-                                                                          GId=g.GId,                                                                    
-                                                                          OfficeName=g.OfficeName,
-                                                                          Sewa=s.Name,
-                                                                          Awastha=a.Name,
-                                                                          TahaShreni=t.Name,
-                                                                          OfficeAddress=g.OfficeAddress,
-                                                                          JobType=g.JobType,
-                                                                          Post=g.Post,
-                                                                          StartDate=g.StartDate,
-                                                                          EndDate=g.EndDate
+                                                                          GId = g.GId,
+                                                                          OfficeName = g.OfficeName,
+                                                                          Sewa = s.Name,
+                                                                          Awastha = a.Name,
+                                                                          TahaShreni = t.Name,
+                                                                          OfficeAddress = g.OfficeAddress,
+                                                                          JobType = g.JobType,
+                                                                          Post = g.Post,
+                                                                          StartDate = g.StartDate,
+                                                                          EndDate = g.EndDate
                                                                       }
                                                                     ).AsEnumerable();
                     exp.GovernmentExperience = government;
@@ -1518,22 +1521,23 @@ namespace Lok.Controllers
                 if (applicant.NonGovernmentInfos != null)
                 {
                     IEnumerable<NonGovernmentExperienceVM> nonGovernment = (from g in applicant.NonGovernmentInfos
-                                                                      from s in Shrenis where s.Id==g.Level
-                                                                      select new NonGovernmentExperienceVM
-                                                                      {
-                                                                          GId=g.GId,
-                                                                         OfficeName=g.OfficeName,
-                                                                         Post=g.Post,
-                                                                         JobType=g.JobType,
-                                                                         JobStartDate=g.JobStartDate,
-                                                                         JobEndDate=g.JobEndDate
-                                                                      }
+                                                                            from s in Shrenis
+                                                                            where s.Id == g.Level
+                                                                            select new NonGovernmentExperienceVM
+                                                                            {
+                                                                                GId = g.GId,
+                                                                                OfficeName = g.OfficeName,
+                                                                                Post = g.Post,
+                                                                                JobType = g.JobType,
+                                                                                JobStartDate = g.JobStartDate,
+                                                                                JobEndDate = g.JobEndDate
+                                                                            }
                                                                     ).AsEnumerable();
                     exp.NonGovernmentExperience = nonGovernment;
                 }
                 // IEnumerable<GovernmentExperienceVM> government = applicant.GovernmentInfos != null ? _mapper.Map<IEnumerable<GovernmentExperienceVM>>(applicant.GovernmentInfos) : null;
                 // IEnumerable<NonGovernmentExperienceVM> NonGovernment = applicant.NonGovernmentInfos != null ? _mapper.Map<IEnumerable<NonGovernmentExperienceVM>>(applicant.NonGovernmentInfos) : null;
-               // exp.NonGovernmentExperience = NonGovernment;
+                // exp.NonGovernmentExperience = NonGovernment;
                 return View(exp);
             }
             else
@@ -1709,7 +1713,7 @@ namespace Lok.Controllers
                                         }).ToList();
 
             List<DropDownItem> Shrenis = (from r in await _Shreni.GetAll()
-                                          where r.Type=="Government"
+                                          where r.Type == "Government"
                                           select new DropDownItem
                                           {
                                               Id = r.Id.ToString(),
@@ -1805,47 +1809,47 @@ namespace Lok.Controllers
 
             if (ModelState.IsValid)
             {
-               
-                    Applicant applicant = await _Applicant.GetById(governmentVM.Id);
 
-                    GovernmentExperienceInfo govInfo = _mapper.Map<GovernmentExperienceInfo>(governmentVM);
-                    govInfo.FileName = govInfo.GId + ".pdf";
-                    applicant.EditedDate = DateTime.Now;
-                    _Applicant.UpdateGovernmentInfo(govInfo, governmentVM.Id, governmentVM.GId);
-                    await _uow.Commit();
+                Applicant applicant = await _Applicant.GetById(governmentVM.Id);
 
-
-
-                    //File Upload
-
-                    string directoryMain = Path.Combine(
-                                    Directory.GetCurrentDirectory(), "wwwroot", "images",
-                                    "applicant", applicant.Id.ToString(), "Government", "File"
-                                    );
+                GovernmentExperienceInfo govInfo = _mapper.Map<GovernmentExperienceInfo>(governmentVM);
+                govInfo.FileName = govInfo.GId + ".pdf";
+                applicant.EditedDate = DateTime.Now;
+                _Applicant.UpdateGovernmentInfo(govInfo, governmentVM.Id, governmentVM.GId);
+                await _uow.Commit();
 
 
 
-                    Directory.CreateDirectory(directoryMain); // no need to check if it exists
+                //File Upload
+
+                string directoryMain = Path.Combine(
+                                Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                "applicant", applicant.Id.ToString(), "Government", "File"
+                                );
 
 
-                    if (FileMain != null)
+
+                Directory.CreateDirectory(directoryMain); // no need to check if it exists
+
+
+                if (FileMain != null)
+                {
+                    var path = Path.Combine(
+                                Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                "applicant", applicant.Id.ToString(), "Government", "File",
+                                govInfo.FileName);
+
+                    using (var stream = new FileStream(path, FileMode.Create))
                     {
-                        var path = Path.Combine(
-                                    Directory.GetCurrentDirectory(), "wwwroot", "images",
-                                    "applicant", applicant.Id.ToString(), "Government", "File",
-                                    govInfo.FileName);
-
-                        using (var stream = new FileStream(path, FileMode.Create))
-                        {
-                            await FileMain.CopyToAsync(stream);
-                        }
+                        await FileMain.CopyToAsync(stream);
                     }
+                }
 
 
 
-                    TempData["Message"] = "Successfully Updated Government Experience Information.";
-                    return RedirectToAction("ExperienceIndex");
-               
+                TempData["Message"] = "Successfully Updated Government Experience Information.";
+                return RedirectToAction("ExperienceIndex");
+
             }
             else
             {
@@ -1861,18 +1865,18 @@ namespace Lok.Controllers
 
         public async Task<ActionResult<NonGovernmentExperienceVM>> NonGovernment()
         {
-          
+
             List<DropDownItem> Levels = (from r in await _Shreni.GetAll()
-                                         where r.Type=="Non-Government"
-                                          select new DropDownItem
-                                          {
-                                              Id = r.Id.ToString(),
-                                              Name = r.Name
-                                          }).ToList();
-           
+                                         where r.Type == "Non-Government"
+                                         select new DropDownItem
+                                         {
+                                             Id = r.Id.ToString(),
+                                             Name = r.Name
+                                         }).ToList();
+
 
             Levels.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
-           
+
 
             string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
             if (id != null)
@@ -1894,13 +1898,13 @@ namespace Lok.Controllers
         public async Task<ActionResult<GovernmentExperienceVM>> NonGovernment(NonGovernmentExperienceVM nonGovVM, IFormFile FileMain)
         {
             List<DropDownItem> Levels = (from r in await _Shreni.GetAll()
-                                          where r.Type == "Non-Government"
-                                          select new DropDownItem
-                                          {
-                                              Id = r.Id.ToString(),
-                                              Name = r.Name
-                                          }).ToList();
-          
+                                         where r.Type == "Non-Government"
+                                         select new DropDownItem
+                                         {
+                                             Id = r.Id.ToString(),
+                                             Name = r.Name
+                                         }).ToList();
+
             Levels.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
 
             if (ModelState.IsValid)
@@ -1983,15 +1987,15 @@ namespace Lok.Controllers
         public async Task<ActionResult<NonGovernmentExperienceVM>> NonGovernmentEdit(string GId)
         {
             List<DropDownItem> Levels = (from r in await _Shreni.GetAll()
-                                         where r.Type=="Non-Government"
-                                           select new DropDownItem
-                                           {
-                                               Id = r.Id.ToString(),
-                                               Name = r.Name
-                                           }).ToList();
+                                         where r.Type == "Non-Government"
+                                         select new DropDownItem
+                                         {
+                                             Id = r.Id.ToString(),
+                                             Name = r.Name
+                                         }).ToList();
 
             Levels.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
-           
+
             string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
             if (id != null)
             {
@@ -2010,7 +2014,7 @@ namespace Lok.Controllers
 
                 nonGovVM.Id = applicant.Id.ToString();
                 nonGovVM.Levels = new SelectList(Levels, "Id", "Name");
-              
+
                 //Check File Exists
                 if (GId != null)
                 {
@@ -2043,65 +2047,65 @@ namespace Lok.Controllers
         public async Task<ActionResult<NonGovernmentExperienceVM>> NonGovernmentEdit(NonGovernmentExperienceVM nonGovVM, IFormFile FileMain)
         {
             List<DropDownItem> Levels = (from r in await _Shreni.GetAll()
-                                         where r.Type=="Non-Government"
-                                        select new DropDownItem
-                                        {
-                                            Id = r.Id.ToString(),
-                                            Name = r.Name
-                                        }).ToList();
-           
+                                         where r.Type == "Non-Government"
+                                         select new DropDownItem
+                                         {
+                                             Id = r.Id.ToString(),
+                                             Name = r.Name
+                                         }).ToList();
+
 
             Levels.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
-           
+
             if (ModelState.IsValid)
             {
-               
-                    Applicant applicant = await _Applicant.GetById(nonGovVM.Id);
 
-                    NonGovernmentExperienceInfo nonGovInfo = _mapper.Map<NonGovernmentExperienceInfo>(nonGovVM);
-                    nonGovInfo.FileName = nonGovInfo.GId + ".pdf";
-                    applicant.EditedDate = DateTime.Now;
-                    _Applicant.UpdateNonGovernmentInfo(nonGovInfo, nonGovVM.Id,nonGovVM.GId);
-                    await _uow.Commit();
+                Applicant applicant = await _Applicant.GetById(nonGovVM.Id);
 
-
-
-                    //File Upload
-
-                    string directoryMain = Path.Combine(
-                                    Directory.GetCurrentDirectory(), "wwwroot", "images",
-                                    "applicant", applicant.Id.ToString(), "NonGovernment", "File"
-                                    );
+                NonGovernmentExperienceInfo nonGovInfo = _mapper.Map<NonGovernmentExperienceInfo>(nonGovVM);
+                nonGovInfo.FileName = nonGovInfo.GId + ".pdf";
+                applicant.EditedDate = DateTime.Now;
+                _Applicant.UpdateNonGovernmentInfo(nonGovInfo, nonGovVM.Id, nonGovVM.GId);
+                await _uow.Commit();
 
 
 
-                    Directory.CreateDirectory(directoryMain); // no need to check if it exists
+                //File Upload
+
+                string directoryMain = Path.Combine(
+                                Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                "applicant", applicant.Id.ToString(), "NonGovernment", "File"
+                                );
 
 
-                    if (FileMain != null)
+
+                Directory.CreateDirectory(directoryMain); // no need to check if it exists
+
+
+                if (FileMain != null)
+                {
+                    var path = Path.Combine(
+                                Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                "applicant", applicant.Id.ToString(), "NonGovernment", "File",
+                                nonGovInfo.FileName);
+
+                    using (var stream = new FileStream(path, FileMode.Create))
                     {
-                        var path = Path.Combine(
-                                    Directory.GetCurrentDirectory(), "wwwroot", "images",
-                                    "applicant", applicant.Id.ToString(), "NonGovernment", "File",
-                                    nonGovInfo.FileName);
-
-                        using (var stream = new FileStream(path, FileMode.Create))
-                        {
-                            await FileMain.CopyToAsync(stream);
-                        }
+                        await FileMain.CopyToAsync(stream);
                     }
+                }
 
 
 
-                    TempData["Message"] = "Successfully Updated NonGovernment Experience Information.";
-                    return RedirectToAction("ExperienceIndex");
-               
+                TempData["Message"] = "Successfully Updated NonGovernment Experience Information.";
+                return RedirectToAction("ExperienceIndex");
+
 
             }
             else
             {
                 nonGovVM.Levels = new SelectList(Levels, "Id", "Name");
-               
+
                 ViewBag.Error = "Error";
                 ModelState.AddModelError(string.Empty, "Error");
                 return View(nonGovVM);
@@ -2119,7 +2123,7 @@ namespace Lok.Controllers
                 {
                     upload = applicant.Uploads;
                     uploadVM = _mapper.Map<UploadVM>(upload);
-                    uploadVM.PhotographLink = upload.Photograph != null ? "~/images/Applicant/" + applicant.Id.ToString() + "/Upload/"+ upload.Photograph : "";
+                    uploadVM.PhotographLink = upload.Photograph != null ? "~/images/Applicant/" + applicant.Id.ToString() + "/Upload/" + upload.Photograph : "";
                     uploadVM.CitizenshipLink = upload.Citizenship != null ? "~/images/Applicant/" + applicant.Id.ToString() + "/Upload/" + upload.Citizenship : "";
                     uploadVM.SignatureLink = upload.Signature != null ? "~/images/Applicant/" + applicant.Id.ToString() + "/Upload/" + upload.Signature : "";
                     uploadVM.InclusionGroupLink = upload.InclusionGroup != null ? "~/images/Applicant/" + applicant.Id.ToString() + "/Upload/" + upload.InclusionGroup : "";
@@ -2134,9 +2138,9 @@ namespace Lok.Controllers
             }
 
         }
-         [HttpPost]
-        public async Task<ActionResult<UploadVM>> Upload(UploadVM uploadVM,IFormFile PhotographFile, 
-                                                        IFormFile SignatureFile, IFormFile CitizenshipFile, IFormFile InclusionGroupFile)
+        [HttpPost]
+        public async Task<ActionResult<UploadVM>> Upload(UploadVM uploadVM, IFormFile PhotographFile,
+                                                       IFormFile SignatureFile, IFormFile CitizenshipFile, IFormFile InclusionGroupFile)
         {
             try
             {
@@ -2147,7 +2151,7 @@ namespace Lok.Controllers
                     {
 
                         Upload upload = new Upload();
-                        if (applicant.Uploads!=null)
+                        if (applicant.Uploads != null)
                         {
                             upload = applicant.Uploads;
                         }
@@ -2213,7 +2217,7 @@ namespace Lok.Controllers
                         }
 
                         applicant.Uploads = upload;
-                         _Applicant.Update(applicant, applicant.Id.ToString());
+                        _Applicant.Update(applicant, applicant.Id.ToString());
                         await _uow.Commit();
                     }
                     else
@@ -2228,7 +2232,7 @@ namespace Lok.Controllers
                     return RedirectToAction("Index");
                 }
             }
-            catch 
+            catch
             {
                 return RedirectToAction("Upload");
             }
@@ -2315,10 +2319,17 @@ namespace Lok.Controllers
                                                        Id = r.Id.ToString(),
                                                        Name = r.Name
                                                    }).ToList();
+                    List<DropDownItem> District = (from r in await _District.GetAll()
+                                                   select new DropDownItem
+                                                   {
+                                                       Id = r.Id.ToString(),
+                                                       Name = r.Name
+                                                   }).ToList();
 
                     preview.Personal = _mapper.Map<PersonalVM>(applicant.PersonalInformation);
                     preview.Extra = _mapper.Map<ExtraVM>(applicant.ExtraInformation);
                     preview.Contact = _mapper.Map<ContactVM>(applicant.ContactInformation);
+                    preview.Contact.District = District.FirstOrDefault(m => m.Id == preview.Contact.District).Name;
 
                     //Uploaded documents
                     preview.Upload = _mapper.Map<UploadVM>(applicant.Uploads);
@@ -2427,11 +2438,270 @@ namespace Lok.Controllers
                     return View(preview);
                 }
             }
-           
-               return RedirectToAction("Login");
-            
+
+            return RedirectToAction("Login");
+
         }
-       
+
+        //Delete the Education Record
+        public async Task<ActionResult> DeleteEducation(string EId)
+        {
+            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            if (id != null)
+            {
+                Applicant applicant = await _Applicant.GetById(id);
+                if (applicant != null)
+                {
+                    if (applicant.EducationInfos != null)
+                    {
+                        EducationInfo eduInfo = applicant.EducationInfos.FirstOrDefault(m => m.EId == EId);
+
+                        _Applicant.DeleteEducationInfo(id, EId);
+                        await _uow.Commit();
+
+
+                        //Delete File if exists
+                        string equivalent = Path.Combine(
+                                                Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                                "applicant", applicant.Id.ToString(), "Education", "Equivalent", eduInfo.EquivalentFileName
+                                             );
+                        string main = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                                                       "applicant", applicant.Id.ToString(), "Education", "main", eduInfo.FileName
+                                                                    );
+
+
+
+                        if (System.IO.File.Exists(main))
+                        {
+                            System.IO.File.Delete(main);
+                        }
+
+
+                        if (System.IO.File.Exists(equivalent))
+                        {
+                            System.IO.File.Delete(equivalent);
+                        }
+                        TempData["Message"] = "Record Deleted Successfully.";
+                        return RedirectToAction("EducationIndex");
+                    }
+                    else
+                    {
+                        return RedirectToAction("EducationIndex");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("login");
+                }
+            }
+            else
+            {
+                return RedirectToAction("Login");
+            }
+
+        }
+
+
+        //Delete the Training Record
+        public async Task<ActionResult> DeleteTraining(string TId)
+        {
+            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            if (id != null)
+            {
+                Applicant applicant = await _Applicant.GetById(id);
+                if (applicant != null)
+                {
+                    if (applicant.TrainingInfos != null)
+                    {
+                        TrainingInfo trainInfo = applicant.TrainingInfos.FirstOrDefault(m => m.TId == TId);
+
+                        _Applicant.DeleteTrainingInfo(id, TId);
+                        await _uow.Commit();
+
+
+                        //Delete File if exists
+                      string main = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                                                       "applicant", applicant.Id.ToString(), "Training", "File", trainInfo.FileName
+                                                                    );
+
+
+
+                        if (System.IO.File.Exists(main))
+                        {
+                            System.IO.File.Delete(main);
+                        }
+
+
+                        TempData["Message"] = "Record Deleted Successfully.";
+                        return RedirectToAction("TrainingIndex");
+                    }
+                    else
+                    {
+                        return RedirectToAction("TrainingINdex");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("login");
+                }
+            }
+            else
+            {
+                return RedirectToAction("Login");
+            }
+
+        }
+
+        //Delete the Council Record
+        public async Task<ActionResult> DeleteCouncil(string PId)
+        {
+            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            if (id != null)
+            {
+                Applicant applicant = await _Applicant.GetById(id);
+                if (applicant != null)
+                {
+                    if (applicant.ProfessionalCouncils != null)
+                    {
+                        ProfessionalCouncil councilInfo = applicant.ProfessionalCouncils.FirstOrDefault(m => m.PId == PId);
+
+                        _Applicant.DeleteProfessionalCouncil(id, PId);
+                        await _uow.Commit();
+
+
+                        //Delete File if exists
+                        string main = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                                                         "applicant", applicant.Id.ToString(), "Council", "File", councilInfo.FileName
+                                                                      );
+
+
+
+                        if (System.IO.File.Exists(main))
+                        {
+                            System.IO.File.Delete(main);
+                        }
+
+
+                        TempData["Message"] = "Record Deleted Successfully.";
+                        return RedirectToAction("CouncilIndex");
+                    }
+                    else
+                    {
+                        return RedirectToAction("CouncilIndex");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("login");
+                }
+            }
+            else
+            {
+                return RedirectToAction("Login");
+            }
+
+        }
+
+        //Delete the Government Record
+        public async Task<ActionResult> DeleteGovernment(string GId)
+        {
+            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            if (id != null)
+            {
+                Applicant applicant = await _Applicant.GetById(id);
+                if (applicant != null)
+                {
+                    if (applicant.GovernmentInfos != null)
+                    {
+                        GovernmentExperienceInfo govInfo = applicant.GovernmentInfos.FirstOrDefault(m => m.GId == GId);
+
+                        _Applicant.DeleteGovernmentInfo(id, GId);
+                        await _uow.Commit();
+
+
+                        //Delete File if exists
+                        string main = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                                                         "applicant", applicant.Id.ToString(), "Government", "File", govInfo.FileName
+                                                                      );
+
+
+
+                        if (System.IO.File.Exists(main))
+                        {
+                            System.IO.File.Delete(main);
+                        }
+
+
+                        TempData["Message"] = "Record Deleted Successfully.";
+                        return RedirectToAction("ExperienceIndex");
+                    }
+                    else
+                    {
+                        return RedirectToAction("ExperienceIndex");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("login");
+                }
+            }
+            else
+            {
+                return RedirectToAction("Login");
+            }
+
+        }
+
+        //Delete the Government Record
+        public async Task<ActionResult> DeleteNonGovernment(string GId)
+        {
+            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            if (id != null)
+            {
+                Applicant applicant = await _Applicant.GetById(id);
+                if (applicant != null)
+                {
+                    if (applicant.NonGovernmentInfos != null)
+                    {
+                        NonGovernmentExperienceInfo govInfo = applicant.NonGovernmentInfos.FirstOrDefault(m => m.GId == GId);
+
+                        _Applicant.DeleteNonGovernmentInfo(id, GId);
+                        await _uow.Commit();
+
+
+                        //Delete File if exists
+                        string main = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                                                         "applicant", applicant.Id.ToString(), "NonGovernment", "File", govInfo.FileName
+                                                                      );
+
+
+
+                        if (System.IO.File.Exists(main))
+                        {
+                            System.IO.File.Delete(main);
+                        }
+
+
+                        TempData["Message"] = "Record Deleted Successfully.";
+                        return RedirectToAction("ExperienceIndex");
+                    }
+                    else
+                    {
+                        return RedirectToAction("ExperienceIndex");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("login");
+                }
+            }
+            else
+            {
+                return RedirectToAction("Login");
+            }
+
+        }
+
         //public ActionResult<Applicant> Create()
         //{
         //    Applicant value = new Applicant();
