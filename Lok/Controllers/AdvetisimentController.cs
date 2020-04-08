@@ -63,21 +63,29 @@ namespace Lok.Controllers
             {
             //Advertisiment obj = new Advertisiment(value);
             List<EthinicalGroup> eths = new List<EthinicalGroup>();
+            List<AdvAndEth> adv = new List<AdvAndEth> ();
             int i = 0;
-            foreach(string key in Col.Keys)
+            foreach (string key in Col.Keys)
             {
-                if(key== "EthinicalGroup["+i+"]")
+                AdvAndEth adve = new AdvAndEth();
+                int values=0;
+
+                if (key== "EthinicalGroup["+i+"]")
                 {
                  EthinicalGroup eth = await _ethinicalGroup.GetById(Col["EthinicalGroup[" + i + "]"]);
-                    eths.Add(eth);
+                    values = Convert.ToInt32(Col["EthinicalGroup[" + i + "]value"]);
 
+                    eths.Add(eth);
+                    adve.GetEthinicalGroup = eth;
+                    adve.Value = values;
+                    adv.Add(adve);
                     i++;
 
                 }
                 // if(key["EthinicalGroup['"+i+"])
             }
             value.EthinicalGroups = eths;
-
+            value.AdvAndEths = adv;
                 value.Group = await _Group.GetById(value.GroupId.ToString());
             value.SubGroup = await _SubGroup.GetById(value.SubGroupId.ToString());
             value.Service = await _service.GetById(value.ServiceId.ToString());
@@ -119,6 +127,7 @@ namespace Lok.Controllers
                     var Advertisiment = await _Advertisiment.GetById(id);
                
                 IEnumerable<EthinicalGroup> a = await _ethinicalGroup.GetAll();
+
                 ViewBag.EthinicalGroup = a.ToList();
 
                 if (String.IsNullOrEmpty(Advertisiment.GroupId))

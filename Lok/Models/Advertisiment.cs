@@ -44,6 +44,7 @@ namespace Lok.Models
 
         public string Notice { get; set; }
         public IList<EthinicalGroup> EthinicalGroups { get; set; }
+        public IList<AdvAndEth> AdvAndEths { get; set; }
         public String CreatedDate { get; set; }
     }
 }

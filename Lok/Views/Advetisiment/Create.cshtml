@@ -77,13 +77,13 @@
                 </select>
                 <span asp-validation-for="SubGroupId" class="text-danger"></span>
             </div>
-            <div class="form-control">
-                <label asp-for="EthinicalGroups" class="control-label"></label>
+            <div class="form-group">
+                <label asp-for="EthinicalGroups" class="control-label"></label><br />
                 @{int i = 0;}
                 @foreach (var item in ViewBag.EthinicalGroup)
                 {
-                    <input name="EthinicalGroup[@i]" value="@item.Id" type="checkbox" />
-                    <label>@item.Name</label>
+                    <input name="EthinicalGroup[@i]" value="@item.Id" type="checkbox" id="EthinicalGroup[@i]" />
+                    <label>@item.Name</label><br />
                     i++;
                 }
                 @*@if (Model.SelectedFruits.Contains(item.Value))
@@ -153,6 +153,41 @@
     <a asp-action="Index">Back to List</a>
 </div>
 
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script type="text/javascript">
+    $(function () {
+
+        $('form input[type=checkbox]').change(function (e) {
+            e.preventDefault();
+         
+            // alert($(this).val());
+            if ($(this).prop("checked") == true) {
+                var className = $(this).attr('Value');
+                b = className + "value";
+                c = $(this).attr('Name') + "value";
+
+               $(this).after('&nbsp;<input type="text" id="'+b+'"  size="4" name="'+c+'">');
+
+                //$(this).after('&nbsp;<input type="text" id="txt"  size="4" name="Value4">');
+            }
+            else {
+                  var className = $(this).attr('Value');
+                b = className + "value";
+              
+                        $("#"+b).remove();
+
+                //check.next("input[type=text]").remove();
+               // check.next("body input#txt").val("1");
+               // $(this).after('input[type=text]').remove();
+
+                }
+
+        });
+       });
+</script>
+
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
 }
