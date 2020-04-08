@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using AutoMapper;
 
 namespace Lok
 {
@@ -27,6 +28,7 @@ namespace Lok
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
@@ -36,6 +38,20 @@ namespace Lok
             services.AddScoped<IMangoContext, MongoContext>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IServiceRepository, ServiceRepository>();
+            services.AddScoped<IReligionRepository, ReligionRepository>();
+            services.AddScoped<IEmploymentRepository, EmploymentRepository>();
+            services.AddScoped<IEducationLevelRepository, EducationLevelRepository>();
+            services.AddScoped<IVargaRepository, VargaRepository>();
+            services.AddScoped<IBoardNameRepository, BoardNameRepository>();
+            services.AddScoped<IFacultyRepository, FacultyRepository>();
+            services.AddScoped<IVargaRepository, VargaRepository>();
+            services.AddScoped<ISewaRepository, SewaRepository>();
+            services.AddScoped<IShreniTahaRepository, ShreniTahaRepository>();
+            services.AddScoped<IAwasthaRepository, AwasthaRepository>();
+            services.AddScoped<IApplicantRepository, ApplicantRepository>();
+            services.AddScoped<IOccupationRepository, OccupationRepository>();
+            services.AddScoped<IDistrictRepository, DistrictRepository>();
+
             services.AddScoped<ISubService, SubServiceRepository>();
             services.AddScoped<IEthinicalGroup, EthinicalGroupRepository>();
             services.AddScoped<IGroupRepository, GroupRepository>();

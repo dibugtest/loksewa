@@ -1,0 +1,61 @@
+﻿@model IEnumerable<Lok.ViewModel.ProfessionalCouncilVM>
+
+@{
+    ViewData["Title"] = "CouncilIndex";
+}
+
+<h2>CouncilIndex</h2>
+
+<p>
+    <a asp-action="CouncilCreate">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ProviderName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Type)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RegistrationNo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ValidateFrom)
+            </th>
+            
+           
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null)
+        {
+@foreach (var item in Model)
+{
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProviderName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Type)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RegistrationNo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ValidateFrom)
+            </td>
+            <td>
+              <a href="@Url.Action("CouncilEdit", "Applicant")?Pid=@item.PId">Edit</a>
+            </td>
+        </tr>
+}
+        }
+        else
+        {
+            <tr><td colspan="6">No Records Found.</td></tr>
+        }
+    </tbody>
+</table>

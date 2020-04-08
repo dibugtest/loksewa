@@ -1,0 +1,116 @@
+﻿@model Lok.ViewModel.EducationVM
+
+@{
+    ViewData["Title"] = "Education";
+}
+
+<h2>Education</h2>
+
+<h4>EducationVM</h4>
+<hr />
+<div class="row">
+  
+        <div class="col-md-12">
+            @if (TempData["Message"] != null)
+            {
+                <div class="alert alert-success">
+                    @TempData["Message"]
+                </div>
+            }
+            @if (ViewBag.Error != null)
+            {
+                <div class="alert alert-danger">
+                    @Html.ValidationSummary()
+                </div>
+            }
+        </div>
+ 
+    <div class="col-md-4">
+        <form asp-action="EducationCreate" enctype="multipart/form-data">
+
+            <div class="form-group">
+                <label asp-for="Id" class="control-label"></label>
+                <input asp-for="Id" class="form-control" />
+                <span asp-validation-for="Id" class="text-danger"></span>
+            </div>
+            <input class="hidden" asp-for="EId" />
+
+            <div class="form-group">
+                <label asp-for="BoardName" class="control-label"></label>
+                <select asp-for="BoardName" asp-items="Model.BoardNames" class="form-control"></select>
+                <span asp-validation-for="BoardName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Level" class="control-label"></label>
+                <select asp-for="Level" asp-items="Model.EducationLevels" class="form-control"></select>
+
+                <span asp-validation-for="Level" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Faculty" class="control-label"></label>
+                <select asp-for="Faculty" asp-items="Model.Faculties" class="form-control"></select>
+
+                <span asp-validation-for="Faculty" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DivisionPercentage" class="control-label"></label>
+                <input asp-for="DivisionPercentage" class="form-control" />
+                <span asp-validation-for="DivisionPercentage" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MainSubject" class="control-label"></label>
+                <input asp-for="MainSubject" class="form-control" />
+                <span asp-validation-for="MainSubject" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DegreeName" class="control-label"></label>
+                <input asp-for="DegreeName" class="form-control" />
+                <span asp-validation-for="DegreeName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EducationType" class="control-label"></label>
+                <select asp-for="EducationType" asp-items="Model.EducationTypes" class="form-control"></select>
+
+                <span asp-validation-for="EducationType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CompletedDate" class="control-label"></label>
+                <input asp-for="CompletedDate" class="form-control" />
+                <span asp-validation-for="CompletedDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DateType" class="control-label"></label>
+                <input asp-for="DateType" class="form-control" />
+                <span asp-validation-for="DateType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FileName" class="control-label"></label>
+                <input asp-for="FileMain" />
+                <span asp-validation-for="FileName" class="text-danger"></span>
+               
+            </div>
+
+           
+
+            <div class="form-group">
+                <label asp-for="EquivalentFileName" class="control-label"></label>
+
+                <input asp-for="FileEquivalent" />
+                <span asp-validation-for="EquivalentFileName" class="text-danger"></span>
+              
+            </div>
+           
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

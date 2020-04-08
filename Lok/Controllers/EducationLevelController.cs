@@ -10,36 +10,36 @@ using MongoDB.Bson;
 
 namespace Lok.Controllers
 {
-    public class ServiceController : Controller
+    public class EducationLevelController : Controller
     {
-        private readonly IServiceRepository _service;
+        private readonly IEducationLevelRepository _EducationLevel;
         private readonly IUnitOfWork _uow;
 
-        public ServiceController(IServiceRepository service, IUnitOfWork uow)
+        public EducationLevelController(IEducationLevelRepository EducationLevel, IUnitOfWork uow)
         {
-            _service = service;
+            _EducationLevel = EducationLevel;
             _uow = uow;
         }
-        // GET: Service
+        // GET: EducationLevel
         public async Task<ActionResult> Index()
         {
-            var Services = await _service.GetAll();
-            return View(Services);
+            var EducationLevels = await _EducationLevel.GetAll();
+            return View(EducationLevels);
         }
 
-        public ActionResult<Service> Create()
+        public ActionResult<EducationLevel> Create()
         {
-            Service value = new Service();
+            EducationLevel value = new EducationLevel();
             return View();
         }
         [HttpPost]
-        public async Task<ActionResult<Service>> Create(Service value)
+        public async Task<ActionResult<EducationLevel>> Create(EducationLevel value)
         {
-            //Service obj = new Service(value);
-            _service.Add(value);
+            //EducationLevel obj = new EducationLevel(value);
+            _EducationLevel.Add(value);
 
             // it will be null
-            //var testService = await _service.GetById(value.);
+            //var testEducationLevel = await _EducationLevel.GetById(value.);
 
             // If everything is ok then:
             await _uow.Commit();
@@ -49,36 +49,24 @@ namespace Lok.Controllers
 
             return RedirectToAction("Index");
         }
-        public async Task<ActionResult> Details(string id) {
-            if (!string.IsNullOrEmpty(id))
-            {
-                var Service = await _service.GetById(id);
-               
-                return View(Service);
-            }
-            else
-                return BadRequest();
-
-
-        }
         [HttpGet]
-        public async Task<ActionResult<Service>> Edit(string id)
+        public async Task<ActionResult<EducationLevel>> Edit(string id)
         {
             if (!string.IsNullOrEmpty(id))
             {
-                var Service = await _service.GetById(id);
-                return View(Service);
+                var EducationLevel = await _EducationLevel.GetById(id);
+                return View(EducationLevel);
             }
             else
                 return BadRequest();
 
         }
         [HttpPost]
-        public async Task<ActionResult<Service>> Edit(string id, Service value)
+        public async Task<ActionResult<EducationLevel>> Edit(string id, EducationLevel value)
         {
             // var product = new Product(value.Id);
             value.Id = ObjectId.Parse(id);
-            _service.Update(value,id);
+            _EducationLevel.Update(value,id);
 
             await _uow.Commit();
 
@@ -88,16 +76,16 @@ namespace Lok.Controllers
         [HttpGet]
         public async Task<ActionResult> Delete(string id)
         {
-            _service.Remove(id);
+            _EducationLevel.Remove(id);
 
             // it won't be null
-            var testService = await _service.GetById(id);
+           // var testEducationLevel = await _EducationLevel.GetById(id);
 
             // If everything is ok then:
             await _uow.Commit();
 
             // not it must by null
-            testService = await _service.GetById(id);
+          //  testEducationLevel = await _EducationLevel.GetById(id);
 
             return RedirectToAction("Index");
         }

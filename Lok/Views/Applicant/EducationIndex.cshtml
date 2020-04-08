@@ -1,0 +1,103 @@
+﻿@model IEnumerable<Lok.ViewModel.EducationVM>
+
+@{
+    ViewData["Title"] = "EducationIndex";
+}
+
+<h2>EducationIndex</h2>
+
+<p>
+    <a asp-action="EducationCreate">Add Education</a>
+</p>
+<div class="row">
+    <div class="col-md-12">
+        @if (TempData["Message"] != null)
+        {
+            <div class="alert alert-success">
+                @TempData["Message"]
+            </div>
+        }
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-danger">
+                @Html.ValidationSummary()
+            </div>
+        }
+    </div>
+</div>
+<table class="table">
+    <thead>
+        <tr>
+           
+            <th>
+                @Html.DisplayNameFor(model => model.EId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.BoardName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Level)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Faculty)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DivisionPercentage)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MainSubject)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DegreeName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EducationType)
+            </th>
+          
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null)
+        {
+@foreach (var item in Model)
+{
+        <tr>
+           
+            <td>
+                @Html.DisplayFor(modelItem => item.EId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.BoardName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Level)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Faculty)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DivisionPercentage)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MainSubject)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DegreeName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EducationType)
+            </td>
+            
+            <td>
+             <a href='@Url.Action("EducationEdit", "Applicant")?EId=@item.EId'>Edit</a>
+            </td>
+        </tr>
+}
+        }
+        else
+        {
+            <tr>No Record Found.</tr>
+        }
+    </tbody>
+</table>
