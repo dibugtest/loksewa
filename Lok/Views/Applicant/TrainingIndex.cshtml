@@ -50,8 +50,9 @@
                     </td>
 
                     <td>
-                        <a href="@Url.Action("TrainingEdit", "Applicant")?TId=@item.TId"><i class="fa fa-edit"></i>Edit</a>
-                       
+                        <a href="@Url.Action("TrainingEdit", "Applicant")?TId=@item.TId"><i class="fa fa-edit"></i>Edit</a>|
+                        <a href="@Url.Action("DeleteTraining","Applicant")?TId=@item.TId" onclick="return confirm('Are you sure you want to delete this record?');">Delete</a>
+
 
                     </td>
                 </tr>

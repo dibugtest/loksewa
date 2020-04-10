@@ -15,11 +15,16 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using MongoDB.Bson;
 using System.IO;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
 
 namespace Lok.Controllers
 {
+    //[Authorize]
     public class ApplicantController : Controller
     {
+        private readonly IAuthinterface _auth;
         private readonly IApplicantRepository _Applicant;
         private readonly IReligionRepository _Religion;
         private readonly IEmploymentRepository _Employment;
@@ -32,6 +37,8 @@ namespace Lok.Controllers
         private readonly ISewaRepository _Sewa;
         private readonly IShreniTahaRepository _Shreni;
         private readonly IAwasthaRepository _Awastha;
+        private readonly IApplicationRepository _Applications;
+        private readonly IAdvertisiment _Advertisement;
 
         private readonly IUnitOfWork _uow;
         public readonly IMapper _mapper;
@@ -40,8 +47,8 @@ namespace Lok.Controllers
         public ApplicantController(IApplicantRepository Applicant, IReligionRepository Religion
                                     , IEmploymentRepository Employment, IOccupationRepository Occupation,
                                     IVargaRepository Varga, IDistrictRepository District, IBoardNameRepository BoardName, IEducationLevelRepository EducationLevel
-                                    , IFacultyRepository Faculty, ISewaRepository Sewa, IAwasthaRepository Awastha,
-                                    IShreniTahaRepository Shreni, IUnitOfWork uow, IMapper mapper)
+                                    , IFacultyRepository Faculty, ISewaRepository Sewa, IAwasthaRepository Awastha, IAuthinterface auth,
+                                    IShreniTahaRepository Shreni, IApplicationRepository Application,IAdvertisiment Advertisement, IUnitOfWork uow, IMapper mapper)
         {
             _Applicant = Applicant;
             _Religion = Religion;
@@ -56,9 +63,11 @@ namespace Lok.Controllers
             _Shreni = Shreni;
             _Awastha = Awastha;
             _uow = uow;
+            _auth = auth;
+            _Applications = Application;
+            _Advertisement = Advertisement;
             _mapper = mapper;
         }
-
 
         // GET: Applicant use authorize
         public async Task<ActionResult> Index()
@@ -67,7 +76,7 @@ namespace Lok.Controllers
             var Applicants = await _Applicant.GetById(id);
             return View(Applicants);
         }
-
+        [AllowAnonymous]
         public async Task<ActionResult<RegistrationVM>> RegisterApplicant()
         {
             RegistrationVM register = new RegistrationVM();
@@ -97,7 +106,6 @@ namespace Lok.Controllers
                                              Name = r.Name
                                          }).ToList();
 
-
             Religions.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
             Occupations.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
             Employments.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
@@ -110,7 +118,7 @@ namespace Lok.Controllers
             register.Vargas = new SelectList(Vargas, "Id", "Name");
             return View(register);
         }
-
+        [AllowAnonymous]
         [HttpPost]
         public async Task<ActionResult<Applicant>> RegisterApplicant(RegistrationVM register)
         {
@@ -232,7 +240,7 @@ namespace Lok.Controllers
             return View(register);
         }
 
-
+        [AllowAnonymous]
         public async Task<ActionResult<ResetPasswordVM>> ResetPassword(string id)
         {
             if (!string.IsNullOrEmpty(id))
@@ -257,6 +265,7 @@ namespace Lok.Controllers
                 return RedirectToAction("ApplicantLogin");
             }
         }
+        [AllowAnonymous]
         [HttpPost]
         public async Task<ActionResult<ResetPasswordVM>> ResetPassword(ResetPasswordVM reset)
         {
@@ -294,15 +303,90 @@ namespace Lok.Controllers
         }
 
 
-
+        [AllowAnonymous]
         public async Task<ActionResult<LoginVM>> Login()
         {
             return View();
         }
-
+        [AllowAnonymous]
         [HttpPost]
         public async Task<ActionResult<LoginVM>> Login(LoginVM login)
         {
+            // ViewBag.ReturnUrl = ReturnUrl;
+
+            //if (await _auth.IsUserExists(l.Email))
+            //{
+            //    var login = _auth.Login(l.Email, l.Password);
+            //    Login user = await _auth.GetUser(l.Email);
+            //    string pass = user.RandomPass;
+
+
+            //    if (login.Result != null)
+            //    {
+            //        var Admin = login;
+
+            //        if (Url.IsLocalUrl(ReturnUrl))
+            //        {
+
+            //            //var objAdmin = context.login.FirstOrDefault(a => (a.Email == l.Email));
+
+            //            //FormsAuthentication.SetAuthCookie(l.Email, false);
+
+            //            //HttpContext.Session.SetString("id", Convert.ToString(user.Id));
+            //           // HttpContext.Session.SetString("userEmail", user.Email);
+            //            //Session.Add("category", Admin.Role);
+
+            //            return Redirect(ReturnUrl);
+
+            //        }
+            //        else
+            //        {
+            //            const string Issuer = "my issuer";
+
+            //            var claims = new List<Claim>();
+            //            claims.Add(new Claim(ClaimTypes.Name, l.Email, ClaimValueTypes.String, Issuer));
+            //            //   claims.Add(new Claim(Constants., user., ClaimValueTypes.String, Constants.Issuer));
+            //            //  claims.Add(new Claim(Constants.CompanyClaimType, user.Company, ClaimValueTypes.String, Constants.Issuer));
+            //            claims.Add(new Claim(ClaimTypes.Role, user.Role, ClaimValueTypes.String, Issuer));
+
+            //            var userIdentity = new ClaimsIdentity("Debugsoft");
+            //            userIdentity.AddClaims(claims);
+
+            //            var userPrincipal = new ClaimsPrincipal(userIdentity);
+
+            //            await HttpContext.SignInAsync(
+            //  "Cookie", userPrincipal,
+            //   new AuthenticationProperties
+            //   {
+            //       ExpiresUtc = DateTime.UtcNow.AddMinutes(100),
+            //       IsPersistent = false,
+            //       AllowRefresh = false
+            //   });
+
+
+
+            //            return RedirectToAction("Index", "Post");
+
+            //        }
+
+            //    }
+            //    else if (l.Password == pass)
+            //    {
+            //        TempData["message"] = l.Email;
+            //        return RedirectToAction("NewPassword");
+            //    }
+
+
+            //    else
+            //    {
+            //        ModelState.AddModelError("", "Invalid Password");
+            //    }
+
+            //}
+            //ModelState.AddModelError("", "Invalid User");
+
+            //return View();
+
             if (ModelState.IsValid)
             {
                 Applicant applicant = await _Applicant.GetByEmail(login.Email);
@@ -355,7 +439,8 @@ namespace Lok.Controllers
 
         public async Task<ActionResult<PersonalVM>> Personal()
         {
-            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+          //  var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+           string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
@@ -2520,9 +2605,9 @@ namespace Lok.Controllers
 
 
                         //Delete File if exists
-                      string main = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images",
-                                                                       "applicant", applicant.Id.ToString(), "Training", "File", trainInfo.FileName
-                                                                    );
+                        string main = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                                                         "applicant", applicant.Id.ToString(), "Training", "File", trainInfo.FileName
+                                                                      );
 
 
 
@@ -2748,22 +2833,121 @@ namespace Lok.Controllers
         //    return RedirectToAction("Index");
         //}
 
-        //[HttpGet]
-        //public async Task<ActionResult> Delete(string id)
-        //{
-        //    _Applicant.Remove(id);
+        [HttpGet]
+        public async Task<ActionResult> Delete(string id)
+        {
+            _Applicant.Remove(id);
 
-        //    // it won't be null
-        //    // var testApplicant = await _Applicant.GetById(id);
+            DeleteFile(id);
+            // If everything is ok then:
+            await _uow.Commit();
 
-        //    // If everything is ok then:
-        //    await _uow.Commit();
+            // not it must by null
+            //  testApplicant = await _Applicant.GetById(id);
 
-        //    // not it must by null
-        //    //  testApplicant = await _Applicant.GetById(id);
+            return RedirectToAction("Index");
+        }
 
-        //    return RedirectToAction("Index");
-        //}
+        public void DeleteFile(string id)
+        {
+            List<string> dirs = new List<string>();
+            List<string> files = new List<string>();
+            List<string> subdirs = new List<string>();
+            string dir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "applicant", id);
+            if (Directory.Exists(dir))
+            {
+                subdirs = Directory.GetDirectories(dir).Length != 0 ? Directory.GetDirectories(dir).ToList() : null;
+                if (subdirs.Count > 0)
+                    foreach (string item in subdirs)
+                    {
+                        List<string> subsubDirs = Directory.GetDirectories(item).Length != 0 ? Directory.GetDirectories(item).ToList() : null;
+                        List<String> filesDir = Directory.GetFiles(item).Length != 0 ? Directory.GetFiles(item).ToList() : null;
+
+                        if (subsubDirs.Count > 0)
+                        {
+                            subdirs.AddRange(subsubDirs);
+                        }
+
+                        if (filesDir.Count > 0)
+                        {
+                            foreach (string fileItem in filesDir)
+                            {
+                                System.IO.File.Delete(fileItem);
+                            }
+                        }
+                    }
+
+                foreach (string item in subdirs)
+                {
+                    Directory.Delete(item);
+                }
+
+                Directory.Delete(dir);
+            }
+        }
+
+        public async Task<ActionResult> Application()
+        {
+            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            ApplicationVM appVM = new ApplicationVM();
+            List<DropDownItem> Faculties = (from f in await _Faculty.GetAll()
+                                            select new DropDownItem
+                                            {
+                                                Id = f.Id.ToString(),
+                                                Name = f.Name
+                                            }).ToList();
+            Faculties.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
+            appVM.Faculties = new SelectList(Faculties, "Id", "Name");
+            IEnumerable<Advertisiment> Ads = await _Advertisement.GetAll();
+            appVM.Advertisements = Ads;
+            appVM.Id = id;
+            return View(appVM);
+         }
+
+        [HttpPost]
+        public async Task<ActionResult<ApplicationVM>> Application(ApplicationVM appVM)
+        {
+            List<DropDownItem> Faculties = (from f in await _Faculty.GetAll()
+                                            select new DropDownItem
+                                            {
+                                                Id = f.Id.ToString(),
+                                                Name = f.Name
+                                            }).ToList();
+            Faculties.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
+            appVM.Faculties = new SelectList(Faculties, "Id", "Name");
+            IEnumerable<Advertisiment> Ads = await _Advertisement.GetAll();
+            appVM.Advertisements = Ads;
+            if (ModelState.IsValid)
+            {
+                Applications app = _mapper.Map<Applications>(appVM);
+
+                IEnumerable<Applications> apps = await _Applications.GetAll();
+                if (apps != null)
+                {
+                    if (!apps.Any(m => m.Advertisement == appVM.Advertisement && m.Applicant == appVM.Id))
+                    {
+                        _Applications.Add(app);
+                        app.PaymentStatus = "Pending";
+                        await _uow.Commit();
+                    }
+                }
+                else
+                {
+                    _Applications.Add(app);
+                    app.PaymentStatus = "Pending";
+                    await _uow.Commit();
+                }
+                TempData["Message"] = "Successfully Submitted the Application.";
+                return RedirectToAction("Index");
+            }
+            else
+            {
+
+                return View(appVM);
+            }
+        }
+
+
 
 
 

@@ -51,6 +51,7 @@ namespace Lok
             services.AddScoped<IApplicantRepository, ApplicantRepository>();
             services.AddScoped<IOccupationRepository, OccupationRepository>();
             services.AddScoped<IDistrictRepository, DistrictRepository>();
+            services.AddScoped<IApplicationRepository, ApplicationRepository>();
 
             services.AddScoped<ISubService, SubServiceRepository>();
             services.AddScoped<IEthinicalGroup, EthinicalGroupRepository>();

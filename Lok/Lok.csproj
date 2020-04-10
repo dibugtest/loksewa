@@ -14,6 +14,7 @@
     <Compile Remove="Data\Interface\IServiceRepository - Copy %284%29.cs" />
     <Compile Remove="Data\Interface\IServiceRepository - Copy %285%29.cs" />
     <Compile Remove="Data\Interface\IServiceRepository - Copy.cs" />
+    <Compile Remove="Handler\LogUserActivity.cs" />
   </ItemGroup>
 
   <ItemGroup>

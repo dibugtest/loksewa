@@ -22,7 +22,7 @@ namespace Lok.Controllers
                 _uow = uow;
             }
             // GET: Post
-            [Authorize("Admin")]
+           // [Authorize("Admin")]
             public async Task<ActionResult> Index()
             {
                 var Posts = await _Post.GetAll();
