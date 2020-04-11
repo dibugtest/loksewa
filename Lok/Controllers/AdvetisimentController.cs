@@ -23,9 +23,9 @@ namespace Lok.Controllers
         private readonly IEthinicalGroup _ethinicalGroup;
         private readonly ICategoryInterface _category;
         private readonly IPostRepository _post;
+        private readonly IEducationLevelRepository _educationLavel;
 
-
-        public AdvetisimentController(IAdvertisiment Advertisiment, IUnitOfWork uow, IGroupRepository Group,ISubGroupRepository subGroup,IServiceRepository service,IEthinicalGroup ethinicalGroup,ICategoryInterface Category,IPostRepository post)
+        public AdvetisimentController(IAdvertisiment Advertisiment,IEducationLevelRepository educationLevel, IUnitOfWork uow, IGroupRepository Group,ISubGroupRepository subGroup,IServiceRepository service,IEthinicalGroup ethinicalGroup,ICategoryInterface Category,IPostRepository post)
             {
                 _Advertisiment = Advertisiment;
                 _uow = uow;
@@ -35,6 +35,7 @@ namespace Lok.Controllers
             _ethinicalGroup = ethinicalGroup;
             _post = post;
             _category = Category;
+            _educationLavel = educationLevel;
             }
             // GET: Advertisiment
             public async Task<ActionResult> Index()
@@ -52,7 +53,7 @@ namespace Lok.Controllers
             ViewBag.SubGroupId = new SelectList(await _SubGroup.GetAll(), "Id", "SubGroupName");
             ViewBag.CategoryId = new SelectList(await _category.GetAll(), "Id", "CategoryName");
             ViewBag.PostId = new SelectList(await _post.GetAll(), "Id", "PostName");
-
+            ViewBag.MInEdu = new SelectList(await _educationLavel.GetAll(), "Id","Name");
             IEnumerable<EthinicalGroup> a =  await _ethinicalGroup.GetAll();
             ViewBag.EthinicalGroup = a.ToList();
 
@@ -61,7 +62,6 @@ namespace Lok.Controllers
             [HttpPost]
             public async Task<ActionResult<Advertisiment>> Create(Advertisiment value,IFormCollection Col)
             {
-            //Advertisiment obj = new Advertisiment(value);
             List<EthinicalGroup> eths = new List<EthinicalGroup>();
             List<AdvAndEth> adv = new List<AdvAndEth> ();
             int i = 0;
@@ -91,7 +91,7 @@ namespace Lok.Controllers
             value.Service = await _service.GetById(value.ServiceId.ToString());
             value.Category = await _category.GetById(value.CategoryId.ToString());
             value.Post = await _post.GetById(value.PostId.ToString());
-
+            value.Edu = await _educationLavel.GetById(value.EducationId.ToString());
 
             _Advertisiment.Add(value);
 
@@ -170,6 +170,14 @@ namespace Lok.Controllers
                 {
                     ViewBag.CategoryId = new SelectList(await _category.GetAll(), "Id", "CategoryName", Advertisiment.CategoryId);
                 }
+                if (String.IsNullOrEmpty(Advertisiment.EducationId))
+                {
+                    ViewBag.MInEdu = new SelectList(await _educationLavel.GetAll(), "Id", "Name");
+                }
+                else
+                {
+                    ViewBag.MInEdu = new SelectList(await _educationLavel.GetAll(), "Id", "Name",Advertisiment.EducationId);
+                }
 
 
                 return View(Advertisiment);
@@ -184,20 +192,32 @@ namespace Lok.Controllers
             {
                 value.Id = ObjectId.Parse(id);
             List<EthinicalGroup> eths = new List<EthinicalGroup>();
+            List<AdvAndEth> adv = new List<AdvAndEth>();
+
             int i = 0;
             foreach (string key in Col.Keys)
             {
+                AdvAndEth adve = new AdvAndEth();
+
+                int values = 0;
+
                 if (key == "EthinicalGroup[" + i + "]")
                 {
                     EthinicalGroup eth = await _ethinicalGroup.GetById(Col["EthinicalGroup[" + i + "]"]);
-                    eths.Add(eth);
+                    values = Convert.ToInt32(Col["EthinicalGroup[" + i + "]value"]);
 
+                    eths.Add(eth);
+                    adve.GetEthinicalGroup = eth;
+                    adve.Value = values;
+                    adv.Add(adve);
                     i++;
+
 
                 }
                 // if(key["EthinicalGroup['"+i+"])
             }
             value.EthinicalGroups = eths;
+            value.Edu = await _educationLavel.GetById(value.EducationId.ToString());
 
             value.Group = await _Group.GetById(value.GroupId.ToString());
             value.SubGroup = await _SubGroup.GetById(value.SubGroupId.ToString());

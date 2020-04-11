@@ -63,6 +63,8 @@ namespace Lok
             services.AddScoped<ILoginInterface, LoginRepository>();
             services.AddScoped<IRoleInterface, RoleRepository>();
             services.AddScoped<IAuthinterface, AuthRepository>();
+            services.AddScoped<IEmailSender, EmailSender>();
+            services.AddScoped<IAdminRepository, AdminRepository>();
             services.Configure<CookieTempDataProviderOptions>(options =>
             {
                 options.Cookie.IsEssential = true;
@@ -82,7 +84,7 @@ namespace Lok
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("Admin",
-                    policy => policy.RequireRole("Admin"));
+                    policy => policy.RequireRole("Admin","SuperAdmin"));
 
                 //options.AddPolicy(,
                 //    policy =>

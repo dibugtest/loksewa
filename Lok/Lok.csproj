@@ -134,4 +134,10 @@
     <Folder Include="wwwroot\images\applicant\5e8322c1472c2746ecc39b51\Education\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\jquery-ui-1.12.1.custom\external\jquery\jquery.js" />
+    <None Include="wwwroot\jquery-ui-1.12.1.custom\jquery-ui.js" />
+    <None Include="wwwroot\jquery-ui-1.12.1.custom\jquery-ui.min.js" />
+  </ItemGroup>
+
 </Project>

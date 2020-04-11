@@ -28,130 +28,146 @@
                 <span asp-validation-for="AdvertisimentType" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Title" class="control-label"></label>
-                <input asp-for="Title" class="form-control" />
-                <span asp-validation-for="Title" class="text-danger"></span>
-            </div>
+                <div class="form-group">
+                    <label asp-for="Title" class="control-label"></label>
+                    <input asp-for="Title" class="form-control" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
 
-            <div class="form-group">
-                <label asp-for="PostId" class="control-label"></label>
+                <div class="form-group">
+                    <label asp-for="PostId" class="control-label"></label>
 
-                <select asp-for="PostId" asp-items="ViewBag.PostId" class="form-control">
-                    <option disabled selected>--- Select ---</option>
+                    <select asp-for="PostId" asp-items="ViewBag.PostId" class="form-control">
+                        <option disabled selected>--- Select ---</option>
 
-                </select>
-                <span asp-validation-for="ServiceId" class="text-danger"></span>
-            </div>
+                    </select>
+                    <span asp-validation-for="ServiceId" class="text-danger"></span>
+                </div>
 
-            <div class="form-group">
-                <label asp-for="ServiceId" class="control-label"></label>
+                <div class="form-group">
+                    <label asp-for="ServiceId" class="control-label"></label>
 
-                <select asp-for="ServiceId" asp-items="ViewBag.ServiceId" class="form-control">
-                    <option disabled selected>--- Select ---</option>
+                    <select asp-for="ServiceId" asp-items="ViewBag.ServiceId" class="form-control">
+                        <option disabled selected>--- Select ---</option>
 
-                </select>
-                <span asp-validation-for="ServiceId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="GroupId" class="control-label"></label>
-                <select asp-for="GroupId" asp-items="ViewBag.GroupId" class="form-control">
+                    </select>
+                    <span asp-validation-for="ServiceId" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="GroupId" class="control-label"></label>
+                    <select asp-for="GroupId" asp-items="ViewBag.GroupId" class="form-control">
 
-                    <option disabled selected>--- Select ---</option>
+                        <option disabled selected>--- Select ---</option>
 
-                </select>
-                <span asp-validation-for="GroupId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SubGroupId" class="control-label"></label>
-                <select asp-for="SubGroupId" asp-items="ViewBag.SubGroupId" class="form-control">
-                    <option disabled selected>--- Select ---</option>
+                    </select>
+                    <span asp-validation-for="GroupId" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="SubGroupId" class="control-label"></label>
+                    <select asp-for="SubGroupId" asp-items="ViewBag.SubGroupId" class="form-control">
+                        <option disabled selected>--- Select ---</option>
 
-                </select>
-                <span asp-validation-for="SubGroupId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CategoryId" class="control-label"></label>
-                <select asp-for="CategoryId" asp-items="ViewBag.CategoryId" class="form-control">
-                    <option disabled selected>--- Select ---</option>
+                    </select>
+                    <span asp-validation-for="SubGroupId" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="CategoryId" class="control-label"></label>
+                    <select asp-for="CategoryId" asp-items="ViewBag.CategoryId" class="form-control">
+                        <option disabled selected>--- Select ---</option>
 
-                </select>
-                <span asp-validation-for="SubGroupId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="EthinicalGroups" class="control-label"></label><br />
-                @{int i = 0;}
-                @foreach (var item in ViewBag.EthinicalGroup)
-                {
-                    <input name="EthinicalGroup[@i]" value="@item.Id" type="checkbox" id="EthinicalGroup[@i]" />
-                    <label>@item.Name</label><br />
-                    i++;
-                }
-                @*@if (Model.SelectedFruits.Contains(item.Value))
-                    {<text> checked </text>*@
-            </div>
+                    </select>
+                    <span asp-validation-for="SubGroupId" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="EthinicalGroups" class="control-label"></label><br />
+                    @{int i = 0;}
+                    @foreach (var item in ViewBag.EthinicalGroup)
+                    {
+                        <input name="EthinicalGroup[@i]" value="@item.Id" type="checkbox" id="EthinicalGroup[@i]" />
+                        <label>@item.Name</label><br />
+                        i++;
+                    }
+                    @*@if (Model.SelectedFruits.Contains(item.Value))
+                        {<text> checked </text>*@
+                </div>
 
-            <div class="form-group">
-                <label asp-for="DatePublished" class="control-label"></label>
-                <input asp-for="DatePublished" class="form-control" />
-                <span asp-validation-for="DatePublished" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TimePublished" class="control-label"></label>
-                <input asp-for="TimePublished" class="form-control" />
-                <span asp-validation-for="TimePublished" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Office" class="control-label"></label>
-                <input asp-for="Office" class="form-control" />
-                <span asp-validation-for="Office" class="text-danger"></span>
-            </div>
+                <div class="form-group">
+                    <label asp-for="DatePublished" class="control-label"></label>
+                    <input asp-for="DatePublished" id="datepicker" class="form-control" />
+                    <span asp-validation-for="DatePublished" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="TimePublished" class="control-label"></label>
+                    <input asp-for="TimePublished" id="time1" class="form-control" />
+                    <span asp-validation-for="TimePublished" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Office" class="control-label"></label>
+                    <input asp-for="Office" class="form-control" />
+                    <span asp-validation-for="Office" class="text-danger"></span>
+                </div>
 
-            <div class="form-group">
-                <label asp-for="Marks" class="control-label"></label>
-                <input asp-for="Marks" class="form-control" />
-                <span asp-validation-for="Marks" class="text-danger"></span>
-            </div>
+                <div class="form-group">
+                    <label asp-for="Marks" class="control-label"></label>
+                    <input asp-for="Marks" class="form-control" />
+                    <span asp-validation-for="Marks" class="text-danger"></span>
+                </div>
 
-            <div class="form-group">
-                <label asp-for="MinAge" class="control-label"></label>
-                <input asp-for="MinAge" class="form-control" />
-                <span asp-validation-for="MinAge" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="MaxAge" class="control-label"></label>
-                <input asp-for="MaxAge" class="form-control" />
-                <span asp-validation-for="MaxAge" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Examtype" class="control-label"></label>
-                <input asp-for="Examtype" class="form-control" />
-                <span asp-validation-for="Examtype" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="MinEduQualification" class="control-label"></label>
-                <input asp-for="MinEduQualification" class="form-control" />
-                <span asp-validation-for="MinEduQualification" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NoticeNo" class="control-label"></label>
-                <input asp-for="NoticeNo" class="form-control" />
-                <span asp-validation-for="NoticeNo" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Notice" class="control-label"></label>
-                <input asp-for="Notice" class="form-control" />
-                <span asp-validation-for="Notice" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-default" />
-            </div>
+                <div class="form-group">
+                    <label asp-for="MinAge" class="control-label"></label>
+                    <input asp-for="MinAge" class="form-control" />
+                    <span asp-validation-for="MinAge" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="MaxAge" class="control-label"></label>
+                    <input asp-for="MaxAge" class="form-control" />
+                    <span asp-validation-for="MaxAge" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Examtype" class="control-label"></label>
+                    <input asp-for="Examtype" class="form-control" />
+                    <span asp-validation-for="Examtype" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="EducationId" class="control-label"></label>
+                    <select asp-for="EducationId" asp-items="ViewBag.MinEdu" class="form-control">
+                        <option disabled selected>--- Select ---</option>
+
+                    </select>
+
+                    <span asp-validation-for="EducationId" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="NoticeNo" class="control-label"></label>
+                    <input asp-for="NoticeNo" class="form-control" />
+                    <span asp-validation-for="NoticeNo" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="EndDate" class="control-label"></label>
+                    <input asp-for="EndDate" id="datepicker1" class="form-control" />
+                    <span asp-validation-for="EndDate" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="DoubleDasturDate" class="control-label"></label>
+                    <input asp-for="DoubleDasturDate" id="datepicker2" class="form-control" />
+                    <span asp-validation-for="DoubleDasturDate" class="text-danger"></span>
+                </div>
+
+
+                <div class="form-group">
+                    <label asp-for="Notice" class="control-label"></label>
+                    <input asp-for="Notice" class="form-control" />
+                    <span asp-validation-for="Notice" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-default" />
+                    <a asp-action="Index">Back to List</a>
+
+                </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
 
 
 <script src="~/lib/jquery/dist/jquery.js"></script>
@@ -160,34 +176,50 @@
 
         $('form input[type=checkbox]').change(function (e) {
             e.preventDefault();
-         
+
             // alert($(this).val());
             if ($(this).prop("checked") == true) {
-                var className = $(this).attr('Value');
-                b = className + "value";
-                c = $(this).attr('Name') + "value";
+                var className = $(this).attr('Value');//id layeko ho
+                b = className + "value";//id ma value lekhya matra ho
+                c = $(this).attr('Name') + "value";//name autai hune vayeko le yaha chai value add vako ho
 
-               $(this).after('&nbsp;<input type="text" id="'+b+'"  size="4" name="'+c+'">');
+                $(this).after('&nbsp;<input type="text" id="' + b + '"  size="4" name="' + c + '">');
 
                 //$(this).after('&nbsp;<input type="text" id="txt"  size="4" name="Value4">');
             }
             else {
-                  var className = $(this).attr('Value');
+                var className = $(this).attr('Value');//id leko ho eth group ko ie that is unique
                 b = className + "value";
-              
-                        $("#"+b).remove();
+
+                $("#" + b).remove();
 
                 //check.next("input[type=text]").remove();
-               // check.next("body input#txt").val("1");
-               // $(this).after('input[type=text]').remove();
+                // check.next("body input#txt").val("1");
+                // $(this).after('input[type=text]').remove();
 
-                }
+            }
 
         });
-       });
+    });
 </script>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <link rel="stylesheet" href="~/jquery-ui-1.12.1.custom/jquery-ui.css" />
+    <script type="text/javascript" src="~/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="~/jquery-ui-1.12.1.custom/jquery.timePicker.js"></script>
+
+    <script>
+        $(function () {
+            $("#datepicker").datepicker();
+            $("#datepicker1").datepicker();
+            $("#datepicker2").datepicker();
+            $("#time1").timePicker();
+
+
+        });
+
+    </script>
+
 
 }

@@ -93,9 +93,16 @@ namespace Lok.Controllers
                    AllowRefresh = false
                });
 
+                        if (user.Role == "SuperAdmin")
+                        {
+                            return RedirectToAction("Index", "Post");
 
+                        }
+                        else
+                        {
 
-                        return RedirectToAction("Index", "Post");
+                            return RedirectToAction("Index", "Post");
+                        }
                        
                     }
 

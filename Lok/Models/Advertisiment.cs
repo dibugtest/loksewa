@@ -37,14 +37,19 @@ namespace Lok.Models
         public string NoticeNo { get; set; }
 
         public string MinAge { get; set; }
+
         public string MaxAge { get; set; }
         public string Examtype { get; set; }
 
-        public string MinEduQualification { get; set; }
+        public EducationLevel Edu { get; set; }
+        public string EducationId { get; set; }
 
         public string Notice { get; set; }
         public IList<EthinicalGroup> EthinicalGroups { get; set; }
         public IList<AdvAndEth> AdvAndEths { get; set; }
-        public String CreatedDate { get; set; }
+        public string CreatedDate { get; set; }
+        public string   StartDate { get; set; }
+        public string EndDate { get; set; }
+        public string DoubleDasturDate { get; set; }
     }
 }
