@@ -2920,7 +2920,10 @@ namespace Lok.Controllers
             if (ModelState.IsValid)
             {
                 Applications app = _mapper.Map<Applications>(appVM);
-
+                app.Applicant= Request.Cookies != null ? Request.Cookies["Id"] : null;
+                app.EthnicalGroup = appVM.EthnicalGroups;
+                app.AppliedDate = DateTime.Now;
+                
                 IEnumerable<Applications> apps = await _Applications.GetAll();
                 if (apps != null)
                 {
@@ -2949,6 +2952,29 @@ namespace Lok.Controllers
 
 
 
+        public async Task<ActionResult> Payment()
+        {
+            PaymentVM payVM = new PaymentVM();
+            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            var applications =await _Applications.GetAll();
+            var advertisements = await _Advertisement.GetAll();
+
+            IEnumerable<ApplicationPay> apps = (from a in applications
+                                                from ad in advertisements
+                                                where a.Advertisement == ad.Id.ToString() && a.Applicant==id
+                                                select new ApplicationPay
+                                                {
+                                                    Id = a.Id.ToString(),
+                                                    ObjAd = ad,
+                                                    EthnicalGroups = String.Join(" , ", a.EthnicalGroup.ToList()),
+                                                    PaymentStatus = a.PaymentStatus
+
+                                                }).AsEnumerable();
+            payVM.Applications = apps.ToList();
+            payVM.Applicant =await _Applicant.GetById(id);
+            return View(payVM); 
+
+        }
 
 
         private static string RandomString(int length)

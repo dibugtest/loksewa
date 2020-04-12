@@ -34,5 +34,6 @@ namespace Lok.ViewModel
         };
         public SelectList Faculties { get; set; }
         public SelectList ExamCenters { get; set; }
+        public Decimal TotalAmount { get; set; }
     }
 }
