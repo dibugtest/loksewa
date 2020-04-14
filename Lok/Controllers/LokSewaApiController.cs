@@ -15,7 +15,7 @@ namespace Lok.Controllers
     public class LokSewaApiController : ControllerBase
     {
         private readonly IAuthinterface _auth;
-        //private readonly IApplicantRepository _Applicant;
+       
         //private readonly IReligionRepository _Religion;
         //private readonly IEmploymentRepository _Employment;
         //private readonly IOccupationRepository _Occupation;
@@ -56,7 +56,7 @@ namespace Lok.Controllers
             //_Awastha = Awastha;
             //_uow = uow;
             //_auth = auth;
-            //_Applications = Application;
+            _Advertisement = Advertisement;
             _Advertisement = Advertisement;
             _mapper = mapper;
         }
@@ -73,7 +73,15 @@ namespace Lok.Controllers
             return groups;
           
         }
+        [Route("/api/LokSewaApi/GetAd/{id}")]
+        [HttpPost]
+        public async Task<Advertisiment> GetAdvertisement(string id)
+        {
+            Advertisiment ads = await _Advertisement.GetById(id);
 
+            return ads;
+
+        }
         // GET: api/LokSewaApi/5
         [HttpGet("{id}", Name = "Get")]
         public string Get(int id)

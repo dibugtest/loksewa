@@ -42,11 +42,11 @@
                             <td>
                                 @if (item.PaymentStatus != "Pending")
                                 {
-                                    <button  disabled>Pay</button>
+                                    <button disabled>Pay</button>
                                 }
                                 else
                                 {
-                                    <button data-toggle="modal" data-target="#myModal" id="btnPay" class="btn btn-default">Pay</button>
+                                    <button data-id="@item.ObjAd.Id" data-toggle="modal" data-target="#myModal" id="btnPay" class="btn btn-default">Pay</button>
 
                                 }
 
@@ -133,14 +133,14 @@
                         <td>
                             <label style="font-size:12px;">
                                 आर्थिक वर्ष:
-                            </label><label style="font-size:12px;">
+                            </label><label style="font-size:12px;" id="lblFiscalYear">
                                 2076/77
                             </label>
                         </td>
                         <td>
                             <label style="font-size:14px;">
                                 मास्टर आइ. डि.
-                            </label><label style="font-size:14px;">
+                            </label><label style="font-size:14px;" id="lblMasterId">
                                 701505
                             </label>
                         </td>
@@ -151,7 +151,7 @@
                         <td>
                             <label style="font-size:12px;">
                                 कारोवार संकेत:
-                            </label><label style="font-size:12px;">
+                            </label><label style="font-size:12px;" id="lblTransaction">
                                 2076-4896844
                             </label>
                         </td>
@@ -177,7 +177,7 @@
                         <td>
                             <label style="font-size:12px;">
                                 कार्यालय:
-                            </label><label style="font-size:12px;">
+                            </label><label style="font-size:12px;" id="lblOffice">
                                 दरखास्त ब्यबस्थापन कार्यलय,अनामनगर(२१००१३५०२)
                             </label>
                         </td>
@@ -185,7 +185,7 @@
                         <td>
                             <label style="font-size:12px;">
                                 फोन:
-                            </label><label style="font-size:14px;">
+                            </label><label style="font-size:14px;" id="lblPhone">
                                 @Model.Applicant.ContactInformation.MobileNo
                             </label>
                         </td>
@@ -202,10 +202,32 @@
                     <tr>
 
                         <td style="padding-right:30px;">
-                            <span style="font-size:14px">पद: </span><span style="font-size:12px" id="lbl"></span>
+                            <span style="font-size:14px">पद: </span><span style="font-size:12px" id="lblPost"></span>
 
-                            ,<span style="font-size:14px">श्रेणी/तह :</span><span style="font-size:12px">रा.प.अनं द्वितीय</span>,
-                            <span style="font-size:14px">सेवा :</span><span style="font-size:12px">एकीकृत तथा संयुक्त</span><div id="A9782:myform:j_idt3736" class="ui-datatable ui-widget" style="text-align:center;"><table role="grid"><thead><tr role="row"><th id="A9782:myform:j_idt3736:j_idt3740" class="ui-state-default" role="columnheader" style="background-color:#EAF0F8;font-size:12px"><div class="ui-dt-c"><span>विज्ञापन नं.</span></div></th><th id="A9782:myform:j_idt3736:j_idt3745" class="ui-state-default" role="columnheader" style="background-color:#EAF0F8;font-size:12px"><div class="ui-dt-c"><span>किसिम/समूह</span></div></th><th id="A9782:myform:j_idt3736:j_idt3751" class="ui-state-default" role="columnheader" style="background-color:#EAF0F8;font-size:12px"><div class="ui-dt-c"><span>शुल्क</span></div></th></tr></thead><tfoot></tfoot><tbody id="A9782:myform:j_idt3736_data" class="ui-datatable-data ui-widget-content"><tr data-ri="0" class="ui-widget-content ui-datatable-even RED" role="row"><td role="gridcell" style="background-color:#EAF0F8;font-size:12px"><div class="ui-dt-c"><span style="font-size:12px">11910/2076-77</span></div></td><td role="gridcell" style="background-color:#EAF0F8;font-size:12px"><div class="ui-dt-c"><span style="font-size:12px">Open</span></div></td><td role="gridcell" style="background-color:#EAF0F8;font-size:12px"><div class="ui-dt-c"><span style="font-size:12px">300.00</span></div></td></tr><tr data-ri="1" class="ui-widget-content ui-datatable-odd RED" role="row"><td role="gridcell" style="background-color:#EAF0F8;font-size:12px"><div class="ui-dt-c"><span style="font-size:12px">11912/2076-77</span></div></td><td role="gridcell" style="background-color:#EAF0F8;font-size:12px"><div class="ui-dt-c"><span style="font-size:12px">Reserved(Tribute)</span></div></td><td role="gridcell" style="background-color:#EAF0F8;font-size:12px"><div class="ui-dt-c"><span style="font-size:12px">150.00</span></div></td></tr><tr data-ri="2" class="ui-widget-content ui-datatable-even color" role="row"><td role="gridcell" style="background-color:#EAF0F8;font-size:12px"><div class="ui-dt-c"><span style="font-size:12px">Total</span></div></td><td role="gridcell" style="background-color:#EAF0F8;font-size:12px"><div class="ui-dt-c"><span style="font-size:12px"></span></div></td><td role="gridcell" style="background-color:#EAF0F8;font-size:12px"><div class="ui-dt-c"><span style="font-size:12px">450.00</span></div></td></tr></tbody></table></div>
+                            ,<span style="font-size:14px">श्रेणी/तह :</span><span style="font-size:12px" id="lblTaha">रा.प.अनं द्वितीय</span>,
+                            <span style="font-size:14px">सेवा :</span><span style="font-size:12px" id="lblGroup">एकीकृत तथा संयुक्त</span><div id="A9782:myform:j_idt3736" class="ui-datatable ui-widget" style="text-align:center;">
+                                <table id="tblReserve" style="border-collapse: collapse; border-spacing: 0;border:1px solid #ddd;">
+                                    <thead>
+                                        <tr role="row">
+                                            <th id="A9782:myform:j_idt3736:j_idt3740" class="ui-state-default" role="columnheader" style="border:1px solid #ddd;"background-color:#EAF0F8;font-size:12px">
+                                                <div class="ui-dt-c"><span>विज्ञापन नं.</span></div>
+                                            </th>
+                                            <th id="A9782:myform:j_idt3736:j_idt3745" class="ui-state-default" role="columnheader" style="border:1px solid #ddd;"background-color:#EAF0F8;font-size:12px">
+                                                <div class="ui-dt-c"><span>किसिम/समूह</span></div>
+                                            </th>
+                                            <th id="A9782:myform:j_idt3736:j_idt3751" class="ui-state-default" role="columnheader" style="border:1px solid #ddd;"background-color:#EAF0F8;font-size:12px">
+                                                <div class="ui-dt-c"><span>शुल्क</span></div>
+                                            </th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody id="tblEth">
+                                        @*<tr data-ri="0" class="ui-widget-content ui-datatable-even RED" role="row"><td role="gridcell" style="background-color:#EAF0F8;font-size:12px"><div class="ui-dt-c"><span style="font-size:12px">11910/2076-77</span></div></td><td role="gridcell" style="background-color:#EAF0F8;font-size:12px"><div class="ui-dt-c"><span style="font-size:12px">Open</span></div></td><td role="gridcell" style="background-color:#EAF0F8;font-size:12px"><div class="ui-dt-c"><span style="font-size:12px">300.00</span></div></td></tr>
+                                        <tr data-ri="1" class="ui-widget-content ui-datatable-odd RED" role="row"><td role="gridcell" style="background-color:#EAF0F8;font-size:12px"><div class="ui-dt-c"><span style="font-size:12px">11912/2076-77</span></div></td><td role="gridcell" style="background-color:#EAF0F8;font-size:12px"><div class="ui-dt-c"><span style="font-size:12px">Reserved(Tribute)</span></div></td><td role="gridcell" style="background-color:#EAF0F8;font-size:12px"><div class="ui-dt-c"><span style="font-size:12px">150.00</span></div></td></tr>
+                                        <tr data-ri="2" class="ui-widget-content ui-datatable-even color" role="row"><td role="gridcell" style="background-color:#EAF0F8;font-size:12px"><div class="ui-dt-c"><span style="font-size:12px">Total</span></div></td><td role="gridcell" style="background-color:#EAF0F8;font-size:12px"><div class="ui-dt-c"><span style="font-size:12px"></span></div></td><td role="gridcell" style="background-color:#EAF0F8;font-size:12px"><div class="ui-dt-c"><span style="font-size:12px">450.00</span></div></td></tr>*@
+                                    </tbody>
+                                </table>
+                            </div>
                             <br>
 
                         </td>
@@ -333,257 +355,10 @@
 
                 </tbody>
             </table>
-
-
 
             <hr>
             <br>
 
-            <table width="100%">
-                <tbody>
-                    <tr>
-                        <td colspan="3">
-                            <table width="100%">
-                                <tbody>
-                                    <tr>
-                                        <td valign="top">
-                                            <img src="~/images/nepal_logo.png" alt="" width="90" height="60">
-
-                                        </td>
-                                        <td align="center" valign="top">
-                                            <label style="font-size:14px;">
-                                                लोक सेवा आयोग
-                                            </label> <br><label style="font-size:14px;">
-                                                दरखास्त  दस्तुर  बूझाउने भाैचर
-                                            </label>
-                                        </td>
-                                        <td>बैंक प्रति</td>
-
-                                    </tr>
-                                </tbody>
-                            </table>
-
-                        </td>
-                    </tr>
-
-
-                </tbody>
-            </table>
-
-
-            <table width="100%">
-
-                <tbody>
-                    <tr>
-                        <td><u><span style="font-size:16px">भाैचर विवरण </span></u></td>
-
-                        <td><u><span style="font-size:16px">राजस्व बूझाउनेको विवरण</span></u></td>
-                        <td></td>
-
-                    </tr>
-                    <tr>
-
-                        <td>
-                            <label style="font-size:12px;">
-                                आर्थिक वर्ष:
-                            </label><label style="font-size:12px;">
-                                2076/77
-                            </label>
-                        </td>
-                        <td>
-                            <label style="font-size:14px;">
-                                मास्टर आइ. डि.
-                            </label><label style="font-size:14px;">
-                                701505
-                            </label>
-                        </td>
-
-                    </tr>
-                    <tr>
-
-                        <td>
-                            <label style="font-size:12px;">
-                                कारोवार संकेत:
-                            </label><label style="font-size:12px;">
-                                2076-4896844
-                            </label>
-                        </td>
-
-                        <td>
-                            <label style="font-size:12px;">
-                                नाम:
-                            </label><label style="font-size:12px">
-                                सागर
-                            </label><label style="font-size:12px">
-                            </label><label style="font-size:12px">
-                                महर्जन
-                            </label>
-                        </td>
-                    </tr>
-
-
-                    <tr>
-
-                        <td>
-                            <label style="font-size:12px;">
-                                कार्यालय:
-                            </label><label style="font-size:12px;">
-                                दरखास्त ब्यबस्थापन कार्यलय,अनामनगर(२१००१३५०२)
-                            </label>
-                        </td>
-
-                        <td>
-                            <label style="font-size:12px;">
-                                फोन:
-                            </label><label style="font-size:14px;">
-                                9843608738
-                            </label>
-                        </td>
-
-                    </tr>
-                    <tr>
-                        <td>
-                            राजस्व बुझाउने बैंक: <label>
-                                राष्ट्रिय बाणिज्य बैंक
-                            </label>
-                        </td>
-                        <td></td>
-                    </tr>
-                    <tr>
-
-                        <td style="padding-right:30px;">
-                            <span style="font-size:14px">पद: </span><span style="font-size:12px">खरिदार वा सो सरह</span>
-
-                            ,<span style="font-size:14px">श्रेणी/तह :</span><span style="font-size:12px">रा.प.अनं द्वितीय</span>,
-                            <span style="font-size:14px">सेवा:</span><span style="font-size:12px">एकीकृत तथा संयुक्त</span><div id="A9782:myform:j_idt3847" class="ui-datatable ui-widget" style="text-align:center;"><table role="grid"><thead><tr role="row"><th id="A9782:myform:j_idt3847:j_idt3849" class="ui-state-default" role="columnheader" style="background-color:#EAF0F8;font-size:12px"><div class="ui-dt-c"><span>विज्ञापन नं.</span></div></th><th id="A9782:myform:j_idt3847:j_idt3855" class="ui-state-default" role="columnheader" style="background-color:#EAF0F8;font-size:12px"><div class="ui-dt-c"><span>किसिम/समूह</span></div></th><th id="A9782:myform:j_idt3847:j_idt3858" class="ui-state-default" role="columnheader" style="background-color:#EAF0F8;font-size:12px"><div class="ui-dt-c"><span>शुल्क</span></div></th></tr></thead><tfoot></tfoot><tbody id="A9782:myform:j_idt3847_data" class="ui-datatable-data ui-widget-content"><tr data-ri="0" class="ui-widget-content ui-datatable-even" role="row"><td role="gridcell" style="background-color:#EAF0F8;font-size:12px"><div class="ui-dt-c"><span style="font-size:12px">11910/2076-77</span></div></td><td role="gridcell" style="background-color:#EAF0F8;font-size:12px"><div class="ui-dt-c"><span style="font-size:12px">Open</span></div></td><td role="gridcell" style="background-color:#EAF0F8;font-size:12px"><div class="ui-dt-c"><span style="font-size:12px">300.00</span></div></td></tr><tr data-ri="1" class="ui-widget-content ui-datatable-odd" role="row"><td role="gridcell" style="background-color:#EAF0F8;font-size:12px"><div class="ui-dt-c"><span style="font-size:12px">11912/2076-77</span></div></td><td role="gridcell" style="background-color:#EAF0F8;font-size:12px"><div class="ui-dt-c"><span style="font-size:12px">Reserved(Tribute)</span></div></td><td role="gridcell" style="background-color:#EAF0F8;font-size:12px"><div class="ui-dt-c"><span style="font-size:12px">150.00</span></div></td></tr><tr data-ri="2" class="ui-widget-content ui-datatable-even" role="row"><td role="gridcell" style="background-color:#EAF0F8;font-size:12px"><div class="ui-dt-c"><span style="font-size:12px">Total</span></div></td><td role="gridcell" style="background-color:#EAF0F8;font-size:12px"><div class="ui-dt-c"><span style="font-size:12px"></span></div></td><td role="gridcell" style="background-color:#EAF0F8;font-size:12px"><div class="ui-dt-c"><span style="font-size:12px">450.00</span></div></td></tr></tbody></table></div>
-                            <br>
-
-                        </td>
-
-
-
-                        <td>
-                            <br>
-                            <table class="voucher-table voucher-table-border" style="font-size:12px; padding=top:10px; padding-left:5px; width: 100%; border-collapse: separate; border-spacing: 0; border: 1px solid #ddd;">
-                                <tbody>
-                                    <tr>
-                                        <td style="width: 50%; border: 1px solid #ddd; padding: 0px 5px; border-bottom-width: 0; border-left-width: 0; vertical-align: top;">
-                                            नोटको विवरण
-                                        </td>
-                                        <td style="width: 25%; border: 1px solid #ddd; padding: 0px 5px; border-bottom-width: 0; border-left-width: 0; vertical-align: top;">
-                                            गणना
-                                        </td>
-                                        <td style="border: 1px solid #ddd; padding: 0px 5px; border-bottom-width: 0; border-left-width: 0; vertical-align: top;">
-                                            रकम
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="voucher-text-right" style="text-align: right; border: 1px solid #ddd; padding: 0px 5px; border-bottom-width: 0; border-left-width: 0; vertical-align: top;">
-                                            १०००
-                                        </td>
-                                        <td style="border: 1px solid #ddd; padding: 0px 5px; border-bottom-width: 0; border-left-width: 0; vertical-align: top;"></td>
-                                        <td style="border: 1px solid #ddd; padding: 0px 5px; border-bottom-width: 0; border-left-width: 0; vertical-align: top;">
-                                            =
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="voucher-text-right" style="text-align: right; border: 1px solid #ddd; padding: 0px 5px; border-bottom-width: 0; border-left-width: 0; vertical-align: top;">
-                                            ५००
-                                        </td>
-                                        <td style="border: 1px solid #ddd; padding: 0px 5px; border-bottom-width: 0; border-left-width: 0; vertical-align: top;"></td>
-                                        <td style="border: 1px solid #ddd; padding: 0px 5px; border-bottom-width: 0; border-left-width: 0; vertical-align: top;">
-                                            =
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="voucher-text-right" style="text-align: right; border: 1px solid #ddd; padding: 0px 5px; border-bottom-width: 0; border-left-width: 0; vertical-align: top;">
-                                            १००
-                                        </td>
-                                        <td style="border: 1px solid #ddd; padding: 0px 5px; border-bottom-width: 0; border-left-width: 0; vertical-align: top;"></td>
-                                        <td style="border: 1px solid #ddd; padding: 0px 5px; border-bottom-width: 0; border-left-width: 0; vertical-align: top;">
-                                            =
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="voucher-text-right" style="text-align: right; border: 1px solid #ddd; padding: 0px 5px; border-bottom-width: 0; border-left-width: 0; vertical-align: top;">
-                                            ५०
-                                        </td>
-                                        <td style="border: 1px solid #ddd; padding: 0px 5px; border-bottom-width: 0; border-left-width: 0; vertical-align: top;"></td>
-                                        <td style="border: 1px solid #ddd; padding: 0px 5px; border-bottom-width: 0; border-left-width: 0; vertical-align: top;">
-                                            =
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="voucher-text-right" style="text-align: right; border: 1px solid #ddd; padding: 0px 5px; border-bottom-width: 0; border-left-width: 0; vertical-align: top;">
-                                            २०
-                                        </td>
-                                        <td style="border: 1px solid #ddd; padding: 0px 5px; border-bottom-width: 0; border-left-width: 0; vertical-align: top;"></td>
-                                        <td style="border: 1px solid #ddd; padding: 0px 5px; border-bottom-width: 0; border-left-width: 0; vertical-align: top;">
-                                            =
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="voucher-text-right" style="text-align: right; border: 1px solid #ddd; padding: 0px 5px; border-bottom-width: 0; border-left-width: 0; vertical-align: top;">
-                                            १०
-                                        </td>
-                                        <td style="border: 1px solid #ddd; padding: 0px 5px; border-bottom-width: 0; border-left-width: 0; vertical-align: top;"></td>
-                                        <td style="border: 1px solid #ddd; padding: 0px 5px; border-bottom-width: 0; border-left-width: 0; vertical-align: top; ">
-                                            =
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="voucher-text-right" style="text-align: right; border: 1px solid #ddd; padding: 0px 5px; border-bottom-width: 0; border-left-width: 0; vertical-align: top;">
-                                            ५
-                                        </td>
-                                        <td style="border: 1px solid #ddd; padding: 0px 5px; border-bottom-width: 0; border-left-width: 0; vertical-align: top;"></td>
-                                        <td style="border: 1px solid #ddd; padding: 0px 5px; border-bottom-width: 0; border-left-width: 0; vertical-align: top;">
-                                            =
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="voucher-text-right" style="text-align: right; border: 1px solid #ddd; padding: 0px 5px; border-bottom-width: 0; border-left-width: 0; vertical-align: top;">
-                                            २
-                                        </td>
-                                        <td style="border: 1px solid #ddd; padding: 0px 5px; border-bottom-width: 0; border-left-width: 0; vertical-align: top;"></td>
-                                        <td style="border: 1px solid #ddd; padding: 0px 5px; border-bottom-width: 0; border-left-width: 0; vertical-align: top;">
-                                            =
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="voucher-text-right" style="text-align: right; border: 1px solid #ddd; padding: 0px 5px; border-bottom-width: 0; border-left-width: 0; vertical-align: top;">
-                                            सिक्का
-                                        </td>
-                                        <td style="border: 1px solid #ddd; padding: 0px 5px; border-bottom-width: 0; border-left-width: 0; vertical-align: top;"></td>
-                                        <td style="border: 1px solid #ddd; padding: 0px 5px; border-bottom-width: 0; border-left-width: 0; vertical-align: top;">
-                                            =
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="voucher-text-right" style="text-align: right; border: 1px solid #ddd; padding: 0px 5px; border-bottom-width: 0; border-left-width: 0; vertical-align: top;">
-                                            जम्मा
-                                        </td>
-                                        <td style="border: 1px solid #ddd; padding: 0px 5px; border-bottom-width: 0; border-left-width: 0; vertical-align: top;"></td>
-                                        <td style="border: 1px solid #ddd; padding: 0px 5px; border-bottom-width: 0; border-left-width: 0; vertical-align: top;">
-                                            =
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-
-                        </td>
-                    </tr>
-
-
-                    <tr>
-                        <td colspan="2">
-                            <br>
-                        </td>
-
-                    </tr>
-
-
-                </tbody>
-            </table>
         </div>
 
 
@@ -595,11 +370,49 @@
     @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
     <a asp-action="Index">Back to List</a>
 </div>
-@section Scripts{ 
+@section Scripts{
     <script>
         $(document).ready(function () {
+            var id = null;
+            var ad = null;
+
+            $("#btnPay").click(function () {
+                id = $(this).attr("data-id");
+            })
+
             $("#btnPrint").click(function () {
                 if ($("#ddlBank").val() != "") {
+                    $.ajax({
+                        async: false,
+                        type: "POST",
+                        dataType: "json",
+                        data: '{"AdNo":"' + id + '"}',
+                        contentType: "application/json; charset=utf-8",
+                        url: "/api/lokSewaApi/getAd/" + id,//RootUrl +
+                        success: function (response) {
+                            if (response != null) {
+                                ad = response;
+                            }
+                        }
+                    });
+
+
+                   // alert($('#ddlBank option:selected').val());
+                    $("body #lblBank").empty().html($('#ddlBank option:selected').val());
+                    $("body #lblOffice").empty().html("Office");
+                    $("body #lblPost").empty().html(ad.post.postName);
+                    $("body #lblTaha").empty().html(ad.post.postName);
+                    $("body #lblGroup").empty().html(ad.group.groupName);
+
+                    var html = "";
+                    var sum = parseFloat(0);
+                    for (var i = 0; i < ad.advAndEths.length; i++) {
+                        html = html + "<tr><td>" + ad.advertisimentNo + "</td><td>"
+                            + ad.advAndEths[i].getEthinicalGroup.name + "</td><td>" + ad.advAndEths[i].getEthinicalGroup.code + "</td></tr>";
+                       // sum = sum + parseFloat(ad.advAndEths[i].getEthinicalGroup.code);
+                    }
+                    html = html + "<tr><td></td><td>Total</td><td>" + sum + "</td></tr>";
+                    $("body #tblEth").html(html);
                     PrintElem("divSlip");
                 }
                 else {
@@ -610,21 +423,17 @@
             $("#ddlStatus").change(function () {
                 var status = $(this).val();
 
-                //var trs = $("table#tblApp tbody").find("tr");
-                //trs.hide();
 
                 $('table#tblApp tbody tr').hide();
                 $('table#tblApp tbody tr').filter(":contains('" + status + "')").show();
-               // trs.filter('.contains("' + status + '")').show();
 
             })
         })
 
 
         function PrintElem(elem) {
-            var mywindow = window.open('','_blank', 'PRINT', 'height=842,width=590');
-
-            mywindow.document.write('<html><head><title></title>');
+            var mywindow = window.open('', '_blank', 'PRINT', 'height=842,width=590');
+            mywindow.document.write('<html><head><title></title><style>#tblReserve td{border:1px solid #ddd; } </style>');
             mywindow.document.write('</head><body >');
             mywindow.document.write(document.getElementById(elem).innerHTML);
             mywindow.document.write('</body></html>');
