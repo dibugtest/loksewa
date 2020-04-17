@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Lok.Data.Interface;
 using Lok.Models;
 using Lok.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -12,6 +13,8 @@ using MongoDB.Bson;
 
 namespace Lok.Controllers
 {
+    [Authorize("Admin",AuthenticationSchemes = "AdminCookie")]
+
     public class AdvetisimentController : Controller
     {
        

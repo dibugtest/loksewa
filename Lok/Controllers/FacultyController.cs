@@ -10,6 +10,7 @@ using MongoDB.Bson;
 
 namespace Lok.Controllers
 {
+
     public class FacultyController : Controller
     {
         private readonly IFacultyRepository _Faculty;

@@ -73,14 +73,27 @@ namespace Lok
             {
                 options.IdleTimeout = TimeSpan.FromDays(1);
             });
-            services.AddAuthentication("Cookie")
-                .AddCookie("Cookie",
+            services.AddAuthentication("UserCookie")
+                .AddCookie("AdminCookie",
                     options =>
                     {
                         options.LoginPath = new PathString("/Login/");
                         options.AccessDeniedPath = new PathString("/Account/Forbidden/");
                         options.LogoutPath = new PathString("/Account/Logout");
-                    });
+                    })
+                .AddCookie("UserCookie",
+                options =>
+                {
+                    options.LoginPath = new PathString("/Account/Login");
+                    options.LogoutPath = new PathString("/Account/Logout");
+
+                }
+
+                )
+               
+            
+                
+                ;
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddAuthorization(options =>
             {
