@@ -57,9 +57,11 @@ namespace Lok.Controllers
             Login Login = new Login(){
                 Email = value.Email,
                 Role = value.Role,
-                RandomPass=password
+                RandomPass=password,
+               sentdate = DateTime.Now.ToShortDateString()
 
-            };
+
+        };
             _login.Add(Login);
                 await _uow.Commit();
 
@@ -91,17 +93,18 @@ namespace Lok.Controllers
        _Admins.Update(value, id);
             Login Login = new Login();
             Login =await Auth.GetUser(admin.Email);
-            if(admin.Email!=value.Email)
+            if (admin.Email != value.Email)
             {
                 Random generator = new Random();
                 string password = generator.Next(0, 999999).ToString("D6");
-                await sender.SendEmailAsync(value.Email, "Your account is successfully created", "Please use this <b>" + password + "</b> for login ");
+                await sender.SendEmailAsync(value.Email, "Your account is successfully created", "Please use this code <b>" + password + "</b> for login ");
                 Login.Email = value.Email;
                 Login.RandomPass = password;
                 Login.Role = value.Role;
-                Login.PasswordHash =null;
-                Login.PasswordSalt =null;
-               
+                Login.PasswordHash = null;
+                Login.PasswordSalt = null;
+                Login.sentdate = DateTime.Now.ToShortDateString();
+
             }
             else
             {

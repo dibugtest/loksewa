@@ -77,8 +77,9 @@ namespace Lok
                 .AddCookie("Cookie",
                     options =>
                     {
-                        options.LoginPath = new PathString("/Account/Login/");
+                        options.LoginPath = new PathString("/Login/");
                         options.AccessDeniedPath = new PathString("/Account/Forbidden/");
+                        options.LogoutPath = new PathString("/Account/Logout");
                     });
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddAuthorization(options =>
@@ -86,14 +87,13 @@ namespace Lok
                 options.AddPolicy("Admin",
                     policy => policy.RequireRole("Admin","SuperAdmin"));
 
-                //options.AddPolicy(,
-                //    policy =>
-                //    {
-                //        policy.RequireAuthenticatedUser();
-                //        policy.RequireRole("Administrator");
-                //        policy.Requirements.Add(new AlbumOwnerRequirement());
-                //    }
-                //);
+                options.AddPolicy("abc",
+                    policy =>
+                    {
+                        policy.RequireAuthenticatedUser();
+                        policy.RequireRole("Administrator");
+                    }
+                );
 
             });
 

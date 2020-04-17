@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Lok.Data.Interface;
 using Lok.Models;
+using Lok.ViewModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -56,7 +57,25 @@ namespace Lok.Controllers
             ViewBag.MInEdu = new SelectList(await _educationLavel.GetAll(), "Id","Name");
             IEnumerable<EthinicalGroup> a =  await _ethinicalGroup.GetAll();
             ViewBag.EthinicalGroup = a.ToList();
+            List<ExamViewModel> ev = new List<ExamViewModel>(){new ExamViewModel
+            {
+                ExamType="Experimental"
+            },
+              new ExamViewModel {
+                ExamType="Interview"
+            },
+               new ExamViewModel {
+                ExamType="Written"
+            },
 
+            };
+            //List<string> Exam = new List<string>()
+            //{
+            // "written", "Interview", "Experimental"
+
+            //};
+
+            ViewBag.Exam = ev;
             return View();
             }
             [HttpPost]
@@ -64,26 +83,48 @@ namespace Lok.Controllers
             {
             List<EthinicalGroup> eths = new List<EthinicalGroup>();
             List<AdvAndEth> adv = new List<AdvAndEth> ();
+            List<string> exam = new List<string>();
+
             int i = 0;
+            int j = 0;
             foreach (string key in Col.Keys)
             {
                 AdvAndEth adve = new AdvAndEth();
-                int values=0;
 
-                if (key== "EthinicalGroup["+i+"]")
+                int values = 0;
+                if (key.Contains("EthinicalGroup") && !key.Contains("value"))
                 {
-                 EthinicalGroup eth = await _ethinicalGroup.GetById(Col["EthinicalGroup[" + i + "]"]);
-                    values = Convert.ToInt32(Col["EthinicalGroup[" + i + "]value"]);
+                    EthinicalGroup eth = await _ethinicalGroup.GetById(Col[key]);
+                    values = Convert.ToInt32(Col[key + "value"]);
 
                     eths.Add(eth);
                     adve.GetEthinicalGroup = eth;
                     adve.Value = values;
                     adv.Add(adve);
-                    i++;
 
                 }
-                // if(key["EthinicalGroup['"+i+"])
+
+                //if (key == "EthinicalGroup[" + i + "]")
+                //{
+                //    EthinicalGroup eth = await _ethinicalGroup.GetById(Col["EthinicalGroup[" + i + "]"]);
+                //    values = Convert.ToInt32(Col["EthinicalGroup[" + i + "]value"]);
+
+                //    eths.Add(eth);
+                //    adve.GetEthinicalGroup = eth;
+                //    adve.Value = values;
+                //    adv.Add(adve);
+                //    i++;
+
+
+                //}
+                if (key.Contains("Exam"))
+                {
+                    string examtype = Col[key];
+                    exam.Add(examtype);
+                    j++;
+                }
             }
+            value.Examtype = exam;
             value.EthinicalGroups = eths;
             value.AdvAndEths = adv;
                 value.Group = await _Group.GetById(value.GroupId.ToString());
@@ -178,6 +219,22 @@ namespace Lok.Controllers
                 {
                     ViewBag.MInEdu = new SelectList(await _educationLavel.GetAll(), "Id", "Name",Advertisiment.EducationId);
                 }
+                List<ExamViewModel> ev = new List<ExamViewModel>(){new ExamViewModel
+            {
+                ExamType="Experimental"
+            },
+              new ExamViewModel {
+                ExamType="Interview"
+            },
+               new ExamViewModel {
+                ExamType="Written"
+            },
+
+            };
+                
+
+                ViewBag.Exam = ev;
+
 
 
                 return View(Advertisiment);
@@ -193,30 +250,54 @@ namespace Lok.Controllers
                 value.Id = ObjectId.Parse(id);
             List<EthinicalGroup> eths = new List<EthinicalGroup>();
             List<AdvAndEth> adv = new List<AdvAndEth>();
-
+            List<string> exam = new List<string>();
             int i = 0;
+            int j = 0;
+
             foreach (string key in Col.Keys)
             {
                 AdvAndEth adve = new AdvAndEth();
 
                 int values = 0;
-
-                if (key == "EthinicalGroup[" + i + "]")
+                if (key.Contains("EthinicalGroup") && !key.Contains("value"))
                 {
-                    EthinicalGroup eth = await _ethinicalGroup.GetById(Col["EthinicalGroup[" + i + "]"]);
-                    values = Convert.ToInt32(Col["EthinicalGroup[" + i + "]value"]);
+                    EthinicalGroup eth = await _ethinicalGroup.GetById(Col[key]);
+                    values = Convert.ToInt32(Col[key + "value"]);
 
                     eths.Add(eth);
                     adve.GetEthinicalGroup = eth;
                     adve.Value = values;
                     adv.Add(adve);
-                    i++;
-
 
                 }
+
+                //if (key == "EthinicalGroup[" + i + "]")
+                //{
+                //    EthinicalGroup eth = await _ethinicalGroup.GetById(Col["EthinicalGroup[" + i + "]"]);
+                //    values = Convert.ToInt32(Col["EthinicalGroup[" + i + "]value"]);
+
+                //    eths.Add(eth);
+                //    adve.GetEthinicalGroup = eth;
+                //    adve.Value = values;
+                //    adv.Add(adve);
+                //    i++;
+
+
+                //}
+                if (key.Contains("Exam"))
+                {
+                    string examtype = Col[key];
+                    exam.Add(examtype);
+                    j++;
+                }
+
                 // if(key["EthinicalGroup['"+i+"])
             }
+            value.Examtype = exam;
+
             value.EthinicalGroups = eths;
+            value.AdvAndEths = adv;
+
             value.Edu = await _educationLavel.GetById(value.EducationId.ToString());
 
             value.Group = await _Group.GetById(value.GroupId.ToString());

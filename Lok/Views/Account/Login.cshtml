@@ -1,79 +1,174 @@
 ﻿
 @model Lok.ViewModel.LoginViewModel
-
-
+@{ 
+    Layout = null;
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <title>Loksewa</title>
+    <meta content="Loksewa Login" name="loksewa" />
+    <meta content="Loksewa nepal" name="loksewa login" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-    <title>Home</title>
-    <link rel="stylesheet" href="/assets/styles/style.min.css">
+    <link rel="shortcut icon" href="/assets/images/favicon.ico">
 
-    <!-- Waves Effect -->
-    <link rel="stylesheet" href="/assets/plugin/waves/waves.min.css">
+    <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="/assets/css/icons.css" rel="stylesheet" type="text/css">
+    <link href="/assets/css/style.css" rel="stylesheet" type="text/css">
 
 </head>
+
+
 <body>
-    <div id="single-wrapper">
-        @using (Html.BeginForm("Login", "Account",  FormMethod.Post, new { @class = "frm-single" }))
-        {
-            <div class="inside">
-                <div class="title">Personal Info</div>
-                <!-- /.title -->
-                <div class="frm-title">
-                    <span style="color:red">
-                    </span>
+
+    <!-- Begin page -->
+    <div class="accountbg"></div>
+    <div class="wrapper-page">
+
+        <div class="card">
+            <div class="card-body">
+
+                <div class="text-center mt-2 mb-4">
+                    Loksewa Nepal
+                    @*<a href="index.html" class="logo logo-admin"><img src="/assets/images/logo.png" height="20" alt="logo"></a>*@
                 </div>
-                <div class="frm-title">Login</div>
 
-                <!-- /.frm-title -->
-                <div class="frm-input">
+                <div class="px-3 pb-3">
+                    @using (Html.BeginForm("Login", "Account", FormMethod.Post, new { @class = "frm-single" }))
+                    {
+                                <div class="form-group row">
+                                    <div class="col-12">
+                                        <input asp-for="Email" class="form-control"  type="text" required="" placeholder="Username">
+                                    </div>
+                                </div>
 
-                    @Html.TextBoxFor(m => m.Email, new { placeholder = "Email", required = "", @class = "frm-inp" })
-                    <i class="fa fa-user frm-ico"></i>
+                                <div class="form-group row">
+                                    <div class="col-12">
+                                        <input asp-for="Password" class="form-control" type="password" required="" placeholder="Password">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <div class="col-12">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="customCheck1">
+                                            <label class="custom-control-label" for="customCheck1">Remember me</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group text-center row m-t-20">
+                                    <div class="col-12">
+                                        <button class="btn btn-danger btn-block waves-effect waves-light" type="submit">Log In</button>
+                                    </div>
+                                </div>
+
+                                <div class="form-group m-t-10 mb-0 row">
+                                    <div class="col-sm-7 m-t-20">
+                                        <a href="@Url.Action("Forgetpass","Account")" class="text-muted"><i class="mdi mdi-lock"></i> <small>Forgot your password ?</small></a>
+                                    </div>
+                                    <div class="col-sm-5 m-t-20">
+                                        <a href="pages-register.html" class="text-muted"><i class="mdi mdi-account-circle"></i> <small>Create an account ?</small></a>
+                                    </div>
+                                </div>
+                    }
                 </div>
-                <!-- /.frm-input -->
-                <div class="frm-input">
-                    @Html.TextBoxFor(m => m.Password, new { placeholder = "Password", type = "Password", @class = "frm-inp", required = "" })
-                    <i class="fa fa-lock frm-ico"></i>
+
+                    </div>
                 </div>
-                <!-- /.frm-input -->
-                <div class="clearfix margin-bottom-20">
-
-                    <!-- /.pull-left -->
-                    <div class="pull-right"><a href="page-recoverpw.html" class="a-link"><i class="fa fa-unlock-alt"></i>Forgot password?</a></div>
-                    <!-- /.pull-right -->
-                </div>
-                <!-- /.clearfix -->
-                <button type="submit" class="frm-submit">Login<i class="fa fa-arrow-circle-right"></i></button>
-
-                <div class="row small-spacing">
-
-                    <!-- /.col-sm-12 -->
-
-                </div>
-                <!-- /.row -->
-                <div class="frm-footer">Dibugsoft © 2019</div>
-                <!-- /.footer -->
             </div>
-        }
-        <!-- .inside -->
-        <!-- /.frm-single -->
-    </div>
-    <script src="/assets/scripts/jquery.min.js"></script>
-    <script src="/assets/scripts/modernizr.min.js"></script>
-    <script src="/assets/plugin/bootstrap/js/bootstrap.min.js"></script>
-    <script src="/assets/plugin/nprogress/nprogress.js"></script>
-    <script src="/assets/plugin/waves/waves.min.js"></script>
 
-    <script src="/assets/scripts/main.min.js"></script>
-</body>
-</html>
+
+
+            <!-- jQuery  -->
+            <script src="/assets/js/jquery.min.js"></script>
+            <script src="/assets/js/popper.min.js"></script>
+            <script src="/assets/js/bootstrap.min.js"></script>
+            <script src="/assets/js/modernizr.min.js"></script>
+            <script src="/assets/js/waves.js"></script>
+            <script src="/assets/js/jquery.slimscroll.js"></script>
+            <script src="/assets/js/jquery.nicescroll.js"></script>
+            <script src="/assets/js/jquery.scrollTo.min.js"></script>
+
+            <!-- App js -->
+            <script src="assets/js/app.js"></script>
+
+        </body>
+        </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        @*@using (Html.BeginForm("Login", "Account",  FormMethod.Post, new { @class = "frm-single" }))
+                {
+                <div class="inside">
+                    <div class="title">Personal Info</div>
+                    /.title
+                    <div class="frm-title">
+                        <span style="color:red">
+                        </span>
+                    </div>
+                    <div class="frm-title">Login</div>
+
+                    /.frm-title
+                    <div class="frm-input">
+
+                        @Html.TextBoxFor(m => m.Email, new { placeholder = "Email", required = "", @class = "frm-inp" })
+                        <i class="fa fa-user frm-ico"></i>
+                    </div>
+                    /.frm-input
+                    <div class="frm-input">
+                        @Html.TextBoxFor(m => m.Password, new { placeholder = "Password", type = "Password", @class = "frm-inp", required = "" })
+                        <i class="fa fa-lock frm-ico"></i>
+                    </div>
+                    /.frm-input
+                    <div class="clearfix margin-bottom-20">
+
+                        /.pull-left
+                        <div class="pull-right"><a href="page-recoverpw.html" class="a-link"><i class="fa fa-unlock-alt"></i>Forgot password?</a></div>
+                        /.pull-right
+                    </div>
+                    /.clearfix
+                    <button type="submit" class="frm-submit">Login<i class="fa fa-arrow-circle-right"></i></button>
+
+                    <div class="row small-spacing">
+
+                        /.col-sm-12
+
+                    </div>
+                    /.row
+                    <div class="frm-footer">Dibugsoft © 2019</div>
+                    /.footer
+                </div>
+                }
+                .inside
+                /.frm-single
+                </div>
+        <script src="/assets/scripts/jquery.min.js"></script>
+        <script src="/assets/scripts/modernizr.min.js"></script>
+        <script src="/assets/plugin/bootstrap/js/bootstrap.min.js"></script>
+        <script src="/assets/plugin/nprogress/nprogress.js"></script>
+        <script src="/assets/plugin/waves/waves.min.js"></script>
+
+        <script src="/assets/scripts/main.min.js"></script>
+    </body>
+    </html>*@
 
 
 @*<div class="login-page">

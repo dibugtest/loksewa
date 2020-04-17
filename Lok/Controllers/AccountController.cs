@@ -17,9 +17,16 @@ namespace Lok.Controllers
     public class AccountController : Controller
     {
         private IAuthinterface auth;
-        public AccountController(IAuthinterface Auth)
+        private IEmailSender sender;
+        private ILoginInterface  log;
+        private IUnitOfWork uow;
+      
+        public AccountController(IAuthinterface Auth,IEmailSender sender,IUnitOfWork uow,ILoginInterface log)
         {
             this.auth = Auth;
+            this.sender = sender;
+            this.uow = uow;
+            this.log = log;
         }
         // GET: Admin/Admins
      
@@ -32,13 +39,15 @@ namespace Lok.Controllers
             return View();
         }
 
-
+        [Route("Login")]
         public ActionResult Login()
         {
             return View();
         }
         Role role = new Role();
         [HttpPost]
+        [Route("Login")]
+
         public async Task<ActionResult> Login(LoginViewModel l, string ReturnUrl)
         {
 
@@ -126,6 +135,32 @@ namespace Lok.Controllers
 
 
         }
+        public ActionResult ForgetPass(){
+            return View();
+        }
+        [HttpPost]
+        public async Task<ActionResult> ForgetPass(string Email)
+        {
+            Login login = await auth.GetUser(Email);
+            if (login != null)
+            {
+
+                Random generator = new Random();
+                string password = generator.Next(0, 999999).ToString("D6");
+                await sender.SendEmailAsync(Email, "change password", "Please use this code <b>" + password + "</b> for login ");
+                login.sentdate = DateTime.Now.ToShortDateString();
+
+                login.Email = Email;
+                login.RandomPass = password;
+                string id = Convert.ToString(login.Id);
+                log.Update(login, id);
+               await uow.Commit();
+               
+
+            }
+            return RedirectToAction("Login");
+        
+        }
 
         public ActionResult NewPassword()
         {
@@ -142,7 +177,6 @@ namespace Lok.Controllers
                 var query = await auth.GetUser(message);
                     string password = pass.Password;
                 Login login =await auth.ChangePass(query, password);
-                //query.RandomPass = null;
 
                 return RedirectToAction("Login");
 

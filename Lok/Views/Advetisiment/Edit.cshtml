@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = "Create";
+        Layout = "_LayoutAdmin";
+
 }
 
 <h2>Create</h2>
@@ -84,15 +86,15 @@
                     @{int i = 0;}
                     @foreach (var item in ViewBag.EthinicalGroup)
                     {
-                        if (Model.EthinicalGroups.Any(m=>m.Id==item.Id))
+                        if (Model.EthinicalGroups.Any(m => m.Id == item.Id))
                         {
-                            <input name="EthinicalGroup[@i]" data-val="@Model.AdvAndEths.Where(m=>m.GetEthinicalGroup.Id==item.Id).FirstOrDefault().Value" value="@item.Id" type="checkbox" id="EthinicalGroup[@i]" checked="checked" />
+                            <input name="EthinicalGroup[@i]" class="ac" data-val="@Model.AdvAndEths.Where(m=>m.GetEthinicalGroup.Id==item.Id).FirstOrDefault().Value" value="@item.Id" type="checkbox" id="EthinicalGroup[@i]" checked="checked" />
                             <label>@item.Name</label><br />
                             i++;
                         }
                         else
                         {
-                            <input name="EthinicalGroup[@i]" value="@item.Id" type="checkbox" id="EthinicalGroup[@i]" />
+                            <input name="EthinicalGroup[@i]" value="@item.Id" class="ac" type="checkbox" id="EthinicalGroup[@i]" />
                             <label>@item.Name</label><br />
                             i++;
 
@@ -101,7 +103,7 @@
 
                     }
                     @*@if (Model.SelectedFruits.Contains(item.Value))
-        {<text> checked </text>*@
+            {<text> checked </text>*@
                 </div>
 
                 <div class="form-group">
@@ -137,9 +139,29 @@
                     <span asp-validation-for="MaxAge" class="text-danger"></span>
                 </div>
                 <div class="form-group">
-                    <label asp-for="Examtype" class="control-label"></label>
-                    <input asp-for="Examtype" class="form-control" />
-                    <span asp-validation-for="Examtype" class="text-danger"></span>
+                    <label asp-for="Examtype" class="control-label"></label><br />
+                    @{int j = 0;}
+                    @foreach (var item in ViewBag.Exam)
+                    {
+                        if (Model.Examtype.Contains(item.ExamType))
+                        {
+                            <input name="Exam[@j]" value="@item.ExamType" type="checkbox" id="Exam" checked="checked" />
+                            <label>@item.ExamType</label><br />
+                            j++;
+
+                        }
+                        else
+                        {
+                            <input name="Exam[@j]" value="@item.ExamType" type="checkbox" id="Exam" />
+                            <label>@item.ExamType</label><br />
+                            j++;
+
+                        }
+
+
+                    }
+                    @*@if (Model.SelectedFruits.Contains(item.Value))
+        {<text> checked </text>*@
                 </div>
                 <div class="form-group">
                     <label asp-for="EducationId" class="control-label"></label>
@@ -178,7 +200,7 @@
 
 
                 </div>
-        </form>
+</form>
     </div>
 </div>
 
@@ -188,13 +210,18 @@
 <script src="~/lib/jquery/dist/jquery.js"></script>
 <script type="text/javascript">
     $(function () {
+
         if ($('form input[type=checkbox]').prop("checked") == true) {
             $("input:checkbox:checked").each(function () {
                     var className =$(this).val();
                 b = className + "value";
                 c = $(this).attr('Name') + "value";
                 d = $(this).attr('data-val');
-                $(this).after('&nbsp;<input type="text" id="' + b + '" value="' + d + '"  size="4" name="' + c + '">');
+                 e = $(this).attr('class');
+                if (e == "ac") {
+
+                    $(this).after('&nbsp;<input type="text" id="' + b + '" value="' + d + '"  size="4" name="' + c + '">');
+                }
 
                //$(this).after('&nbsp;<input type="text" id="txt"  size="4" name="Value4">');
             
@@ -221,9 +248,11 @@
                 var className = $(this).attr('Value');
                 b = className + "value";
                 c = $(this).attr('Name') + "value";
+                 d = $(this).attr('class');
+                if (d == "ac") {
 
-                $(this).after('&nbsp;<input type="text" id="' + b + '"  size="4" name="' + c + '">');
-
+                    $(this).after('&nbsp;<input type="text" id="' + b + '"  size="4" name="' + c + '">');
+                }
                 //$(this).after('&nbsp;<input type="text" id="txt"  size="4" name="Value4">');
             }
             else {
