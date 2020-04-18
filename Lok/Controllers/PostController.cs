@@ -10,6 +10,8 @@ using MongoDB.Bson;
 
 namespace Lok.Controllers
 {
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
+
     public class PostController : Controller
     {
         
@@ -22,14 +24,15 @@ namespace Lok.Controllers
                 _uow = uow;
             }
             // GET: Post
-            [Authorize("Admin")]
+            [Authorize("Admin", AuthenticationSchemes = "AdminCookie")]
             public async Task<ActionResult> Index()
             {
                 var Posts = await _Post.GetAll();
                 return View(Posts);
             }
+        [Authorize("Admin")]
 
-            public ActionResult<Post> Create()
+        public ActionResult<Post> Create()
             {
                 Post value = new Post();
                 return View();

@@ -49,6 +49,7 @@ namespace Lok.Controllers
         [Route("Login")]
 
         public async Task<ActionResult> Login(LoginViewModel l, string ReturnUrl)
+        
         {
 
             ViewBag.ReturnUrl = ReturnUrl;
@@ -94,7 +95,7 @@ namespace Lok.Controllers
                         var userPrincipal = new ClaimsPrincipal(userIdentity);
 
                         await HttpContext.SignInAsync(
-              "Cookie",userPrincipal,
+              "AdminCookie", userPrincipal,
                new AuthenticationProperties
                {
                    ExpiresUtc = DateTime.UtcNow.AddMinutes(100),
@@ -187,9 +188,9 @@ namespace Lok.Controllers
         }
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.SignOutAsync();
+            await HttpContext.SignOutAsync("AdminCookie");
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Login");
         }
 
         //  public ActionResult Logout()
