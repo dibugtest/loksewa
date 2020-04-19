@@ -79,6 +79,7 @@ namespace Lok
                         options.LoginPath = new PathString("/Account/Login/");
                         options.AccessDeniedPath = new PathString("/Account/Forbidden/");
                     });
+            services.AddMvc();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddAuthorization(options =>
             {

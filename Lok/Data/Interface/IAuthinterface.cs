@@ -10,7 +10,7 @@ namespace Lok.Data.Interface
     {
         Task<bool> IsUserExists(string Email);
         Task<Login> Login(string Email, string Password);
-            Task<Login> ChangePass(Login Login, string password);
+          Task<Login> ChangePass(Login Login, string password);
         Task<Login> GetUser(string Email);
 
     }

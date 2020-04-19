@@ -18,13 +18,15 @@ using System.IO;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
+using Lok.Filter;
+using System.Threading;
 
 namespace Lok.Controllers
 {
-    //[Authorize]
     public class ApplicantController : Controller
     {
         private readonly IAuthinterface _auth;
+        private readonly ILoginInterface _login;
         private readonly IApplicantRepository _Applicant;
         private readonly IReligionRepository _Religion;
         private readonly IEmploymentRepository _Employment;
@@ -39,17 +41,21 @@ namespace Lok.Controllers
         private readonly IAwasthaRepository _Awastha;
         private readonly IApplicationRepository _Applications;
         private readonly IAdvertisiment _Advertisement;
+        private IAuthinterface auth;
+
 
         private readonly IUnitOfWork _uow;
         public readonly IMapper _mapper;
 
 
-        public ApplicantController(IApplicantRepository Applicant, IReligionRepository Religion
+        public ApplicantController(ILoginInterface Login, IAuthinterface Auth, IApplicantRepository Applicant, IReligionRepository Religion
                                     , IEmploymentRepository Employment, IOccupationRepository Occupation,
                                     IVargaRepository Varga, IDistrictRepository District, IBoardNameRepository BoardName, IEducationLevelRepository EducationLevel
                                     , IFacultyRepository Faculty, ISewaRepository Sewa, IAwasthaRepository Awastha, IAuthinterface auth,
-                                    IShreniTahaRepository Shreni, IApplicationRepository Application,IAdvertisiment Advertisement, IUnitOfWork uow, IMapper mapper)
+                                    IShreniTahaRepository Shreni, IApplicationRepository Application, IAdvertisiment Advertisement, IUnitOfWork uow, IMapper mapper)
         {
+            auth = Auth;
+            _login = Login;
             _Applicant = Applicant;
             _Religion = Religion;
             _Employment = Employment;
@@ -68,13 +74,25 @@ namespace Lok.Controllers
             _Advertisement = Advertisement;
             _mapper = mapper;
         }
-
-        // GET: Applicant use authorize
+        [Auth("Login", "Applicant", "Applicant")]
         public async Task<ActionResult> Index()
         {
-            string id = Request.Cookies["Id"].ToString();
-            var Applicants = await _Applicant.GetById(id);
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string applicantId = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+
+
+            var Applicants = await _Applicant.GetById(applicantId);
             return View(Applicants);
+
         }
         [AllowAnonymous]
         public async Task<ActionResult<RegistrationVM>> RegisterApplicant()
@@ -163,35 +181,37 @@ namespace Lok.Controllers
 
             if (ModelState.IsValid)
             {
-                if (!string.IsNullOrEmpty(register.Id))
+                //if (!string.IsNullOrEmpty(register.Id))
+                //{
+                //    Applicant registeredApplicant = await _Applicant.GetById(register.Id);
+
+                //    string EmailBody = "Your Reset Password is " + Base64Decode(registeredApplicant.RandomPassword) + ".Email Verification and Password Setup link." + "<a href='" + "http://localhost:5000/applicant/emailVerification/" + register.Id + "'>Link</a>";
+                //    try
+                //    {
+                //        SendEMail(register.Email, "Email Verification Link.", EmailBody);
+
+                //        registeredApplicant.PersonalInformation = _mapper.Map<PersonalInfo>(register);
+
+                //        registeredApplicant.ExtraInformation = _mapper.Map<ExtraInfo>(register);
+
+                //        registeredApplicant.EditedDate = DateTime.Now;
+                //        registeredApplicant.CreatedBy = "Admin";//from login
+                //        _Applicant.Update(registeredApplicant, register.Id);
+                //        await _uow.Commit();
+
+                //        TempData["Message"] = "Successfully Registered. Please check your Email and reset your password.";
+                //        return RedirectToAction("PasswordReset", register.Id);
+                //    }
+                //    catch
+                //    {
+                //        ViewBag.Error = "Error";
+                //        ModelState.AddModelError(string.Empty, "Failed to send mail. Please Try Again.");
+                //        return View(register);
+                //    }
+                //}
+                // if()
                 {
-                    Applicant registeredApplicant = await _Applicant.GetById(register.Id);
-
-                    string EmailBody = "Your Reset Password is " + Base64Decode(registeredApplicant.RandomPassword) + ".Email Verification and Password Setup link." + "<a href='" + "http://localhost:5000/applicant/emailVerification/" + register.Id + "'>Link</a>";
-                    try
-                    {
-                        SendEMail(register.Email, "Email Verification Link.", EmailBody);
-
-                        registeredApplicant.PersonalInformation = _mapper.Map<PersonalInfo>(register);
-
-                        registeredApplicant.ExtraInformation = _mapper.Map<ExtraInfo>(register);
-
-                        registeredApplicant.EditedDate = DateTime.Now;
-                        registeredApplicant.CreatedBy = "Admin";//from login
-                        _Applicant.Update(registeredApplicant, register.Id);
-
-                        TempData["Message"] = "Successfully Registered. Please check your Email and reset your password.";
-                        return RedirectToAction("PasswordReset", register.Id);
-                    }
-                    catch
-                    {
-                        ViewBag.Error = "Error";
-                        ModelState.AddModelError(string.Empty, "Failed to send mail. Please Try Again.");
-                        return View(register);
-                    }
-                }
-                else
-                {
+                    Login userLogin = new Login();
 
                     Applicant applicant = new Applicant();
                     applicant.CreatedDate = DateTime.Now;
@@ -201,8 +221,13 @@ namespace Lok.Controllers
 
                     applicant.ExtraInformation = _mapper.Map<ExtraInfo>(register);
 
+                    bool userExists = true;
+                    if (await _login.GetAll() != null)
+                    {
+                        userExists =await auth.IsUserExists(register.Email);
+                    }
                     //Check if the applicant exist with email 
-                    if (_Applicant.GetByEmail(register.Email) != null)
+                    if (_Applicant.GetByEmail(register.Email) != null&& userExists  )
                     {
                         string randString = RandomString(6);
                         applicant.RandomPassword = Base64Encode(randString);
@@ -212,11 +237,17 @@ namespace Lok.Controllers
 
                         await _uow.Commit();
 
+                        //Add User to Login
+                        userLogin.RandomPass = Base64Encode(randString);
+                        userLogin.Role = "Applicant";
 
-                        if (applicant.Id != null)
+                        _login.Add(userLogin);
+                        await _uow.Commit();
+
+                        if (applicant.Id != null && userLogin.Id != null)
                         {
                             //send Email for email verification
-                            string EmailBody = "Your Reset Password is " + Base64Decode(applicant.RandomPassword) + ".Email Verification and Password Setup link." + "<a href='" + "http://localhost:5000/applicant/emailVerification/'" + applicant.Id + ">Link</a>";
+                            string EmailBody = "Your Reset Password is " + randString + ".Email Verification and Password Setup link." + "<a href='" + "http://localhost:5000/applicant/ResetPassword/'" + applicant.Id + ">Link</a>";
                             try
                             {
                                 SendEMail(register.Email, "Email Verification Link.", EmailBody);
@@ -236,34 +267,37 @@ namespace Lok.Controllers
                     }
                 }
             }
-
+            ViewBag.Error = "Error";
+            ModelState.AddModelError(string.Empty, "Fill up the form properly.");
             return View(register);
         }
 
         [AllowAnonymous]
         public async Task<ActionResult<ResetPasswordVM>> ResetPassword(string id)
         {
-            if (!string.IsNullOrEmpty(id))
-            {
-                Applicant applicant = await _Applicant.GetById(id);
-                if (applicant == null)
-                {
-                    ViewBag.Error = "Error";
-                    ModelState.AddModelError(string.Empty, "Please try Again!");
-                    return View();
-                }
-                else
-                {
-                    ResetPasswordVM reset = new ResetPasswordVM();
-                    reset.Id = applicant.Id.ToString();
-                    reset.Name = applicant.PersonalInformation.FirstName + " " + applicant.PersonalInformation.MiddleName + " " + applicant.PersonalInformation.LastName;
-                    return View(reset);
-                }
-            }
-            else
-            {
-                return RedirectToAction("ApplicantLogin");
-            }
+            ResetPasswordVM reset = new ResetPasswordVM();
+            return View(reset);
+            //if (!string.IsNullOrEmpty(id))
+            //{
+            //    Applicant applicant = await _Applicant.GetById(id);
+            //    if (applicant == null)
+            //    {
+            //        ViewBag.Error = "Error";
+            //        ModelState.AddModelError(string.Empty, "Please try Again!");
+            //        return View();
+            //    }
+            //    else
+            //    {
+            //        ResetPasswordVM reset = new ResetPasswordVM();
+            //        reset.Id = applicant.Id.ToString();
+            //        reset.Name = applicant.PersonalInformation.FirstName + " " + applicant.PersonalInformation.MiddleName + " " + applicant.PersonalInformation.LastName;
+            //        return View(reset);
+            //    }
+            //}
+            //else
+            //{
+            //    return RedirectToAction("ApplicantLogin");
+            //}
         }
         [AllowAnonymous]
         [HttpPost]
@@ -271,35 +305,56 @@ namespace Lok.Controllers
         {
             if (ModelState.IsValid)
             {
-                Applicant applicant = await _Applicant.GetById(reset.Id);
-                if (applicant != null)
-                {
-                    if (applicant.RandomPassword == Base64Encode(reset.RandPassword))
-                    {
-                        applicant.EmailVerification = true;
-                        applicant.RandomPassword = "";
+                Login userLogin = await _auth.GetUser(reset.Email);
 
-                        applicant.Password = new Passwords { Hash = reset.Password, Salt = reset.Password };
+                await auth.ChangePass(userLogin, reset.Password);
+                TempData["Message"] = "Successfully Reset Password. Login using new password.";
+                return RedirectToAction("Login");
 
-                        applicant.QuestionAnswer = _mapper.Map<SecurityQA>(reset);
+                //    if (userLogin != null)
+                //    {
+                //        if (Base64Decode(userLogin.RandomPass) == reset.RandPassword)
+                //        {
 
-                        _Applicant.Update(applicant, reset.Id);
-                        await _uow.Commit();
+                //        }
+                //    }
 
-                        TempData["Message"] = "Successfully Reset Password. Login using new password.";
-                        return View(reset);
-                    }
-                    else
-                    {
-                        ModelState.AddModelError(string.Empty, "Reset Password doesnot match.");
-                        ViewBag.Error = "Error";
-                        return View();
-                    }
-                }
+                //    Applicant applicant = await _Applicant.GetById(reset.Id);
+                //    if (applicant != null)
+                //    {
+                //        if (applicant.RandomPassword == Base64Encode(reset.RandPassword))
+                //        {
+                //            applicant.EmailVerification = true;
+                //            applicant.RandomPassword = "";
+
+                //            applicant.Password = new Passwords { Hash = reset.Password, Salt = reset.Password };
+
+                //            applicant.QuestionAnswer = _mapper.Map<SecurityQA>(reset);
+
+                //            _Applicant.Update(applicant, reset.Id);
+                //            await _uow.Commit();
+
+                //            TempData["Message"] = "Successfully Reset Password. Login using new password.";
+                //            return View(reset);
+                //        }
+                //        else
+                //        {
+                //            ModelState.AddModelError(string.Empty, "Reset Password doesnot match.");
+                //            ViewBag.Error = "Error";
+                //            return View();
+                //        }
+                //    }
+                //}
+                //ViewBag.Error = "Error";
+                //ModelState.AddModelError(string.Empty, "Please try Again!");
+                //return View(reset);
             }
-            ViewBag.Error = "Error";
-            ModelState.AddModelError(string.Empty, "Please try Again!");
-            return View(reset);
+            else
+            {
+                ViewBag.Error = "Error";
+                ModelState.AddModelError(string.Empty, "Please try Again!");
+                return View(reset);
+            }
         }
 
 
@@ -310,137 +365,132 @@ namespace Lok.Controllers
         }
         [AllowAnonymous]
         [HttpPost]
-        public async Task<ActionResult<LoginVM>> Login(LoginVM login)
+        public async Task<ActionResult<LoginVM>> Login(LoginVM l)
         {
-            // ViewBag.ReturnUrl = ReturnUrl;
-
-            //if (await _auth.IsUserExists(l.Email))
-            //{
-            //    var login = _auth.Login(l.Email, l.Password);
-            //    Login user = await _auth.GetUser(l.Email);
-            //    string pass = user.RandomPass;
-
-
-            //    if (login.Result != null)
-            //    {
-            //        var Admin = login;
-
-            //        if (Url.IsLocalUrl(ReturnUrl))
-            //        {
-
-            //            //var objAdmin = context.login.FirstOrDefault(a => (a.Email == l.Email));
-
-            //            //FormsAuthentication.SetAuthCookie(l.Email, false);
-
-            //            //HttpContext.Session.SetString("id", Convert.ToString(user.Id));
-            //           // HttpContext.Session.SetString("userEmail", user.Email);
-            //            //Session.Add("category", Admin.Role);
-
-            //            return Redirect(ReturnUrl);
-
-            //        }
-            //        else
-            //        {
-            //            const string Issuer = "my issuer";
-
-            //            var claims = new List<Claim>();
-            //            claims.Add(new Claim(ClaimTypes.Name, l.Email, ClaimValueTypes.String, Issuer));
-            //            //   claims.Add(new Claim(Constants., user., ClaimValueTypes.String, Constants.Issuer));
-            //            //  claims.Add(new Claim(Constants.CompanyClaimType, user.Company, ClaimValueTypes.String, Constants.Issuer));
-            //            claims.Add(new Claim(ClaimTypes.Role, user.Role, ClaimValueTypes.String, Issuer));
-
-            //            var userIdentity = new ClaimsIdentity("Debugsoft");
-            //            userIdentity.AddClaims(claims);
-
-            //            var userPrincipal = new ClaimsPrincipal(userIdentity);
-
-            //            await HttpContext.SignInAsync(
-            //  "Cookie", userPrincipal,
-            //   new AuthenticationProperties
-            //   {
-            //       ExpiresUtc = DateTime.UtcNow.AddMinutes(100),
-            //       IsPersistent = false,
-            //       AllowRefresh = false
-            //   });
-
-
-
-            //            return RedirectToAction("Index", "Post");
-
-            //        }
-
-            //    }
-            //    else if (l.Password == pass)
-            //    {
-            //        TempData["message"] = l.Email;
-            //        return RedirectToAction("NewPassword");
-            //    }
-
-
-            //    else
-            //    {
-            //        ModelState.AddModelError("", "Invalid Password");
-            //    }
-
-            //}
-            //ModelState.AddModelError("", "Invalid User");
-
-            //return View();
-
             if (ModelState.IsValid)
             {
-                Applicant applicant = await _Applicant.GetByEmail(login.Email);
-                if (applicant != null)
+                if (await auth.IsUserExists(l.Email))
                 {
-                    if (applicant.EmailVerification)
+                    var login = auth.Login(l.Email, l.Password);
+                    Login user = await auth.GetUser(l.Email);
+
+                    if (login.Result != null)
                     {
-                        if (applicant.Password.Hash == login.Password)
+                        Applicant applicant = await _Applicant.GetByEmail(l.Email);
+
+
+                        var Admin = login;
+                        const string Issuer = "my issuer";
+
+                        var claims = new List<Claim>();
+                        claims.Add(new Claim(ClaimTypes.Name, l.Email, ClaimValueTypes.String, Issuer));
+                        claims.Add(new Claim(ClaimTypes.Role, user.Role, ClaimValueTypes.String, Issuer));
+
+
+                        var userIdentity = new ClaimsIdentity("Debugsoft");
+                        userIdentity.AddClaims(claims);
+                        if (applicant != null)
                         {
-                            CookieOptions mycookie = new CookieOptions();
+                            userIdentity.AddClaim(new Claim("ApplicantId", applicant.Id.ToString()));
 
-                            if (Response.Cookies != null)
-                            {
-                                Response.Cookies.Delete("Id");
-                            }
+                        }
 
-                            mycookie.Expires = DateTime.Now.AddMinutes(5);
+                        var userPrincipal = new ClaimsPrincipal(userIdentity);
 
-                            Response.Cookies.Append("Id", applicant.Id.ToString(), mycookie);
-                            //Response.Cookies.Delete(key);
+                        await HttpContext.SignInAsync("Cookie", userPrincipal, new AuthenticationProperties
+                        {
+                            ExpiresUtc = DateTime.UtcNow.AddMinutes(100),
+                            IsPersistent = false,
+                            AllowRefresh = false
+                        });
 
+                        if (user.Role == "Applicant")
+                        {
                             return RedirectToAction("Index");
                         }
                         else
                         {
-                            ViewBag.Error = "Error";
-                            ModelState.AddModelError(string.Empty, "Email and Password not Matched.");
-                            return View(login);
+                            ModelState.AddModelError("", "Invalid UserName or Password");
+                            return View(l);
                         }
 
                     }
+
                     else
                     {
-                        ViewBag.Error = "Error";
-                        ModelState.AddModelError(String.Empty, "Check your mail and reset your password");
-                        return View(login);
-                        // TempData["ErrorMessage"] = "Check your mail and reset your password.";
-                        //  return RedirectToAction("ResetPassword",new { Id = applicant.Id.ToString() });
-                    }
-                }
-                else
-                {
-                    ViewBag.Error = "Error";
-                    ModelState.AddModelError(string.Empty, "Please try Again.");
-                    return View(login);
-                }
-            }
-            return View(login);
-        }
+                        ModelState.AddModelError("", "Invalid UserName or Password");
+                        return View(l);
 
+                    }
+
+                }
+
+            }
+            ModelState.AddModelError("", "Invalid User");
+            return View(l);
+
+            //    Applicant applicant = await _Applicant.GetByEmail(login.Email);
+            //    if (applicant != null)
+            //    {
+            //        if (applicant.EmailVerification)
+            //        {
+            //            if (applicant.Password.Hash == login.Password)
+            //            {
+            //                CookieOptions mycookie = new CookieOptions();
+
+            //                if (Response.Cookies != null)
+            //                {
+            //                    Response.Cookies.Delete("Id");
+            //                }
+
+            //                mycookie.Expires = DateTime.Now.AddMinutes(5);
+
+            //                Response.Cookies.Append("Id", applicant.Id.ToString(), mycookie);
+            //                //Response.Cookies.Delete(key);
+
+            //                return RedirectToAction("Index");
+            //            }
+            //            else
+            //            {
+            //                ViewBag.Error = "Error";
+            //                ModelState.AddModelError(string.Empty, "Email and Password not Matched.");
+            //                return View(login);
+            //            }
+
+            //        }
+            //        else
+            //        {
+            //            ViewBag.Error = "Error";
+            //            ModelState.AddModelError(String.Empty, "Check your mail and reset your password");
+            //            return View(login);
+            //            // TempData["ErrorMessage"] = "Check your mail and reset your password.";
+            //            //  return RedirectToAction("ResetPassword",new { Id = applicant.Id.ToString() });
+            //        }
+            //    }
+            //    else
+            //    {
+            //        ViewBag.Error = "Error";
+            //        ModelState.AddModelError(string.Empty, "Please try Again.");
+            //        return View(login);
+            //    }
+            //}
+            // return View();
+
+        }
+        [Auth("Login", "Applicant", "Applicant")]
         public async Task<ActionResult<PersonalVM>> Personal()
         {
-          //  var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-           string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
@@ -449,15 +499,20 @@ namespace Lok.Controllers
 
                 return View(personalVM);
             }
-            else
-            {
-                return RedirectToAction("Login");
-            }
-        }
+            return View();
 
+        }
+        [Auth("Login", "Applicant", "Applicant")]
         [HttpPost]
         public async Task<ActionResult<PersonalVM>> Personal(PersonalVM personalVM)
         {
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
             if (ModelState.IsValid)
             {
                 Applicant applicant = await _Applicant.GetById(personalVM.Id);
@@ -477,9 +532,22 @@ namespace Lok.Controllers
                 return View(personalVM);
             }
         }
-
+       
         public async Task<ActionResult<ExtraVM>> Extra()
         {
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+
+
             List<DropDownItem> Religions = (from r in await _Religion.GetAll()
                                             select new DropDownItem
                                             {
@@ -512,7 +580,7 @@ namespace Lok.Controllers
             Employments.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
             Vargas.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
 
-            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            // string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
@@ -525,10 +593,7 @@ namespace Lok.Controllers
                 extraVM.Vargas = new SelectList(Vargas, "Id", "Name");
                 return View(extraVM);
             }
-            else
-            {
-                return RedirectToAction("Login");
-            }
+            return View();
         }
 
         [HttpPost]
@@ -592,7 +657,18 @@ namespace Lok.Controllers
         }
 
         public async Task<ActionResult<ContactVM>> Contact()
-        {
+        { //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+
             List<DropDownItem> Districts = (from r in await _District.GetAll()
                                             select new DropDownItem
                                             {
@@ -603,7 +679,7 @@ namespace Lok.Controllers
 
             Districts.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
 
-            string id = Request.Cookies != null ? Request.Cookies["Id"].ToString() : null;
+            // string id = Request.Cookies != null ? Request.Cookies["Id"].ToString() : null;
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
@@ -655,7 +731,17 @@ namespace Lok.Controllers
         }
         public async Task<ActionResult> EducationIndex()
         {
-            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
@@ -711,6 +797,18 @@ namespace Lok.Controllers
 
         public async Task<ActionResult<EducationVM>> EducationCreate()
         {
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+
             List<DropDownItem> BoardNames = (from r in await _BoardName.GetAll()
                                              select new DropDownItem
                                              {
@@ -738,7 +836,7 @@ namespace Lok.Controllers
             Faculties.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
 
 
-            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            // string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
@@ -880,6 +978,19 @@ namespace Lok.Controllers
 
         public async Task<ActionResult<EducationVM>> EducationEdit(string EId)
         {
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+
+
             if (String.IsNullOrEmpty(EId))
             {
                 return RedirectToAction("EducationIndex");
@@ -911,7 +1022,7 @@ namespace Lok.Controllers
             Faculties.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
 
 
-            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            // string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
@@ -1113,7 +1224,20 @@ namespace Lok.Controllers
 
         public async Task<ActionResult> TrainingIndex()
         {
-            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+
+
+            // string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
@@ -1143,8 +1267,18 @@ namespace Lok.Controllers
 
         public async Task<ActionResult<TrainingVM>> TrainingCreate()
         {
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
 
-            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+            // string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
@@ -1233,11 +1367,22 @@ namespace Lok.Controllers
         }
         public async Task<ActionResult<TrainingVM>> TrainingEdit(string TId)
         {
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
             if (TId == null)
             {
                 return RedirectToAction("TrainingIndex");
             }
-            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            //string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
@@ -1333,7 +1478,19 @@ namespace Lok.Controllers
 
         public async Task<ActionResult> CouncilIndex()
         {
-            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+
+            // string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
@@ -1367,7 +1524,19 @@ namespace Lok.Controllers
 
         public async Task<ActionResult<ProfessionalCouncilVM>> CouncilCreate()
         {
-            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+
+            // string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
@@ -1456,11 +1625,23 @@ namespace Lok.Controllers
         }
         public async Task<ActionResult<ProfessionalCouncilVM>> CouncilEdit(string PId)
         {
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+
             if (PId == null)
             {
                 return RedirectToAction("CouncilIndex");
             }
-            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            //string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
@@ -1553,7 +1734,19 @@ namespace Lok.Controllers
 
         public async Task<ActionResult<ExperienceVM>> ExperienceIndex()
         {
-            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+
+            // string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
@@ -1635,6 +1828,18 @@ namespace Lok.Controllers
 
         public async Task<ActionResult<GovernmentExperienceVM>> Government()
         {
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+
             List<DropDownItem> Sewas = (from r in await _Sewa.GetAll()
                                         select new DropDownItem
                                         {
@@ -1661,7 +1866,7 @@ namespace Lok.Controllers
             Shrenis.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
 
 
-            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            //string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
@@ -1790,6 +1995,18 @@ namespace Lok.Controllers
 
         public async Task<ActionResult<GovernmentExperienceVM>> GovernmentEdit(string GId)
         {
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+
             List<DropDownItem> Sewas = (from r in await _Sewa.GetAll()
                                         select new DropDownItem
                                         {
@@ -1815,7 +2032,7 @@ namespace Lok.Controllers
             Awasthas.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
             Shrenis.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
 
-            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            //string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
@@ -1950,6 +2167,17 @@ namespace Lok.Controllers
 
         public async Task<ActionResult<NonGovernmentExperienceVM>> NonGovernment()
         {
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
 
             List<DropDownItem> Levels = (from r in await _Shreni.GetAll()
                                          where r.Type == "Non-Government"
@@ -1963,7 +2191,7 @@ namespace Lok.Controllers
             Levels.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
 
 
-            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            //string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
@@ -2071,6 +2299,18 @@ namespace Lok.Controllers
 
         public async Task<ActionResult<NonGovernmentExperienceVM>> NonGovernmentEdit(string GId)
         {
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+
             List<DropDownItem> Levels = (from r in await _Shreni.GetAll()
                                          where r.Type == "Non-Government"
                                          select new DropDownItem
@@ -2081,7 +2321,7 @@ namespace Lok.Controllers
 
             Levels.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
 
-            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            //string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
@@ -2198,7 +2438,19 @@ namespace Lok.Controllers
         }
         public async Task<ActionResult<UploadVM>> Upload()
         {
-            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+
+            // string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
@@ -2326,7 +2578,19 @@ namespace Lok.Controllers
 
         public async Task<ActionResult<PreviewVM>> Preview()
         {
-            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+
+            //string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
             if (id != null)
             {
                 PreviewVM preview = new PreviewVM();
@@ -2531,7 +2795,18 @@ namespace Lok.Controllers
         //Delete the Education Record
         public async Task<ActionResult> DeleteEducation(string EId)
         {
-            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+            //string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
@@ -2590,7 +2865,19 @@ namespace Lok.Controllers
         //Delete the Training Record
         public async Task<ActionResult> DeleteTraining(string TId)
         {
-            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+
+            // string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
@@ -2640,7 +2927,19 @@ namespace Lok.Controllers
         //Delete the Council Record
         public async Task<ActionResult> DeleteCouncil(string PId)
         {
-            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+
+            //string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
@@ -2690,7 +2989,19 @@ namespace Lok.Controllers
         //Delete the Government Record
         public async Task<ActionResult> DeleteGovernment(string GId)
         {
-            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+
+            // string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
@@ -2740,7 +3051,19 @@ namespace Lok.Controllers
         //Delete the Government Record
         public async Task<ActionResult> DeleteNonGovernment(string GId)
         {
-            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+
+            //string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
@@ -2836,6 +3159,18 @@ namespace Lok.Controllers
         [HttpGet]
         public async Task<ActionResult> Delete(string id)
         {
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            //string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+            //                   .Select(c => c.Value).SingleOrDefault();
+
             _Applicant.Remove(id);
 
             DeleteFile(id);
@@ -2888,7 +3223,18 @@ namespace Lok.Controllers
 
         public async Task<ActionResult> Application()
         {
-            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+            //string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
             ApplicationVM appVM = new ApplicationVM();
             List<DropDownItem> Faculties = (from f in await _Faculty.GetAll()
                                             select new DropDownItem
@@ -2902,7 +3248,7 @@ namespace Lok.Controllers
             appVM.Advertisements = Ads;
             appVM.Id = id;
             return View(appVM);
-         }
+        }
 
         [HttpPost]
         public async Task<ActionResult<ApplicationVM>> Application(ApplicationVM appVM)
@@ -2920,10 +3266,10 @@ namespace Lok.Controllers
             if (ModelState.IsValid)
             {
                 Applications app = _mapper.Map<Applications>(appVM);
-                app.Applicant= Request.Cookies != null ? Request.Cookies["Id"] : null;
+                app.Applicant = Request.Cookies != null ? Request.Cookies["Id"] : null;
                 app.EthnicalGroup = appVM.EthnicalGroups;
                 app.AppliedDate = DateTime.Now;
-                
+
                 IEnumerable<Applications> apps = await _Applications.GetAll();
                 if (apps != null)
                 {
@@ -2954,14 +3300,26 @@ namespace Lok.Controllers
 
         public async Task<ActionResult> Payment()
         {
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+
             PaymentVM payVM = new PaymentVM();
-            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
-            var applications =await _Applications.GetAll();
+            // string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            var applications = await _Applications.GetAll();
             var advertisements = await _Advertisement.GetAll();
 
             IEnumerable<ApplicationPay> apps = (from a in applications
                                                 from ad in advertisements
-                                                where a.Advertisement == ad.Id.ToString() && a.Applicant==id
+                                                where a.Advertisement == ad.Id.ToString() && a.Applicant == id
                                                 select new ApplicationPay
                                                 {
                                                     Id = a.Id.ToString(),
@@ -2971,8 +3329,8 @@ namespace Lok.Controllers
 
                                                 }).AsEnumerable();
             payVM.Applications = apps.ToList();
-            payVM.Applicant =await _Applicant.GetById(id);
-            return View(payVM); 
+            payVM.Applicant = await _Applicant.GetById(id);
+            return View(payVM);
 
         }
 
