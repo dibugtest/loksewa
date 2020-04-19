@@ -15,5 +15,10 @@ namespace Lok.Data.Interface
         void UpdateProfessionalCouncil(ProfessionalCouncil obj, string id,string PId);
         void UpdateGovernmentInfo(GovernmentExperienceInfo obj, string id,string GId);
         void UpdateNonGovernmentInfo(NonGovernmentExperienceInfo obj, string id,string GId);
+        void DeleteEducationInfo(string id, string EId);
+        void DeleteTrainingInfo(string id, string TId);
+        void DeleteProfessionalCouncil( string id, string PId);
+        void DeleteGovernmentInfo(string id, string GId);
+        void DeleteNonGovernmentInfo( string id, string GId);
     }
 }

@@ -51,7 +51,7 @@
                             <a class="dropdown-item" asp-controller="Sewa" asp-action="Index">Sewa</a>
                             <a class="dropdown-item" asp-controller="ShreniTaha" asp-action="Index">Shreni/Taha</a>
                             <a class="dropdown-item" asp-controller="Varga" asp-action="Index">Varga</a>
-                            </div>
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -87,8 +87,11 @@
                 integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd">
         </script>
         <script src="~/js/site.min.js" asp-append-version="true"></script>
-    </environment>
 
+    </environment>
+    <script type="text/javascript">
+        var RootUrl = '@Url.Content("~/")';
+    </script>
     @RenderSection("Scripts", required: false)
 </body>
 </html>

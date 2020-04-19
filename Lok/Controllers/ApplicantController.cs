@@ -15,11 +15,18 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using MongoDB.Bson;
 using System.IO;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Lok.Filter;
+using System.Threading;
 
 namespace Lok.Controllers
 {
     public class ApplicantController : Controller
     {
+        private readonly IAuthinterface _auth;
+        private readonly ILoginInterface _login;
         private readonly IApplicantRepository _Applicant;
         private readonly IReligionRepository _Religion;
         private readonly IEmploymentRepository _Employment;
@@ -32,17 +39,23 @@ namespace Lok.Controllers
         private readonly ISewaRepository _Sewa;
         private readonly IShreniTahaRepository _Shreni;
         private readonly IAwasthaRepository _Awastha;
+        private readonly IApplicationRepository _Applications;
+        private readonly IAdvertisiment _Advertisement;
+        private IAuthinterface auth;
+
 
         private readonly IUnitOfWork _uow;
         public readonly IMapper _mapper;
 
 
-        public ApplicantController(IApplicantRepository Applicant, IReligionRepository Religion
+        public ApplicantController(ILoginInterface Login, IAuthinterface Auth, IApplicantRepository Applicant, IReligionRepository Religion
                                     , IEmploymentRepository Employment, IOccupationRepository Occupation,
                                     IVargaRepository Varga, IDistrictRepository District, IBoardNameRepository BoardName, IEducationLevelRepository EducationLevel
-                                    , IFacultyRepository Faculty, ISewaRepository Sewa,IAwasthaRepository Awastha,
-                                    IShreniTahaRepository Shreni, IUnitOfWork uow, IMapper mapper)
+                                    , IFacultyRepository Faculty, ISewaRepository Sewa, IAwasthaRepository Awastha, IAuthinterface auth,
+                                    IShreniTahaRepository Shreni, IApplicationRepository Application, IAdvertisiment Advertisement, IUnitOfWork uow, IMapper mapper)
         {
+            auth = Auth;
+            _login = Login;
             _Applicant = Applicant;
             _Religion = Religion;
             _Employment = Employment;
@@ -56,18 +69,32 @@ namespace Lok.Controllers
             _Shreni = Shreni;
             _Awastha = Awastha;
             _uow = uow;
+            _auth = auth;
+            _Applications = Application;
+            _Advertisement = Advertisement;
             _mapper = mapper;
         }
-
-
-        // GET: Applicant use authorize
+        [Auth("Login", "Applicant", "Applicant")]
         public async Task<ActionResult> Index()
         {
-            string id = Request.Cookies["Id"].ToString();
-            var Applicants = await _Applicant.GetById(id);
-            return View(Applicants);
-        }
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
 
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string applicantId = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+
+
+            var Applicants = await _Applicant.GetById(applicantId);
+            return View(Applicants);
+
+        }
+        [AllowAnonymous]
         public async Task<ActionResult<RegistrationVM>> RegisterApplicant()
         {
             RegistrationVM register = new RegistrationVM();
@@ -97,7 +124,6 @@ namespace Lok.Controllers
                                              Name = r.Name
                                          }).ToList();
 
-
             Religions.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
             Occupations.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
             Employments.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
@@ -110,7 +136,7 @@ namespace Lok.Controllers
             register.Vargas = new SelectList(Vargas, "Id", "Name");
             return View(register);
         }
-
+        [AllowAnonymous]
         [HttpPost]
         public async Task<ActionResult<Applicant>> RegisterApplicant(RegistrationVM register)
         {
@@ -155,35 +181,37 @@ namespace Lok.Controllers
 
             if (ModelState.IsValid)
             {
-                if (!string.IsNullOrEmpty(register.Id))
+                //if (!string.IsNullOrEmpty(register.Id))
+                //{
+                //    Applicant registeredApplicant = await _Applicant.GetById(register.Id);
+
+                //    string EmailBody = "Your Reset Password is " + Base64Decode(registeredApplicant.RandomPassword) + ".Email Verification and Password Setup link." + "<a href='" + "http://localhost:5000/applicant/emailVerification/" + register.Id + "'>Link</a>";
+                //    try
+                //    {
+                //        SendEMail(register.Email, "Email Verification Link.", EmailBody);
+
+                //        registeredApplicant.PersonalInformation = _mapper.Map<PersonalInfo>(register);
+
+                //        registeredApplicant.ExtraInformation = _mapper.Map<ExtraInfo>(register);
+
+                //        registeredApplicant.EditedDate = DateTime.Now;
+                //        registeredApplicant.CreatedBy = "Admin";//from login
+                //        _Applicant.Update(registeredApplicant, register.Id);
+                //        await _uow.Commit();
+
+                //        TempData["Message"] = "Successfully Registered. Please check your Email and reset your password.";
+                //        return RedirectToAction("PasswordReset", register.Id);
+                //    }
+                //    catch
+                //    {
+                //        ViewBag.Error = "Error";
+                //        ModelState.AddModelError(string.Empty, "Failed to send mail. Please Try Again.");
+                //        return View(register);
+                //    }
+                //}
+                // if()
                 {
-                    Applicant registeredApplicant = await _Applicant.GetById(register.Id);
-
-                    string EmailBody = "Your Reset Password is " + Base64Decode(registeredApplicant.RandomPassword) + ".Email Verification and Password Setup link." + "<a href='" + "http://localhost:5000/applicant/emailVerification/" + register.Id + "'>Link</a>";
-                    try
-                    {
-                        SendEMail(register.Email, "Email Verification Link.", EmailBody);
-
-                        registeredApplicant.PersonalInformation = _mapper.Map<PersonalInfo>(register);
-
-                        registeredApplicant.ExtraInformation = _mapper.Map<ExtraInfo>(register);
-
-                        registeredApplicant.EditedDate = DateTime.Now;
-                        registeredApplicant.CreatedBy = "Admin";//from login
-                        _Applicant.Update(registeredApplicant, register.Id);
-
-                        TempData["Message"] = "Successfully Registered. Please check your Email and reset your password.";
-                        return RedirectToAction("PasswordReset", register.Id);
-                    }
-                    catch
-                    {
-                        ViewBag.Error = "Error";
-                        ModelState.AddModelError(string.Empty, "Failed to send mail. Please Try Again.");
-                        return View(register);
-                    }
-                }
-                else
-                {
+                    Login userLogin = new Login();
 
                     Applicant applicant = new Applicant();
                     applicant.CreatedDate = DateTime.Now;
@@ -193,8 +221,13 @@ namespace Lok.Controllers
 
                     applicant.ExtraInformation = _mapper.Map<ExtraInfo>(register);
 
+                    bool userExists = true;
+                    if (await _login.GetAll() != null)
+                    {
+                        userExists =await auth.IsUserExists(register.Email);
+                    }
                     //Check if the applicant exist with email 
-                    if (_Applicant.GetByEmail(register.Email) != null)
+                    if (_Applicant.GetByEmail(register.Email) != null&& userExists  )
                     {
                         string randString = RandomString(6);
                         applicant.RandomPassword = Base64Encode(randString);
@@ -204,11 +237,17 @@ namespace Lok.Controllers
 
                         await _uow.Commit();
 
+                        //Add User to Login
+                        userLogin.RandomPass = Base64Encode(randString);
+                        userLogin.Role = "Applicant";
 
-                        if (applicant.Id != null)
+                        _login.Add(userLogin);
+                        await _uow.Commit();
+
+                        if (applicant.Id != null && userLogin.Id != null)
                         {
                             //send Email for email verification
-                            string EmailBody = "Your Reset Password is " + Base64Decode(applicant.RandomPassword) + ".Email Verification and Password Setup link." + "<a href='" + "http://localhost:5000/applicant/emailVerification/'" + applicant.Id + ">Link</a>";
+                            string EmailBody = "Your Reset Password is " + randString + ".Email Verification and Password Setup link." + "<a href='" + "http://localhost:5000/applicant/ResetPassword/'" + applicant.Id + ">Link</a>";
                             try
                             {
                                 SendEMail(register.Email, "Email Verification Link.", EmailBody);
@@ -228,134 +267,230 @@ namespace Lok.Controllers
                     }
                 }
             }
-
+            ViewBag.Error = "Error";
+            ModelState.AddModelError(string.Empty, "Fill up the form properly.");
             return View(register);
         }
 
-
+        [AllowAnonymous]
         public async Task<ActionResult<ResetPasswordVM>> ResetPassword(string id)
         {
-            if (!string.IsNullOrEmpty(id))
-            {
-                Applicant applicant = await _Applicant.GetById(id);
-                if (applicant == null)
-                {
-                    ViewBag.Error = "Error";
-                    ModelState.AddModelError(string.Empty, "Please try Again!");
-                    return View();
-                }
-                else
-                {
-                    ResetPasswordVM reset = new ResetPasswordVM();
-                    reset.Id = applicant.Id.ToString();
-                    reset.Name = applicant.PersonalInformation.FirstName + " " + applicant.PersonalInformation.MiddleName + " " + applicant.PersonalInformation.LastName;
-                    return View(reset);
-                }
-            }
-            else
-            {
-                return RedirectToAction("ApplicantLogin");
-            }
+            ResetPasswordVM reset = new ResetPasswordVM();
+            return View(reset);
+            //if (!string.IsNullOrEmpty(id))
+            //{
+            //    Applicant applicant = await _Applicant.GetById(id);
+            //    if (applicant == null)
+            //    {
+            //        ViewBag.Error = "Error";
+            //        ModelState.AddModelError(string.Empty, "Please try Again!");
+            //        return View();
+            //    }
+            //    else
+            //    {
+            //        ResetPasswordVM reset = new ResetPasswordVM();
+            //        reset.Id = applicant.Id.ToString();
+            //        reset.Name = applicant.PersonalInformation.FirstName + " " + applicant.PersonalInformation.MiddleName + " " + applicant.PersonalInformation.LastName;
+            //        return View(reset);
+            //    }
+            //}
+            //else
+            //{
+            //    return RedirectToAction("ApplicantLogin");
+            //}
         }
+        [AllowAnonymous]
         [HttpPost]
         public async Task<ActionResult<ResetPasswordVM>> ResetPassword(ResetPasswordVM reset)
         {
             if (ModelState.IsValid)
             {
-                Applicant applicant = await _Applicant.GetById(reset.Id);
-                if (applicant != null)
-                {
-                    if (applicant.RandomPassword == Base64Encode(reset.RandPassword))
-                    {
-                        applicant.EmailVerification = true;
-                        applicant.RandomPassword = "";
+                Login userLogin = await _auth.GetUser(reset.Email);
 
-                        applicant.Password = new Passwords { Hash = reset.Password, Salt = reset.Password };
+                await auth.ChangePass(userLogin, reset.Password);
+                TempData["Message"] = "Successfully Reset Password. Login using new password.";
+                return RedirectToAction("Login");
 
-                        applicant.QuestionAnswer = _mapper.Map<SecurityQA>(reset);
+                //    if (userLogin != null)
+                //    {
+                //        if (Base64Decode(userLogin.RandomPass) == reset.RandPassword)
+                //        {
 
-                        _Applicant.Update(applicant, reset.Id);
-                        await _uow.Commit();
+                //        }
+                //    }
 
-                        TempData["Message"] = "Successfully Reset Password. Login using new password.";
-                        return View(reset);
-                    }
-                    else
-                    {
-                        ModelState.AddModelError(string.Empty, "Reset Password doesnot match.");
-                        ViewBag.Error = "Error";
-                        return View();
-                    }
-                }
+                //    Applicant applicant = await _Applicant.GetById(reset.Id);
+                //    if (applicant != null)
+                //    {
+                //        if (applicant.RandomPassword == Base64Encode(reset.RandPassword))
+                //        {
+                //            applicant.EmailVerification = true;
+                //            applicant.RandomPassword = "";
+
+                //            applicant.Password = new Passwords { Hash = reset.Password, Salt = reset.Password };
+
+                //            applicant.QuestionAnswer = _mapper.Map<SecurityQA>(reset);
+
+                //            _Applicant.Update(applicant, reset.Id);
+                //            await _uow.Commit();
+
+                //            TempData["Message"] = "Successfully Reset Password. Login using new password.";
+                //            return View(reset);
+                //        }
+                //        else
+                //        {
+                //            ModelState.AddModelError(string.Empty, "Reset Password doesnot match.");
+                //            ViewBag.Error = "Error";
+                //            return View();
+                //        }
+                //    }
+                //}
+                //ViewBag.Error = "Error";
+                //ModelState.AddModelError(string.Empty, "Please try Again!");
+                //return View(reset);
             }
-            ViewBag.Error = "Error";
-            ModelState.AddModelError(string.Empty, "Please try Again!");
-            return View(reset);
+            else
+            {
+                ViewBag.Error = "Error";
+                ModelState.AddModelError(string.Empty, "Please try Again!");
+                return View(reset);
+            }
         }
 
 
-
+        [AllowAnonymous]
         public async Task<ActionResult<LoginVM>> Login()
         {
             return View();
         }
-
+        [AllowAnonymous]
         [HttpPost]
-        public async Task<ActionResult<LoginVM>> Login(LoginVM login)
+        public async Task<ActionResult<LoginVM>> Login(LoginVM l)
         {
             if (ModelState.IsValid)
             {
-                Applicant applicant = await _Applicant.GetByEmail(login.Email);
-                if (applicant != null)
+                if (await auth.IsUserExists(l.Email))
                 {
-                    if (applicant.EmailVerification)
+                    var login = auth.Login(l.Email, l.Password);
+                    Login user = await auth.GetUser(l.Email);
+
+                    if (login.Result != null)
                     {
-                        if (applicant.Password.Hash == login.Password)
+                        Applicant applicant = await _Applicant.GetByEmail(l.Email);
+
+
+                        var Admin = login;
+                        const string Issuer = "my issuer";
+
+                        var claims = new List<Claim>();
+                        claims.Add(new Claim(ClaimTypes.Name, l.Email, ClaimValueTypes.String, Issuer));
+                        claims.Add(new Claim(ClaimTypes.Role, user.Role, ClaimValueTypes.String, Issuer));
+
+
+                        var userIdentity = new ClaimsIdentity("Debugsoft");
+                        userIdentity.AddClaims(claims);
+                        if (applicant != null)
                         {
-                            CookieOptions mycookie = new CookieOptions();
+                            userIdentity.AddClaim(new Claim("ApplicantId", applicant.Id.ToString()));
 
-                            if (Response.Cookies != null)
-                            {
-                                Response.Cookies.Delete("Id");
-                            }
+                        }
 
-                            mycookie.Expires = DateTime.Now.AddMinutes(5);
+                        var userPrincipal = new ClaimsPrincipal(userIdentity);
 
-                            Response.Cookies.Append("Id", applicant.Id.ToString(), mycookie);
-                            //Response.Cookies.Delete(key);
+                        await HttpContext.SignInAsync("Cookie", userPrincipal, new AuthenticationProperties
+                        {
+                            ExpiresUtc = DateTime.UtcNow.AddMinutes(100),
+                            IsPersistent = false,
+                            AllowRefresh = false
+                        });
 
+                        if (user.Role == "Applicant")
+                        {
                             return RedirectToAction("Index");
                         }
                         else
                         {
-                            ViewBag.Error = "Error";
-                            ModelState.AddModelError(string.Empty, "Email and Password not Matched.");
-                            return View(login);
+                            ModelState.AddModelError("", "Invalid UserName or Password");
+                            return View(l);
                         }
 
                     }
+
                     else
                     {
-                        ViewBag.Error = "Error";
-                        ModelState.AddModelError(String.Empty, "Check your mail and reset your password");
-                        return View(login);
-                        // TempData["ErrorMessage"] = "Check your mail and reset your password.";
-                        //  return RedirectToAction("ResetPassword",new { Id = applicant.Id.ToString() });
-                    }
-                }
-                else
-                {
-                    ViewBag.Error = "Error";
-                    ModelState.AddModelError(string.Empty, "Please try Again.");
-                    return View(login);
-                }
-            }
-            return View(login);
-        }
+                        ModelState.AddModelError("", "Invalid UserName or Password");
+                        return View(l);
 
+                    }
+
+                }
+
+            }
+            ModelState.AddModelError("", "Invalid User");
+            return View(l);
+
+            //    Applicant applicant = await _Applicant.GetByEmail(login.Email);
+            //    if (applicant != null)
+            //    {
+            //        if (applicant.EmailVerification)
+            //        {
+            //            if (applicant.Password.Hash == login.Password)
+            //            {
+            //                CookieOptions mycookie = new CookieOptions();
+
+            //                if (Response.Cookies != null)
+            //                {
+            //                    Response.Cookies.Delete("Id");
+            //                }
+
+            //                mycookie.Expires = DateTime.Now.AddMinutes(5);
+
+            //                Response.Cookies.Append("Id", applicant.Id.ToString(), mycookie);
+            //                //Response.Cookies.Delete(key);
+
+            //                return RedirectToAction("Index");
+            //            }
+            //            else
+            //            {
+            //                ViewBag.Error = "Error";
+            //                ModelState.AddModelError(string.Empty, "Email and Password not Matched.");
+            //                return View(login);
+            //            }
+
+            //        }
+            //        else
+            //        {
+            //            ViewBag.Error = "Error";
+            //            ModelState.AddModelError(String.Empty, "Check your mail and reset your password");
+            //            return View(login);
+            //            // TempData["ErrorMessage"] = "Check your mail and reset your password.";
+            //            //  return RedirectToAction("ResetPassword",new { Id = applicant.Id.ToString() });
+            //        }
+            //    }
+            //    else
+            //    {
+            //        ViewBag.Error = "Error";
+            //        ModelState.AddModelError(string.Empty, "Please try Again.");
+            //        return View(login);
+            //    }
+            //}
+            // return View();
+
+        }
+        [Auth("Login", "Applicant", "Applicant")]
         public async Task<ActionResult<PersonalVM>> Personal()
         {
-            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
@@ -364,15 +499,20 @@ namespace Lok.Controllers
 
                 return View(personalVM);
             }
-            else
-            {
-                return RedirectToAction("Login");
-            }
-        }
+            return View();
 
+        }
+        [Auth("Login", "Applicant", "Applicant")]
         [HttpPost]
         public async Task<ActionResult<PersonalVM>> Personal(PersonalVM personalVM)
         {
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
             if (ModelState.IsValid)
             {
                 Applicant applicant = await _Applicant.GetById(personalVM.Id);
@@ -392,9 +532,22 @@ namespace Lok.Controllers
                 return View(personalVM);
             }
         }
-
+       
         public async Task<ActionResult<ExtraVM>> Extra()
         {
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+
+
             List<DropDownItem> Religions = (from r in await _Religion.GetAll()
                                             select new DropDownItem
                                             {
@@ -427,7 +580,7 @@ namespace Lok.Controllers
             Employments.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
             Vargas.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
 
-            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            // string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
@@ -440,10 +593,7 @@ namespace Lok.Controllers
                 extraVM.Vargas = new SelectList(Vargas, "Id", "Name");
                 return View(extraVM);
             }
-            else
-            {
-                return RedirectToAction("Login");
-            }
+            return View();
         }
 
         [HttpPost]
@@ -507,7 +657,18 @@ namespace Lok.Controllers
         }
 
         public async Task<ActionResult<ContactVM>> Contact()
-        {
+        { //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+
             List<DropDownItem> Districts = (from r in await _District.GetAll()
                                             select new DropDownItem
                                             {
@@ -518,7 +679,7 @@ namespace Lok.Controllers
 
             Districts.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
 
-            string id = Request.Cookies != null ? Request.Cookies["Id"].ToString() : null;
+            // string id = Request.Cookies != null ? Request.Cookies["Id"].ToString() : null;
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
@@ -570,7 +731,17 @@ namespace Lok.Controllers
         }
         public async Task<ActionResult> EducationIndex()
         {
-            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
@@ -593,30 +764,30 @@ namespace Lok.Controllers
                                                     Name = r.Name
                                                 }).ToList();
 
-               // IEnumerable<EducationVM> edus = applicant.EducationInfos != null ? _mapper.Map<IEnumerable<EducationVM>>(applicant.EducationInfos) : null;
-               
+                // IEnumerable<EducationVM> edus = applicant.EducationInfos != null ? _mapper.Map<IEnumerable<EducationVM>>(applicant.EducationInfos) : null;
+
 
                 IEnumerable<EducationVM> edus = (from e in applicant.EducationInfos
-                        from b in BoardNames
-                        where b.Id == e.BoardName
-                        from l in EducationLevels
-                        where l.Id == e.Level
-                        from f in Faculties
-                        where f.Id == e.Faculty
-                        select new EducationVM
-                        {
-                            EId = e.EId,
-                            BoardName = b.Name,
-                            Level = l.Name,
-                            Faculty = f.Name,
-                            DivisionPercentage=e.DivisionPercentage,
-                            MainSubject=e.MainSubject,
-                            DegreeName=e.DegreeName,
-                            EducationType=e.EducationType
+                                                 from b in BoardNames
+                                                 where b.Id == e.BoardName
+                                                 from l in EducationLevels
+                                                 where l.Id == e.Level
+                                                 from f in Faculties
+                                                 where f.Id == e.Faculty
+                                                 select new EducationVM
+                                                 {
+                                                     EId = e.EId,
+                                                     BoardName = b.Name,
+                                                     Level = l.Name,
+                                                     Faculty = f.Name,
+                                                     DivisionPercentage = e.DivisionPercentage,
+                                                     MainSubject = e.MainSubject,
+                                                     DegreeName = e.DegreeName,
+                                                     EducationType = e.EducationType
 
-                        }).AsEnumerable();
+                                                 }).AsEnumerable();
 
-                    return View(edus);
+                return View(edus);
             }
             else
             {
@@ -626,6 +797,18 @@ namespace Lok.Controllers
 
         public async Task<ActionResult<EducationVM>> EducationCreate()
         {
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+
             List<DropDownItem> BoardNames = (from r in await _BoardName.GetAll()
                                              select new DropDownItem
                                              {
@@ -653,7 +836,7 @@ namespace Lok.Controllers
             Faculties.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
 
 
-            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            // string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
@@ -795,6 +978,19 @@ namespace Lok.Controllers
 
         public async Task<ActionResult<EducationVM>> EducationEdit(string EId)
         {
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+
+
             if (String.IsNullOrEmpty(EId))
             {
                 return RedirectToAction("EducationIndex");
@@ -826,53 +1022,53 @@ namespace Lok.Controllers
             Faculties.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
 
 
-            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            // string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
                 EducationVM educationVM = new EducationVM();
                 educationVM.EId = EId;
-               
-                    if (applicant.EducationInfos != null)
+
+                if (applicant.EducationInfos != null)
+                {
+                    EducationInfo eduInfo = applicant.EducationInfos.FirstOrDefault(m => m.EId == EId);
+                    if (eduInfo != null)
                     {
-                        EducationInfo eduInfo = applicant.EducationInfos.FirstOrDefault(m => m.EId == EId);
-                        if (eduInfo != null)
-                        {
-                            educationVM = _mapper.Map<EducationVM>(eduInfo);
-                        }
+                        educationVM = _mapper.Map<EducationVM>(eduInfo);
                     }
-                
+                }
+
                 educationVM.Id = applicant.Id.ToString();
                 educationVM.BoardNames = new SelectList(BoardNames, "Id", "Name");
                 educationVM.EducationLevels = new SelectList(EducationLevels, "Id", "Name");
                 educationVM.Faculties = new SelectList(Faculties, "Id", "Name");
 
                 //Check File Exists
-               
-                    if (educationVM.FileName != null)
-                    {
-                        string mainFile = Path.Combine(
-                                            Directory.GetCurrentDirectory(), "wwwroot", "images",
-                                            "applicant", applicant.Id.ToString(), "Education", "Main", educationVM.FileName
-                                            );
 
-                        if (System.IO.File.Exists(mainFile))
-                        {
-                            educationVM.FileMainLink = "~/images/applicant/" + educationVM.Id + "/Education/Main/" + educationVM.FileName;
-                        }
-                    }
-                    if (educationVM.EquivalentFileName != null)
-                    {
-                        string EquivalentFile = Path.Combine(
-                                           Directory.GetCurrentDirectory(), "wwwroot", "images",
-                                           "applicant", applicant.Id.ToString(), "Education", "Equivalent", educationVM.EquivalentFileName
-                                           );
+                if (educationVM.FileName != null)
+                {
+                    string mainFile = Path.Combine(
+                                        Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                        "applicant", applicant.Id.ToString(), "Education", "Main", educationVM.FileName
+                                        );
 
-                        if (System.IO.File.Exists(EquivalentFile))
-                        {
-                            educationVM.FileEquivalentLink = "~/images/applicant/" + educationVM.Id + "/Education/Equivalent/" + educationVM.EquivalentFileName;
-                        }
+                    if (System.IO.File.Exists(mainFile))
+                    {
+                        educationVM.FileMainLink = "~/images/applicant/" + educationVM.Id + "/Education/Main/" + educationVM.FileName;
                     }
+                }
+                if (educationVM.EquivalentFileName != null)
+                {
+                    string EquivalentFile = Path.Combine(
+                                       Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                       "applicant", applicant.Id.ToString(), "Education", "Equivalent", educationVM.EquivalentFileName
+                                       );
+
+                    if (System.IO.File.Exists(EquivalentFile))
+                    {
+                        educationVM.FileEquivalentLink = "~/images/applicant/" + educationVM.Id + "/Education/Equivalent/" + educationVM.EquivalentFileName;
+                    }
+                }
 
                 return View(educationVM);
 
@@ -1028,25 +1224,38 @@ namespace Lok.Controllers
 
         public async Task<ActionResult> TrainingIndex()
         {
-            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+
+
+            // string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
                 IEnumerable<TrainingVM> training = null;
                 if (applicant.TrainingInfos != null)
                 {
-                   training  = (from t in applicant.TrainingInfos
-                                                        select new TrainingVM
-                                                        {
-                                                            TId = t.TId,
-                                                            DivisionPercentage = t.DivisionPercentage,
-                                                            OrganizationName = t.OrganizationName,
-                                                            TrainingName = t.TrainingName,
-                                                            StartDate = t.StartDate,
-                                                            EndDate = t.EndDate
-                                                        }).AsEnumerable();
+                    training = (from t in applicant.TrainingInfos
+                                select new TrainingVM
+                                {
+                                    TId = t.TId,
+                                    DivisionPercentage = t.DivisionPercentage,
+                                    OrganizationName = t.OrganizationName,
+                                    TrainingName = t.TrainingName,
+                                    StartDate = t.StartDate,
+                                    EndDate = t.EndDate
+                                }).AsEnumerable();
                 }
-               // IEnumerable<TrainingVM> training = applicant.TrainingInfos != null ? _mapper.Map<IEnumerable<TrainingInfo>, IEnumerable<TrainingVM>>(applicant.TrainingInfos.AsEnumerable()) : null;
+                // IEnumerable<TrainingVM> training = applicant.TrainingInfos != null ? _mapper.Map<IEnumerable<TrainingInfo>, IEnumerable<TrainingVM>>(applicant.TrainingInfos.AsEnumerable()) : null;
                 return View(training);
             }
             else
@@ -1058,8 +1267,18 @@ namespace Lok.Controllers
 
         public async Task<ActionResult<TrainingVM>> TrainingCreate()
         {
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
 
-            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+            // string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
@@ -1148,42 +1367,53 @@ namespace Lok.Controllers
         }
         public async Task<ActionResult<TrainingVM>> TrainingEdit(string TId)
         {
-            if (TId==null)
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+            if (TId == null)
             {
                 return RedirectToAction("TrainingIndex");
             }
-            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            //string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
                 TrainingVM trainVM = new TrainingVM();
                 trainVM.TId = TId;
-                    if (applicant.TrainingInfos != null)
+                if (applicant.TrainingInfos != null)
+                {
+                    TrainingInfo trainInfo = applicant.TrainingInfos.FirstOrDefault(m => m.TId == TId);
+                    if (trainInfo != null)
                     {
-                        TrainingInfo trainInfo = applicant.TrainingInfos.FirstOrDefault(m => m.TId == TId);
-                        if (trainInfo != null)
-                        {
-                            trainVM = _mapper.Map<TrainingVM>(trainInfo);
-                        }
+                        trainVM = _mapper.Map<TrainingVM>(trainInfo);
                     }
-                
-                trainVM.Id = applicant.Id.ToString();
-                
-                //Check File Exists
-               
-                    if (trainVM.FileName != null)
-                    {
-                        string mainFile = Path.Combine(
-                                            Directory.GetCurrentDirectory(), "wwwroot", "images",
-                                            "applicant", applicant.Id.ToString(), "Training", "File", trainVM.FileName
-                                            );
+                }
 
-                        if (System.IO.File.Exists(mainFile))
-                        {
-                            trainVM.FileMainLink = "~/images/applicant/" + trainVM.Id + "/Training/File/" + trainVM.FileName;
-                        }
+                trainVM.Id = applicant.Id.ToString();
+
+                //Check File Exists
+
+                if (trainVM.FileName != null)
+                {
+                    string mainFile = Path.Combine(
+                                        Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                        "applicant", applicant.Id.ToString(), "Training", "File", trainVM.FileName
+                                        );
+
+                    if (System.IO.File.Exists(mainFile))
+                    {
+                        trainVM.FileMainLink = "~/images/applicant/" + trainVM.Id + "/Training/File/" + trainVM.FileName;
                     }
-                   
+                }
+
 
 
                 return View(trainVM);
@@ -1200,55 +1430,67 @@ namespace Lok.Controllers
         {
             if (ModelState.IsValid)
             {
-                    Applicant applicant = await _Applicant.GetById(trainVM.Id);
-                   TrainingInfo trainInfo = _mapper.Map<TrainingInfo>(trainVM);
-                    trainInfo.FileName = trainInfo.TId + ".pdf";
-                    applicant.EditedDate = DateTime.Now;
-                   _Applicant.UpdateTrainingInfo(trainInfo, trainVM.Id, trainVM.TId);
-                    
-                    await _uow.Commit();
+                Applicant applicant = await _Applicant.GetById(trainVM.Id);
+                TrainingInfo trainInfo = _mapper.Map<TrainingInfo>(trainVM);
+                trainInfo.FileName = trainInfo.TId + ".pdf";
+                applicant.EditedDate = DateTime.Now;
+                _Applicant.UpdateTrainingInfo(trainInfo, trainVM.Id, trainVM.TId);
+
+                await _uow.Commit();
 
 
 
-                    //File Upload
-                   
-                    string directoryMain = Path.Combine(
-                                    Directory.GetCurrentDirectory(), "wwwroot", "images",
-                                    "applicant", applicant.Id.ToString(), "Training", "File"
-                                    );
+                //File Upload
 
-                    Directory.CreateDirectory(directoryMain); // no need to check if it exists
-                   
+                string directoryMain = Path.Combine(
+                                Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                "applicant", applicant.Id.ToString(), "Training", "File"
+                                );
 
-                    if (FileMain != null)
-                    {
-                        var path = Path.Combine(
-                                    Directory.GetCurrentDirectory(), "wwwroot", "images",
-                                    "applicant", applicant.Id.ToString(), "Training", "File",
-                                    trainInfo.FileName);
+                Directory.CreateDirectory(directoryMain); // no need to check if it exists
 
-                        using (var stream = new FileStream(path, FileMode.Create))
-                        {
-                            await FileMain.CopyToAsync(stream);
-                        }
-                    }
 
-                    TempData["Message"] = "Successfully Updated Training Information.";
-                    return RedirectToAction("TrainingIndex");
-                }
-                else
+                if (FileMain != null)
                 {
-                   
-                    ViewBag.Error = "Error";
-                    ModelState.AddModelError(string.Empty, "Error.");
-                    return View(trainVM);
+                    var path = Path.Combine(
+                                Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                "applicant", applicant.Id.ToString(), "Training", "File",
+                                trainInfo.FileName);
+
+                    using (var stream = new FileStream(path, FileMode.Create))
+                    {
+                        await FileMain.CopyToAsync(stream);
+                    }
                 }
 
+                TempData["Message"] = "Successfully Updated Training Information.";
+                return RedirectToAction("TrainingIndex");
             }
+            else
+            {
+
+                ViewBag.Error = "Error";
+                ModelState.AddModelError(string.Empty, "Error.");
+                return View(trainVM);
+            }
+
+        }
 
         public async Task<ActionResult> CouncilIndex()
         {
-            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+
+            // string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
@@ -1282,7 +1524,19 @@ namespace Lok.Controllers
 
         public async Task<ActionResult<ProfessionalCouncilVM>> CouncilCreate()
         {
-            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+
+            // string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
@@ -1371,11 +1625,23 @@ namespace Lok.Controllers
         }
         public async Task<ActionResult<ProfessionalCouncilVM>> CouncilEdit(string PId)
         {
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+
             if (PId == null)
             {
                 return RedirectToAction("CouncilIndex");
             }
-            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            //string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
@@ -1468,7 +1734,19 @@ namespace Lok.Controllers
 
         public async Task<ActionResult<ExperienceVM>> ExperienceIndex()
         {
-            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+
+            // string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
@@ -1496,21 +1774,24 @@ namespace Lok.Controllers
                 if (applicant.GovernmentInfos != null)
                 {
                     IEnumerable<GovernmentExperienceVM> government = (from g in applicant.GovernmentInfos
-                                                                      from s in Sewas where s.Id == g.Sewa
-                                                                      from a in Awasthas where a.Id == g.Awastha
-                                                                      from t in Shrenis where t.Id == g.TahaShreni
+                                                                      from s in Sewas
+                                                                      where s.Id == g.Sewa
+                                                                      from a in Awasthas
+                                                                      where a.Id == g.Awastha
+                                                                      from t in Shrenis
+                                                                      where t.Id == g.TahaShreni
                                                                       select new GovernmentExperienceVM
                                                                       {
-                                                                          GId=g.GId,                                                                    
-                                                                          OfficeName=g.OfficeName,
-                                                                          Sewa=s.Name,
-                                                                          Awastha=a.Name,
-                                                                          TahaShreni=t.Name,
-                                                                          OfficeAddress=g.OfficeAddress,
-                                                                          JobType=g.JobType,
-                                                                          Post=g.Post,
-                                                                          StartDate=g.StartDate,
-                                                                          EndDate=g.EndDate
+                                                                          GId = g.GId,
+                                                                          OfficeName = g.OfficeName,
+                                                                          Sewa = s.Name,
+                                                                          Awastha = a.Name,
+                                                                          TahaShreni = t.Name,
+                                                                          OfficeAddress = g.OfficeAddress,
+                                                                          JobType = g.JobType,
+                                                                          Post = g.Post,
+                                                                          StartDate = g.StartDate,
+                                                                          EndDate = g.EndDate
                                                                       }
                                                                     ).AsEnumerable();
                     exp.GovernmentExperience = government;
@@ -1518,22 +1799,23 @@ namespace Lok.Controllers
                 if (applicant.NonGovernmentInfos != null)
                 {
                     IEnumerable<NonGovernmentExperienceVM> nonGovernment = (from g in applicant.NonGovernmentInfos
-                                                                      from s in Shrenis where s.Id==g.Level
-                                                                      select new NonGovernmentExperienceVM
-                                                                      {
-                                                                          GId=g.GId,
-                                                                         OfficeName=g.OfficeName,
-                                                                         Post=g.Post,
-                                                                         JobType=g.JobType,
-                                                                         JobStartDate=g.JobStartDate,
-                                                                         JobEndDate=g.JobEndDate
-                                                                      }
+                                                                            from s in Shrenis
+                                                                            where s.Id == g.Level
+                                                                            select new NonGovernmentExperienceVM
+                                                                            {
+                                                                                GId = g.GId,
+                                                                                OfficeName = g.OfficeName,
+                                                                                Post = g.Post,
+                                                                                JobType = g.JobType,
+                                                                                JobStartDate = g.JobStartDate,
+                                                                                JobEndDate = g.JobEndDate
+                                                                            }
                                                                     ).AsEnumerable();
                     exp.NonGovernmentExperience = nonGovernment;
                 }
                 // IEnumerable<GovernmentExperienceVM> government = applicant.GovernmentInfos != null ? _mapper.Map<IEnumerable<GovernmentExperienceVM>>(applicant.GovernmentInfos) : null;
                 // IEnumerable<NonGovernmentExperienceVM> NonGovernment = applicant.NonGovernmentInfos != null ? _mapper.Map<IEnumerable<NonGovernmentExperienceVM>>(applicant.NonGovernmentInfos) : null;
-               // exp.NonGovernmentExperience = NonGovernment;
+                // exp.NonGovernmentExperience = NonGovernment;
                 return View(exp);
             }
             else
@@ -1546,6 +1828,18 @@ namespace Lok.Controllers
 
         public async Task<ActionResult<GovernmentExperienceVM>> Government()
         {
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+
             List<DropDownItem> Sewas = (from r in await _Sewa.GetAll()
                                         select new DropDownItem
                                         {
@@ -1572,7 +1866,7 @@ namespace Lok.Controllers
             Shrenis.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
 
 
-            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            //string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
@@ -1701,6 +1995,18 @@ namespace Lok.Controllers
 
         public async Task<ActionResult<GovernmentExperienceVM>> GovernmentEdit(string GId)
         {
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+
             List<DropDownItem> Sewas = (from r in await _Sewa.GetAll()
                                         select new DropDownItem
                                         {
@@ -1709,7 +2015,7 @@ namespace Lok.Controllers
                                         }).ToList();
 
             List<DropDownItem> Shrenis = (from r in await _Shreni.GetAll()
-                                          where r.Type=="Government"
+                                          where r.Type == "Government"
                                           select new DropDownItem
                                           {
                                               Id = r.Id.ToString(),
@@ -1726,7 +2032,7 @@ namespace Lok.Controllers
             Awasthas.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
             Shrenis.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
 
-            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            //string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
@@ -1805,47 +2111,47 @@ namespace Lok.Controllers
 
             if (ModelState.IsValid)
             {
-               
-                    Applicant applicant = await _Applicant.GetById(governmentVM.Id);
 
-                    GovernmentExperienceInfo govInfo = _mapper.Map<GovernmentExperienceInfo>(governmentVM);
-                    govInfo.FileName = govInfo.GId + ".pdf";
-                    applicant.EditedDate = DateTime.Now;
-                    _Applicant.UpdateGovernmentInfo(govInfo, governmentVM.Id, governmentVM.GId);
-                    await _uow.Commit();
+                Applicant applicant = await _Applicant.GetById(governmentVM.Id);
 
-
-
-                    //File Upload
-
-                    string directoryMain = Path.Combine(
-                                    Directory.GetCurrentDirectory(), "wwwroot", "images",
-                                    "applicant", applicant.Id.ToString(), "Government", "File"
-                                    );
+                GovernmentExperienceInfo govInfo = _mapper.Map<GovernmentExperienceInfo>(governmentVM);
+                govInfo.FileName = govInfo.GId + ".pdf";
+                applicant.EditedDate = DateTime.Now;
+                _Applicant.UpdateGovernmentInfo(govInfo, governmentVM.Id, governmentVM.GId);
+                await _uow.Commit();
 
 
 
-                    Directory.CreateDirectory(directoryMain); // no need to check if it exists
+                //File Upload
+
+                string directoryMain = Path.Combine(
+                                Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                "applicant", applicant.Id.ToString(), "Government", "File"
+                                );
 
 
-                    if (FileMain != null)
+
+                Directory.CreateDirectory(directoryMain); // no need to check if it exists
+
+
+                if (FileMain != null)
+                {
+                    var path = Path.Combine(
+                                Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                "applicant", applicant.Id.ToString(), "Government", "File",
+                                govInfo.FileName);
+
+                    using (var stream = new FileStream(path, FileMode.Create))
                     {
-                        var path = Path.Combine(
-                                    Directory.GetCurrentDirectory(), "wwwroot", "images",
-                                    "applicant", applicant.Id.ToString(), "Government", "File",
-                                    govInfo.FileName);
-
-                        using (var stream = new FileStream(path, FileMode.Create))
-                        {
-                            await FileMain.CopyToAsync(stream);
-                        }
+                        await FileMain.CopyToAsync(stream);
                     }
+                }
 
 
 
-                    TempData["Message"] = "Successfully Updated Government Experience Information.";
-                    return RedirectToAction("ExperienceIndex");
-               
+                TempData["Message"] = "Successfully Updated Government Experience Information.";
+                return RedirectToAction("ExperienceIndex");
+
             }
             else
             {
@@ -1861,20 +2167,31 @@ namespace Lok.Controllers
 
         public async Task<ActionResult<NonGovernmentExperienceVM>> NonGovernment()
         {
-          
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+
             List<DropDownItem> Levels = (from r in await _Shreni.GetAll()
-                                         where r.Type=="Non-Government"
-                                          select new DropDownItem
-                                          {
-                                              Id = r.Id.ToString(),
-                                              Name = r.Name
-                                          }).ToList();
-           
+                                         where r.Type == "Non-Government"
+                                         select new DropDownItem
+                                         {
+                                             Id = r.Id.ToString(),
+                                             Name = r.Name
+                                         }).ToList();
+
 
             Levels.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
-           
 
-            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+
+            //string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
@@ -1894,13 +2211,13 @@ namespace Lok.Controllers
         public async Task<ActionResult<GovernmentExperienceVM>> NonGovernment(NonGovernmentExperienceVM nonGovVM, IFormFile FileMain)
         {
             List<DropDownItem> Levels = (from r in await _Shreni.GetAll()
-                                          where r.Type == "Non-Government"
-                                          select new DropDownItem
-                                          {
-                                              Id = r.Id.ToString(),
-                                              Name = r.Name
-                                          }).ToList();
-          
+                                         where r.Type == "Non-Government"
+                                         select new DropDownItem
+                                         {
+                                             Id = r.Id.ToString(),
+                                             Name = r.Name
+                                         }).ToList();
+
             Levels.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
 
             if (ModelState.IsValid)
@@ -1982,17 +2299,29 @@ namespace Lok.Controllers
 
         public async Task<ActionResult<NonGovernmentExperienceVM>> NonGovernmentEdit(string GId)
         {
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+
             List<DropDownItem> Levels = (from r in await _Shreni.GetAll()
-                                         where r.Type=="Non-Government"
-                                           select new DropDownItem
-                                           {
-                                               Id = r.Id.ToString(),
-                                               Name = r.Name
-                                           }).ToList();
+                                         where r.Type == "Non-Government"
+                                         select new DropDownItem
+                                         {
+                                             Id = r.Id.ToString(),
+                                             Name = r.Name
+                                         }).ToList();
 
             Levels.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
-           
-            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+
+            //string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
@@ -2010,7 +2339,7 @@ namespace Lok.Controllers
 
                 nonGovVM.Id = applicant.Id.ToString();
                 nonGovVM.Levels = new SelectList(Levels, "Id", "Name");
-              
+
                 //Check File Exists
                 if (GId != null)
                 {
@@ -2043,65 +2372,65 @@ namespace Lok.Controllers
         public async Task<ActionResult<NonGovernmentExperienceVM>> NonGovernmentEdit(NonGovernmentExperienceVM nonGovVM, IFormFile FileMain)
         {
             List<DropDownItem> Levels = (from r in await _Shreni.GetAll()
-                                         where r.Type=="Non-Government"
-                                        select new DropDownItem
-                                        {
-                                            Id = r.Id.ToString(),
-                                            Name = r.Name
-                                        }).ToList();
-           
+                                         where r.Type == "Non-Government"
+                                         select new DropDownItem
+                                         {
+                                             Id = r.Id.ToString(),
+                                             Name = r.Name
+                                         }).ToList();
+
 
             Levels.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
-           
+
             if (ModelState.IsValid)
             {
-               
-                    Applicant applicant = await _Applicant.GetById(nonGovVM.Id);
 
-                    NonGovernmentExperienceInfo nonGovInfo = _mapper.Map<NonGovernmentExperienceInfo>(nonGovVM);
-                    nonGovInfo.FileName = nonGovInfo.GId + ".pdf";
-                    applicant.EditedDate = DateTime.Now;
-                    _Applicant.UpdateNonGovernmentInfo(nonGovInfo, nonGovVM.Id,nonGovVM.GId);
-                    await _uow.Commit();
+                Applicant applicant = await _Applicant.GetById(nonGovVM.Id);
 
-
-
-                    //File Upload
-
-                    string directoryMain = Path.Combine(
-                                    Directory.GetCurrentDirectory(), "wwwroot", "images",
-                                    "applicant", applicant.Id.ToString(), "NonGovernment", "File"
-                                    );
+                NonGovernmentExperienceInfo nonGovInfo = _mapper.Map<NonGovernmentExperienceInfo>(nonGovVM);
+                nonGovInfo.FileName = nonGovInfo.GId + ".pdf";
+                applicant.EditedDate = DateTime.Now;
+                _Applicant.UpdateNonGovernmentInfo(nonGovInfo, nonGovVM.Id, nonGovVM.GId);
+                await _uow.Commit();
 
 
 
-                    Directory.CreateDirectory(directoryMain); // no need to check if it exists
+                //File Upload
+
+                string directoryMain = Path.Combine(
+                                Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                "applicant", applicant.Id.ToString(), "NonGovernment", "File"
+                                );
 
 
-                    if (FileMain != null)
+
+                Directory.CreateDirectory(directoryMain); // no need to check if it exists
+
+
+                if (FileMain != null)
+                {
+                    var path = Path.Combine(
+                                Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                "applicant", applicant.Id.ToString(), "NonGovernment", "File",
+                                nonGovInfo.FileName);
+
+                    using (var stream = new FileStream(path, FileMode.Create))
                     {
-                        var path = Path.Combine(
-                                    Directory.GetCurrentDirectory(), "wwwroot", "images",
-                                    "applicant", applicant.Id.ToString(), "NonGovernment", "File",
-                                    nonGovInfo.FileName);
-
-                        using (var stream = new FileStream(path, FileMode.Create))
-                        {
-                            await FileMain.CopyToAsync(stream);
-                        }
+                        await FileMain.CopyToAsync(stream);
                     }
+                }
 
 
 
-                    TempData["Message"] = "Successfully Updated NonGovernment Experience Information.";
-                    return RedirectToAction("ExperienceIndex");
-               
+                TempData["Message"] = "Successfully Updated NonGovernment Experience Information.";
+                return RedirectToAction("ExperienceIndex");
+
 
             }
             else
             {
                 nonGovVM.Levels = new SelectList(Levels, "Id", "Name");
-               
+
                 ViewBag.Error = "Error";
                 ModelState.AddModelError(string.Empty, "Error");
                 return View(nonGovVM);
@@ -2109,7 +2438,19 @@ namespace Lok.Controllers
         }
         public async Task<ActionResult<UploadVM>> Upload()
         {
-            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+
+            // string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
             if (id != null)
             {
                 Applicant applicant = await _Applicant.GetById(id);
@@ -2119,7 +2460,7 @@ namespace Lok.Controllers
                 {
                     upload = applicant.Uploads;
                     uploadVM = _mapper.Map<UploadVM>(upload);
-                    uploadVM.PhotographLink = upload.Photograph != null ? "~/images/Applicant/" + applicant.Id.ToString() + "/Upload/"+ upload.Photograph : "";
+                    uploadVM.PhotographLink = upload.Photograph != null ? "~/images/Applicant/" + applicant.Id.ToString() + "/Upload/" + upload.Photograph : "";
                     uploadVM.CitizenshipLink = upload.Citizenship != null ? "~/images/Applicant/" + applicant.Id.ToString() + "/Upload/" + upload.Citizenship : "";
                     uploadVM.SignatureLink = upload.Signature != null ? "~/images/Applicant/" + applicant.Id.ToString() + "/Upload/" + upload.Signature : "";
                     uploadVM.InclusionGroupLink = upload.InclusionGroup != null ? "~/images/Applicant/" + applicant.Id.ToString() + "/Upload/" + upload.InclusionGroup : "";
@@ -2134,9 +2475,9 @@ namespace Lok.Controllers
             }
 
         }
-         [HttpPost]
-        public async Task<ActionResult<UploadVM>> Upload(UploadVM uploadVM,IFormFile PhotographFile, 
-                                                        IFormFile SignatureFile, IFormFile CitizenshipFile, IFormFile InclusionGroupFile)
+        [HttpPost]
+        public async Task<ActionResult<UploadVM>> Upload(UploadVM uploadVM, IFormFile PhotographFile,
+                                                       IFormFile SignatureFile, IFormFile CitizenshipFile, IFormFile InclusionGroupFile)
         {
             try
             {
@@ -2147,7 +2488,7 @@ namespace Lok.Controllers
                     {
 
                         Upload upload = new Upload();
-                        if (applicant.Uploads!=null)
+                        if (applicant.Uploads != null)
                         {
                             upload = applicant.Uploads;
                         }
@@ -2213,7 +2554,7 @@ namespace Lok.Controllers
                         }
 
                         applicant.Uploads = upload;
-                         _Applicant.Update(applicant, applicant.Id.ToString());
+                        _Applicant.Update(applicant, applicant.Id.ToString());
                         await _uow.Commit();
                     }
                     else
@@ -2228,7 +2569,7 @@ namespace Lok.Controllers
                     return RedirectToAction("Index");
                 }
             }
-            catch 
+            catch
             {
                 return RedirectToAction("Upload");
             }
@@ -2237,7 +2578,19 @@ namespace Lok.Controllers
 
         public async Task<ActionResult<PreviewVM>> Preview()
         {
-            string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+
+            //string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
             if (id != null)
             {
                 PreviewVM preview = new PreviewVM();
@@ -2315,10 +2668,17 @@ namespace Lok.Controllers
                                                        Id = r.Id.ToString(),
                                                        Name = r.Name
                                                    }).ToList();
+                    List<DropDownItem> District = (from r in await _District.GetAll()
+                                                   select new DropDownItem
+                                                   {
+                                                       Id = r.Id.ToString(),
+                                                       Name = r.Name
+                                                   }).ToList();
 
                     preview.Personal = _mapper.Map<PersonalVM>(applicant.PersonalInformation);
                     preview.Extra = _mapper.Map<ExtraVM>(applicant.ExtraInformation);
                     preview.Contact = _mapper.Map<ContactVM>(applicant.ContactInformation);
+                    preview.Contact.District = District.FirstOrDefault(m => m.Id == preview.Contact.District).Name;
 
                     //Uploaded documents
                     preview.Upload = _mapper.Map<UploadVM>(applicant.Uploads);
@@ -2427,11 +2787,329 @@ namespace Lok.Controllers
                     return View(preview);
                 }
             }
-           
-               return RedirectToAction("Login");
-            
+
+            return RedirectToAction("Login");
+
         }
-       
+
+        //Delete the Education Record
+        public async Task<ActionResult> DeleteEducation(string EId)
+        {
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+            //string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            if (id != null)
+            {
+                Applicant applicant = await _Applicant.GetById(id);
+                if (applicant != null)
+                {
+                    if (applicant.EducationInfos != null)
+                    {
+                        EducationInfo eduInfo = applicant.EducationInfos.FirstOrDefault(m => m.EId == EId);
+
+                        _Applicant.DeleteEducationInfo(id, EId);
+                        await _uow.Commit();
+
+
+                        //Delete File if exists
+                        string equivalent = Path.Combine(
+                                                Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                                "applicant", applicant.Id.ToString(), "Education", "Equivalent", eduInfo.EquivalentFileName
+                                             );
+                        string main = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                                                       "applicant", applicant.Id.ToString(), "Education", "main", eduInfo.FileName
+                                                                    );
+
+
+
+                        if (System.IO.File.Exists(main))
+                        {
+                            System.IO.File.Delete(main);
+                        }
+
+
+                        if (System.IO.File.Exists(equivalent))
+                        {
+                            System.IO.File.Delete(equivalent);
+                        }
+                        TempData["Message"] = "Record Deleted Successfully.";
+                        return RedirectToAction("EducationIndex");
+                    }
+                    else
+                    {
+                        return RedirectToAction("EducationIndex");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("login");
+                }
+            }
+            else
+            {
+                return RedirectToAction("Login");
+            }
+
+        }
+
+
+        //Delete the Training Record
+        public async Task<ActionResult> DeleteTraining(string TId)
+        {
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+
+            // string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            if (id != null)
+            {
+                Applicant applicant = await _Applicant.GetById(id);
+                if (applicant != null)
+                {
+                    if (applicant.TrainingInfos != null)
+                    {
+                        TrainingInfo trainInfo = applicant.TrainingInfos.FirstOrDefault(m => m.TId == TId);
+
+                        _Applicant.DeleteTrainingInfo(id, TId);
+                        await _uow.Commit();
+
+
+                        //Delete File if exists
+                        string main = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                                                         "applicant", applicant.Id.ToString(), "Training", "File", trainInfo.FileName
+                                                                      );
+
+
+
+                        if (System.IO.File.Exists(main))
+                        {
+                            System.IO.File.Delete(main);
+                        }
+
+
+                        TempData["Message"] = "Record Deleted Successfully.";
+                        return RedirectToAction("TrainingIndex");
+                    }
+                    else
+                    {
+                        return RedirectToAction("TrainingINdex");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("login");
+                }
+            }
+            else
+            {
+                return RedirectToAction("Login");
+            }
+
+        }
+
+        //Delete the Council Record
+        public async Task<ActionResult> DeleteCouncil(string PId)
+        {
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+
+            //string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            if (id != null)
+            {
+                Applicant applicant = await _Applicant.GetById(id);
+                if (applicant != null)
+                {
+                    if (applicant.ProfessionalCouncils != null)
+                    {
+                        ProfessionalCouncil councilInfo = applicant.ProfessionalCouncils.FirstOrDefault(m => m.PId == PId);
+
+                        _Applicant.DeleteProfessionalCouncil(id, PId);
+                        await _uow.Commit();
+
+
+                        //Delete File if exists
+                        string main = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                                                         "applicant", applicant.Id.ToString(), "Council", "File", councilInfo.FileName
+                                                                      );
+
+
+
+                        if (System.IO.File.Exists(main))
+                        {
+                            System.IO.File.Delete(main);
+                        }
+
+
+                        TempData["Message"] = "Record Deleted Successfully.";
+                        return RedirectToAction("CouncilIndex");
+                    }
+                    else
+                    {
+                        return RedirectToAction("CouncilIndex");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("login");
+                }
+            }
+            else
+            {
+                return RedirectToAction("Login");
+            }
+
+        }
+
+        //Delete the Government Record
+        public async Task<ActionResult> DeleteGovernment(string GId)
+        {
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+
+            // string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            if (id != null)
+            {
+                Applicant applicant = await _Applicant.GetById(id);
+                if (applicant != null)
+                {
+                    if (applicant.GovernmentInfos != null)
+                    {
+                        GovernmentExperienceInfo govInfo = applicant.GovernmentInfos.FirstOrDefault(m => m.GId == GId);
+
+                        _Applicant.DeleteGovernmentInfo(id, GId);
+                        await _uow.Commit();
+
+
+                        //Delete File if exists
+                        string main = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                                                         "applicant", applicant.Id.ToString(), "Government", "File", govInfo.FileName
+                                                                      );
+
+
+
+                        if (System.IO.File.Exists(main))
+                        {
+                            System.IO.File.Delete(main);
+                        }
+
+
+                        TempData["Message"] = "Record Deleted Successfully.";
+                        return RedirectToAction("ExperienceIndex");
+                    }
+                    else
+                    {
+                        return RedirectToAction("ExperienceIndex");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("login");
+                }
+            }
+            else
+            {
+                return RedirectToAction("Login");
+            }
+
+        }
+
+        //Delete the Government Record
+        public async Task<ActionResult> DeleteNonGovernment(string GId)
+        {
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+
+            //string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            if (id != null)
+            {
+                Applicant applicant = await _Applicant.GetById(id);
+                if (applicant != null)
+                {
+                    if (applicant.NonGovernmentInfos != null)
+                    {
+                        NonGovernmentExperienceInfo govInfo = applicant.NonGovernmentInfos.FirstOrDefault(m => m.GId == GId);
+
+                        _Applicant.DeleteNonGovernmentInfo(id, GId);
+                        await _uow.Commit();
+
+
+                        //Delete File if exists
+                        string main = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images",
+                                                                         "applicant", applicant.Id.ToString(), "NonGovernment", "File", govInfo.FileName
+                                                                      );
+
+
+
+                        if (System.IO.File.Exists(main))
+                        {
+                            System.IO.File.Delete(main);
+                        }
+
+
+                        TempData["Message"] = "Record Deleted Successfully.";
+                        return RedirectToAction("ExperienceIndex");
+                    }
+                    else
+                    {
+                        return RedirectToAction("ExperienceIndex");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("login");
+                }
+            }
+            else
+            {
+                return RedirectToAction("Login");
+            }
+
+        }
+
         //public ActionResult<Applicant> Create()
         //{
         //    Applicant value = new Applicant();
@@ -2478,23 +3156,183 @@ namespace Lok.Controllers
         //    return RedirectToAction("Index");
         //}
 
-        //[HttpGet]
-        //public async Task<ActionResult> Delete(string id)
-        //{
-        //    _Applicant.Remove(id);
+        [HttpGet]
+        public async Task<ActionResult> Delete(string id)
+        {
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
 
-        //    // it won't be null
-        //    // var testApplicant = await _Applicant.GetById(id);
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
 
-        //    // If everything is ok then:
-        //    await _uow.Commit();
+            // Get the claims values
+            //string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+            //                   .Select(c => c.Value).SingleOrDefault();
 
-        //    // not it must by null
-        //    //  testApplicant = await _Applicant.GetById(id);
+            _Applicant.Remove(id);
 
-        //    return RedirectToAction("Index");
-        //}
+            DeleteFile(id);
+            // If everything is ok then:
+            await _uow.Commit();
 
+            // not it must by null
+            //  testApplicant = await _Applicant.GetById(id);
+
+            return RedirectToAction("Index");
+        }
+
+        public void DeleteFile(string id)
+        {
+            List<string> dirs = new List<string>();
+            List<string> files = new List<string>();
+            List<string> subdirs = new List<string>();
+            string dir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "applicant", id);
+            if (Directory.Exists(dir))
+            {
+                subdirs = Directory.GetDirectories(dir).Length != 0 ? Directory.GetDirectories(dir).ToList() : null;
+                if (subdirs.Count > 0)
+                    foreach (string item in subdirs)
+                    {
+                        List<string> subsubDirs = Directory.GetDirectories(item).Length != 0 ? Directory.GetDirectories(item).ToList() : null;
+                        List<String> filesDir = Directory.GetFiles(item).Length != 0 ? Directory.GetFiles(item).ToList() : null;
+
+                        if (subsubDirs.Count > 0)
+                        {
+                            subdirs.AddRange(subsubDirs);
+                        }
+
+                        if (filesDir.Count > 0)
+                        {
+                            foreach (string fileItem in filesDir)
+                            {
+                                System.IO.File.Delete(fileItem);
+                            }
+                        }
+                    }
+
+                foreach (string item in subdirs)
+                {
+                    Directory.Delete(item);
+                }
+
+                Directory.Delete(dir);
+            }
+        }
+
+        public async Task<ActionResult> Application()
+        {
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+            //string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            ApplicationVM appVM = new ApplicationVM();
+            List<DropDownItem> Faculties = (from f in await _Faculty.GetAll()
+                                            select new DropDownItem
+                                            {
+                                                Id = f.Id.ToString(),
+                                                Name = f.Name
+                                            }).ToList();
+            Faculties.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
+            appVM.Faculties = new SelectList(Faculties, "Id", "Name");
+            IEnumerable<Advertisiment> Ads = await _Advertisement.GetAll();
+            appVM.Advertisements = Ads;
+            appVM.Id = id;
+            return View(appVM);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<ApplicationVM>> Application(ApplicationVM appVM)
+        {
+            List<DropDownItem> Faculties = (from f in await _Faculty.GetAll()
+                                            select new DropDownItem
+                                            {
+                                                Id = f.Id.ToString(),
+                                                Name = f.Name
+                                            }).ToList();
+            Faculties.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
+            appVM.Faculties = new SelectList(Faculties, "Id", "Name");
+            IEnumerable<Advertisiment> Ads = await _Advertisement.GetAll();
+            appVM.Advertisements = Ads;
+            if (ModelState.IsValid)
+            {
+                Applications app = _mapper.Map<Applications>(appVM);
+                app.Applicant = Request.Cookies != null ? Request.Cookies["Id"] : null;
+                app.EthnicalGroup = appVM.EthnicalGroups;
+                app.AppliedDate = DateTime.Now;
+
+                IEnumerable<Applications> apps = await _Applications.GetAll();
+                if (apps != null)
+                {
+                    if (!apps.Any(m => m.Advertisement == appVM.Advertisement && m.Applicant == appVM.Id))
+                    {
+                        _Applications.Add(app);
+                        app.PaymentStatus = "Pending";
+                        await _uow.Commit();
+                    }
+                }
+                else
+                {
+                    _Applications.Add(app);
+                    app.PaymentStatus = "Pending";
+                    await _uow.Commit();
+                }
+                TempData["Message"] = "Successfully Submitted the Application.";
+                return RedirectToAction("Index");
+            }
+            else
+            {
+
+                return View(appVM);
+            }
+        }
+
+
+
+        public async Task<ActionResult> Payment()
+        {
+            //Get the current claims principal
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+            if (identity == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Get the claims values
+            string id = identity.Claims.Where(c => c.Type.Contains("ApplicantId"))
+                               .Select(c => c.Value).SingleOrDefault();
+
+            PaymentVM payVM = new PaymentVM();
+            // string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            var applications = await _Applications.GetAll();
+            var advertisements = await _Advertisement.GetAll();
+
+            IEnumerable<ApplicationPay> apps = (from a in applications
+                                                from ad in advertisements
+                                                where a.Advertisement == ad.Id.ToString() && a.Applicant == id
+                                                select new ApplicationPay
+                                                {
+                                                    Id = a.Id.ToString(),
+                                                    ObjAd = ad,
+                                                    EthnicalGroups = String.Join(" , ", a.EthnicalGroup.ToList()),
+                                                    PaymentStatus = a.PaymentStatus
+
+                                                }).AsEnumerable();
+            payVM.Applications = apps.ToList();
+            payVM.Applicant = await _Applicant.GetById(id);
+            return View(payVM);
+
+        }
 
 
         private static string RandomString(int length)

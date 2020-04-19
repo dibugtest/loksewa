@@ -90,7 +90,8 @@
             </td>
             
             <td>
-             <a href='@Url.Action("EducationEdit", "Applicant")?EId=@item.EId'>Edit</a>
+                <a href='@Url.Action("EducationEdit", "Applicant")?EId=@item.EId'>Edit</a>|
+                <a href="@Url.Action("DeleteEducation","Applicant")?EId=@item.EId" onclick="return confirm('Are you sure you want to delete this record?');">Delete</a>
             </td>
         </tr>
 }

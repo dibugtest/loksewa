@@ -55,6 +55,8 @@ namespace Lok.Mapping
             CreateMap<ResetPasswordVM, SecurityQA>();
             CreateMap<Upload, UploadVM>();
 
+            CreateMap<ApplicationVM, Applications>().ForMember(x => x.Id, opt => opt.Ignore());
+
 
         }
     }
