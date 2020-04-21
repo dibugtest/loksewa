@@ -6,105 +6,140 @@
 
 }
 
-<h2>Details</h2>
 
 <div>
-    <h4>Advertisiment</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.AdvertisimentType)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.AdvertisimentType)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.SNo)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.SNo)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.ServiceId)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.ServiceId)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.GroupId)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.GroupId)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.SubGroupId)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.SubGroupId)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.DatePublished)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.DatePublished)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Office)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Office)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Marks)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Marks)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.NoticeNo)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.NoticeNo)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.MinAge)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.MinAge)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.MaxAge)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.MaxAge)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Examtype)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Examtype)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Edu.Name)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Edu.Name)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Notice)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Notice)
-        </dd>
-    </dl>
+    <h3>Advertisiment Details</h3>
+    <table class="table table-bordered table-responsive-lg table-striped">
+        <tr>
+            <td>
+                @Html.DisplayNameFor(model => model.AdvertisimentType)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.AdvertisimentType)
+            </td>
+        </tr>
+        <tr>
+            <td>
+                @Html.DisplayNameFor(model => model.SNo)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.SNo)
+            </td>
+        </tr>
+        <tr>
+            <td>
+                @Html.DisplayNameFor(model => model.ServiceId)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.ServiceId)
+            </td>
+        </tr>
+        <tr>
+
+            <td>
+                @Html.DisplayNameFor(model => model.GroupId)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.GroupId)
+            </td>
+        </tr>
+        <tr>
+
+            <td>
+                @Html.DisplayNameFor(model => model.SubGroupId)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.SubGroupId)
+            </td>
+        </tr>
+        <tr>
+
+            <td>
+                @Html.DisplayNameFor(model => model.DatePublished)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.DatePublished)
+            </td>
+        </tr>
+        <tr>
+
+            <td>
+                @Html.DisplayNameFor(model => model.Office)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.Office)
+            </td>
+        </tr>
+        <tr>
+
+            <td>
+                @Html.DisplayNameFor(model => model.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.Title)
+            </td>
+        </tr>
+        <tr>
+
+            <td>
+                @Html.DisplayNameFor(model => model.Marks)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.Marks)
+            </td>
+        </tr>
+        <tr>
+
+            <td>
+                @Html.DisplayNameFor(model => model.NoticeNo)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.NoticeNo)
+            </td>
+        </tr>
+        <tr>
+
+            <td>
+                @Html.DisplayNameFor(model => model.MinAge)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.MinAge)
+            </td>
+        </tr>
+        <tr>
+
+            <td>
+                @Html.DisplayNameFor(model => model.MaxAge)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.MaxAge)
+            </td>
+        </tr>
+        <tr>
+
+            <td>
+                @Html.DisplayNameFor(model => model.Examtype)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.Examtype)
+            </td>
+        </tr>
+        <tr>
+
+            <td>
+                @Html.DisplayNameFor(model => model.Edu.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.Edu.Name)
+            </td>
+        </tr>
+
+        
+    </table>
 </div>
 <div>
-    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
-    <a asp-action="Index">Back to List</a>
+    <center>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.Id }, new { @class = "btn btn-primary" }) |
+        <a asp-action="Index">Back to List</a>
+    </center>
 </div>

@@ -2,237 +2,302 @@
 
 @{
     ViewData["Title"] = "Create";
-        Layout = "_LayoutAdmin";
+    Layout = "_LayoutAdmin";
 
 }
 
-<h2>Create</h2>
+<h3>Create Advertisiment</h3>
 
-<h4>Advertisiment</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+<form asp-action="Create">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="row">
+        <div class="col-md-4">
             <div class="form-group">
-                <label asp-for="AdvertisimentNo" class="control-label"></label>
+                <label class="control-label"> Advertisiment No</label>
                 <input asp-for="AdvertisimentNo" class="form-control" />
                 <span asp-validation-for="AdvertisimentNo" class="text-danger"></span>
             </div>
+        </div>
+        <div class="col-md-4">
+
             <div class="form-group">
                 <label asp-for="SNo" class="control-label"></label>
                 <input asp-for="SNo" class="form-control" />
                 <span asp-validation-for="SNo" class="text-danger"></span>
             </div>
+        </div>
+        <div class="col-md-4">
+
             <div class="form-group">
-                <label asp-for="AdvertisimentType" class="control-label"></label>
+                <label class="control-label">Advertisiment Type</label>
                 <input asp-for="AdvertisimentType" class="form-control" />
                 <span asp-validation-for="AdvertisimentType" class="text-danger"></span>
             </div>
+        </div>
+        <div class="col-md-4">
+
             <div class="form-group">
-                <div class="form-group">
-                    <label asp-for="Title" class="control-label"></label>
-                    <input asp-for="Title" class="form-control" />
-                    <span asp-validation-for="Title" class="text-danger"></span>
-                </div>
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-4">
 
-                <div class="form-group">
-                    <label asp-for="PostId" class="control-label"></label>
+            <div class="form-group">
+                <label class="control-label">Post</label>
 
-                    <select asp-for="PostId" asp-items="ViewBag.PostId" class="form-control">
-                        <option disabled selected>--- Select ---</option>
+                <select asp-for="PostId" asp-items="ViewBag.PostId" class="form-control">
+                    <option disabled selected>--- Select ---</option>
 
-                    </select>
-                    <span asp-validation-for="ServiceId" class="text-danger"></span>
-                </div>
+                </select>
+                <span asp-validation-for="ServiceId" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-4">
 
-                <div class="form-group">
-                    <label asp-for="ServiceId" class="control-label"></label>
+            <div class="form-group">
+                <label class="control-label">Service</label>
 
-                    <select asp-for="ServiceId" asp-items="ViewBag.ServiceId" class="form-control">
-                        <option disabled selected>--- Select ---</option>
+                <select asp-for="ServiceId" asp-items="ViewBag.ServiceId" class="form-control">
+                    <option disabled selected>--- Select ---</option>
 
-                    </select>
-                    <span asp-validation-for="ServiceId" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="GroupId" class="control-label"></label>
-                    <select asp-for="GroupId" asp-items="ViewBag.GroupId" class="form-control">
+                </select>
+                <span asp-validation-for="ServiceId" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-4">
 
-                        <option disabled selected>--- Select ---</option>
+            <div class="form-group">
+                <label class="control-label">Group</label>
+                <select asp-for="GroupId" asp-items="ViewBag.GroupId" class="form-control">
 
-                    </select>
-                    <span asp-validation-for="GroupId" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="SubGroupId" class="control-label"></label>
-                    <select asp-for="SubGroupId" asp-items="ViewBag.SubGroupId" class="form-control">
-                        <option disabled selected>--- Select ---</option>
+                    <option disabled selected>--- Select ---</option>
 
-                    </select>
-                    <span asp-validation-for="SubGroupId" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="CategoryId" class="control-label"></label>
-                    <select asp-for="CategoryId" asp-items="ViewBag.CategoryId" class="form-control">
-                        <option disabled selected>--- Select ---</option>
+                </select>
+                <span asp-validation-for="GroupId" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-4">
 
-                    </select>
-                    <span asp-validation-for="SubGroupId" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="EthinicalGroups" class="control-label"></label><br />
-                    @{int i = 0;}
-                    @foreach (var item in ViewBag.EthinicalGroup)
-                    {
-                        <input name="EthinicalGroup[@i]" value="@item.Id" class="ac" type="checkbox" id="EthinicalGroup[@i]" />
-                        <label>@item.Name</label><br />
-                        i++;
-                    }
-                    @*@if (Model.SelectedFruits.Contains(item.Value))
-                        {<text> checked </text>*@
-                </div>
+            <div class="form-group">
+                <label class="control-label">sub Group</label>
+                <select asp-for="SubGroupId" asp-items="ViewBag.SubGroupId" class="form-control">
+                    <option disabled selected>--- Select ---</option>
 
-                <div class="form-group">
-                    <label asp-for="DatePublished" class="control-label"></label>
-                    <input asp-for="DatePublished" id="datepicker" class="form-control" />
-                    <span asp-validation-for="DatePublished" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="TimePublished" class="control-label"></label>
-                    <input asp-for="TimePublished" id="time1" class="form-control" />
-                    <span asp-validation-for="TimePublished" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="Office" class="control-label"></label>
-                    <input asp-for="Office" class="form-control" />
-                    <span asp-validation-for="Office" class="text-danger"></span>
-                </div>
+                </select>
+                <span asp-validation-for="SubGroupId" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-4">
 
-                <div class="form-group">
-                    <label asp-for="Marks" class="control-label"></label>
-                    <input asp-for="Marks" class="form-control" />
-                    <span asp-validation-for="Marks" class="text-danger"></span>
-                </div>
+            <div class="form-group">
+                <label class="control-label"> Category</label>
+                <select asp-for="CategoryId" asp-items="ViewBag.CategoryId" class="form-control">
+                    <option disabled selected>--- Select ---</option>
 
-                <div class="form-group">
-                    <label asp-for="MinAge" class="control-label"></label>
-                    <input asp-for="MinAge" class="form-control" />
-                    <span asp-validation-for="MinAge" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="MaxAge" class="control-label"></label>
-                    <input asp-for="MaxAge" class="form-control" />
-                    <span asp-validation-for="MaxAge" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <div class="form-group">
-                        <label asp-for="Examtype" class="control-label"></label><br />
-                        @{int j = 0;}
-                        @foreach (var item in ViewBag.Exam)
-                        {
-                            <input name="Exam[@j]" value="@item.ExamType" type="checkbox" id="Exam" />
-                            <label>@item.ExamType</label><br />
-                            j++;
-                        }
-                        @*@if (Model.SelectedFruits.Contains(item.Value))
-            {<text> checked </text>*@
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label asp-for="EducationId" class="control-label"></label>
-                    <select asp-for="EducationId" asp-items="ViewBag.MinEdu" class="form-control">
-                        <option disabled selected>--- Select ---</option>
+                </select>
+                <span asp-validation-for="SubGroupId" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-4">
 
-                    </select>
+            <div class="form-group">
+                <label class="control-label">Ethinic Group</label><br />
+                @{int i = 0;}
+                @foreach (var item in ViewBag.EthinicalGroup)
+                {
+                    <input name="EthinicalGroup[@i]" value="@item.Id" class="ac" type="checkbox" id="EthinicalGroup[@i]" />
+                    <label>@item.Name</label><br />
+                    i++;
+                }
+                @*@if (Model.SelectedFruits.Contains(item.Value))
+                {<text> checked </text>*@
+            </div>
+        </div>
+        <div class="col-md-4">
 
-                    <span asp-validation-for="EducationId" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="NoticeNo" class="control-label"></label>
-                    <input asp-for="NoticeNo" class="form-control" />
-                    <span asp-validation-for="NoticeNo" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="EndDate" class="control-label"></label>
-                    <input asp-for="EndDate" id="datepicker1" class="form-control" />
-                    <span asp-validation-for="EndDate" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="DoubleDasturDate" class="control-label"></label>
-                    <input asp-for="DoubleDasturDate" id="datepicker2" class="form-control" />
-                    <span asp-validation-for="DoubleDasturDate" class="text-danger"></span>
-                </div>
+            <div class="form-group">
+                <label class="control-label">Publishing  Date</label>
+                <input asp-for="DatePublished" id="datepicker" type="date" class="form-control" />
+                <span asp-validation-for="DatePublished" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-4">
 
+            <div class="form-group">
+                <label class="control-label"> Publishing Time</label>
+                <input asp-for="TimePublished" id="time1" type="time" class="form-control" />
+                <span asp-validation-for="TimePublished" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-4">
 
-                <div class="form-group">
-                    <label asp-for="Notice" class="control-label"></label>
-                    <input asp-for="Notice" class="form-control" />
-                    <span asp-validation-for="Notice" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <input type="submit" value="Create" class="btn btn-default" />
+            <div class="form-group">
+                <label asp-for="Office" class="control-label"></label>
+                <input asp-for="Office" class="form-control" />
+                <span asp-validation-for="Office" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-4">
+
+            <div class="form-group">
+                <label asp-for="Marks" class="control-label"></label>
+                <input asp-for="Marks" class="form-control" />
+                <span asp-validation-for="Marks" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-4">
+
+            <div class="form-group">
+                <label asp-for="MinAge" class="control-label"></label>
+                <input asp-for="MinAge" class="form-control" />
+                <span asp-validation-for="MinAge" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-4">
+
+            <div class="form-group">
+                <label asp-for="MaxAge" class="control-label"></label>
+                <input asp-for="MaxAge" class="form-control" />
+                <span asp-validation-for="MaxAge" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label asp-for="Examtype" class="control-label"></label><br />
+                @{int j = 0;}
+                @foreach (var item in ViewBag.Exam)
+                {
+                    <input name="Exam[@j]" value="@item.ExamType" type="checkbox" id="Exam" />
+                    <label>@item.ExamType</label><br />
+                    j++;
+                }
+                @*@if (Model.SelectedFruits.Contains(item.Value))
+                {<text> checked </text>*@
+            </div>
+        </div>
+        <div class="col-md-4">
+
+            <div class="form-group">
+                <label class="control-label">Education</label>
+                <select asp-for="EducationId" asp-items="ViewBag.MinEdu" class="form-control">
+                    <option disabled selected>--- Select ---</option>
+
+                </select>
+
+                <span asp-validation-for="EducationId" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-4">
+
+            <div class="form-group">
+                <label asp-for="NoticeNo" class="control-label"></label>
+                <input asp-for="NoticeNo" class="form-control" />
+                <span asp-validation-for="NoticeNo" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-4">
+
+            <div class="form-group">
+                <label class="control-label">Exam date</label>
+                <input asp-for="EndDate" type="date" class="form-control" />
+                <span asp-validation-for="EndDate" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-4">
+
+            <div class="form-group">
+                <label class="control-label">Fiscal year</label>
+                <input asp-for="FiscalYear" class="form-control" />
+                <span asp-validation-for="FiscalYear" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="form-group">
+                <label class="control-label">Double dastur Date</label>
+                <input asp-for="DoubleDasturDate" type="date" class="form-control" />
+                <span asp-validation-for="DoubleDasturDate" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-4">
+
+            <div class="form-group">
+                <label asp-for="Notice" class="control-label"></label>
+                <input asp-for="Notice" class="form-control" />
+                <span asp-validation-for="Notice" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="form-group">
+                <center>
+                    <input type="submit" value="Create" class="btn btn-primary" />
                     <a asp-action="Index">Back to List</a>
-
-                </div>
-        </form>
+                </center>
+            </div>
+        </div>
     </div>
-</div>
 
-
+</form>
 
 <script src="~/lib/jquery/dist/jquery.js"></script>
-<script type="text/javascript">
-    $(function () {
 
+<script>
+    $(function () {
         $('form input[type=checkbox]').change(function (e) {
             e.preventDefault();
-
-            // alert($(this).val());
             if ($(this).prop("checked") == true) {
                 var className = $(this).attr('Value');//id layeko ho
                 b = className + "value";//id ma value lekhya matra ho
                 c = $(this).attr('Name') + "value";//name autai hune vayeko le yaha chai value add vako ho
                 d = $(this).attr('class');
                 if (d == "ac") {
-                    $(this).after('&nbsp;<input type="text" id="' + b + '"  size="4" name="' + c + '">');
+                    $(this).after('&nbsp;<input type = "text" id = "' + b + '" size = "4" name = "' + c + '" > ');
+                }
+            }
+               // <input type="text" id="txt" size="4" name="Value4">');
+                                //}
+                else {
+                    var className = $(this).attr('Value');//id leko ho eth group ko ie that is unique
+                    b = className + "value";
+
+                    $("#" + b).remove();
+
+                    //check.next("input[type=text]").remove();
+                    // check.next("body input#txt").val("1");
+                    // $(this).after('input[type=text]').remove();
+
                 }
 
-                //$(this).after('&nbsp;<input type="text" id="txt"  size="4" name="Value4">');
-            }
-            else {
-                var className = $(this).attr('Value');//id leko ho eth group ko ie that is unique
-                b = className + "value";
+            });
 
-                $("#" + b).remove();
 
-                //check.next("input[type=text]").remove();
-                // check.next("body input#txt").val("1");
-                // $(this).after('input[type=text]').remove();
-
-            }
-
-        });
-    });
+});
 </script>
-
-@section Scripts {
+@section scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    <link rel="stylesheet" href="~/jquery-ui-1.12.1.custom/jquery-ui.css" />
+
+    @*<link rel="stylesheet" href="~/jquery-ui-1.12.1.custom/jquery-ui.css" />
+
     <script type="text/javascript" src="~/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
     <script type="text/javascript" src="~/jquery-ui-1.12.1.custom/jquery.timePicker.js"></script>
 
-    <script>
+    <script type="text/javascript">
         $(function () {
             $("#datepicker").datepicker();
-            $("#datepicker1").datepicker();
-            $("#datepicker2").datepicker();
-            $("#time1").timePicker();
+                            $("#datepicker1").datepicker();
+                            $("#datepicker2").datepicker();
+                            $("#time1").timePicker();
 
 
-        });
+                        });
+    </script>*@
 
-    </script>
+
 
 
 }

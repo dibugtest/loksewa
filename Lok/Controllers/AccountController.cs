@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using Lok.Data.Interface;
 using Lok.Models;
@@ -85,13 +86,12 @@ namespace Lok.Controllers
                         
                         var claims = new List<Claim>();
                         claims.Add(new Claim(ClaimTypes.Name, l.Email, ClaimValueTypes.String, Issuer));
-                        //   claims.Add(new Claim(Constants., user., ClaimValueTypes.String, Constants.Issuer));
+                         //   claims.Add(new Claim(Constants., user., ClaimValueTypes.String, Constants.Issuer));
                         //  claims.Add(new Claim(Constants.CompanyClaimType, user.Company, ClaimValueTypes.String, Constants.Issuer));
                         claims.Add(new Claim(ClaimTypes.Role, user.Role, ClaimValueTypes.String, Issuer));
 
                         var userIdentity = new ClaimsIdentity("Debugsoft");
                         userIdentity.AddClaims(claims);
-
                         var userPrincipal = new ClaimsPrincipal(userIdentity);
 
                         await HttpContext.SignInAsync(
@@ -102,6 +102,13 @@ namespace Lok.Controllers
                    IsPersistent = false,
                    AllowRefresh = false
                });
+                        // Set current principal
+                        Thread.CurrentPrincipal = userPrincipal;
+                        var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+                        // Get the claims values
+                        var name = identity.Claims.Where(c => c.Type == ClaimTypes.Name)
+                                           .Select(c => c.Value).SingleOrDefault();
 
                         if (user.Role == "SuperAdmin")
                         {

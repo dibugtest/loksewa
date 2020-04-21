@@ -11,7 +11,7 @@ using MongoDB.Bson;
 
 namespace Lok.Controllers
 {
-    [Authorize("Admin")]
+    [Authorize("Admin",AuthenticationSchemes ="AdminCookie")]
     public class AdminController : Controller
     {
             private readonly IAdminRepository _Admins;

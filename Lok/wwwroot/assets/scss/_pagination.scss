@@ -12,9 +12,3 @@
   color: $dark;
   background-color: $light;
 }
-
-.pagination{
-  .page-link:focus{
-    box-shadow: 0 0 0 0.2rem rgba($primary, 0.5);
-  }
-}
