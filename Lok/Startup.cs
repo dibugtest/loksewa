@@ -85,8 +85,8 @@ namespace Lok
                 .AddCookie("UserCookie",
                 options =>
                 {
-                    options.LoginPath = new PathString("/Account/Login");
-                    options.LogoutPath = new PathString("/Account/Logout");
+                    options.LoginPath = new PathString("/Applicant/Login");
+                    options.LogoutPath = new PathString("/applicant/Logout");
 
                 }
 
@@ -100,6 +100,9 @@ namespace Lok
             {
                 options.AddPolicy("Admin",
                     policy => policy.RequireRole("Admin","SuperAdmin"));
+
+                options.AddPolicy("Applicant",
+                    policy => policy.RequireRole("Applicant"));
 
                 options.AddPolicy("abc",
                     policy =>

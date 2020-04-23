@@ -93,6 +93,9 @@
     <Content Update="Views\Faculty\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Shared\_LayoutAdmin - Copy.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\ShreniTaha\Create.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

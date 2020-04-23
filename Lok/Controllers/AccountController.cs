@@ -50,9 +50,7 @@ namespace Lok.Controllers
         [Route("Login")]
 
         public async Task<ActionResult> Login(LoginViewModel l, string ReturnUrl)
-        
         {
-
             ViewBag.ReturnUrl = ReturnUrl;
 
 

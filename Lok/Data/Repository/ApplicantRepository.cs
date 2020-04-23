@@ -18,9 +18,12 @@ namespace Lok.Data.Repository
         }
         public virtual async Task<Applicant> GetByEmail(string id)
         {
-            IMongoCollection<Applicant> DbSet = Context.GetCollection<Applicant>(typeof(Applicant).Name);
-            var data = await DbSet.FindAsync(m => m.PersonalInformation.Email == id);//.FindAsync(Builders<Applicant>.Filter.Eq("PersonalInformation.Email", ObjectId.Parse(id)));
-            return data.SingleOrDefault();
+            var data =await GetAll();
+
+            //IMongoCollection<Applicant> DbSet = Context.GetCollection<Applicant>(typeof(Applicant).Name);
+           // var data = await DbSet.FindAsync(Builders<Applicant>.Filter.Where(m => m.PersonalInformation.Email == id));
+           // var data = await DbSet.FindAsync(m => m.PersonalInformation.Email == id);//.FindAsync(Builders<Applicant>.Filter.Eq("PersonalInformation.Email", ObjectId.Parse(id)));
+            return data.FirstOrDefault(m=>m.PersonalInformation.Email==id);
         }
         public virtual void UpdateEducationInfo(EducationInfo obj, string id,string EId)
         {
