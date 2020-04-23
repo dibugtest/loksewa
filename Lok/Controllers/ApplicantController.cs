@@ -72,40 +72,34 @@ namespace Lok.Controllers
             _Advertisement = Advertisement;
             _mapper = mapper;
         }
+        public async Task<ActionResult> Logout()
+        {
+            var identity = User.Identity;
 
+            ClaimsIdentity claimsIdentity = identity as ClaimsIdentity;
+
+            var claimNameList = claimsIdentity.Claims.Select(x => x.Type).ToList();
+
+            foreach (var name in claimNameList)
+            {
+                var claim = claimsIdentity.Claims.FirstOrDefault(x => x.Type == name);
+                if (claim != null)
+                {
+                    claimsIdentity.RemoveClaim(claim);
+                }
+            }
+            await HttpContext.SignOutAsync("UserCookie");
+            return RedirectToAction("Login");
+        }
 
         public async Task<ActionResult> Index()
         {
-            var userIdentity = new ClaimsIdentity("Debugsoft");
-            var userPrincipal = new ClaimsPrincipal(userIdentity);
-            Thread.CurrentPrincipal = userPrincipal;
-            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+            var identity = User.Identity;
 
-            // Get the claims values
-            var Email = ClaimTypes.Email;// identity.Claims.Where(c => c.Type == ClaimTypes.Email)
-                              //.Select(c => c.Value).SingleOrDefault();
-            //var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+            var Email = IdentityExtension.GetEmail(identity);
 
             //// Get the claims values
-            //var name = identity.Claims.Where(c => c.Type == ClaimTypes.Email)
-            //                   .Select(c => c.Value).SingleOrDefault();
-
-            //var principal = System.Security.Claims.ClaimsPrincipal.Current;
-            //string Email = principal.FindFirst("Email").Value;
-
-            //var identity = (System.Security.Claims.ClaimsIdentity)Context.User.Identity;
-            //string fullname1 = identity.Claims.FirstOrDefault(c => c.Type == "FullName").Value;
-            //Get the current claims principal
-            // var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
-           // string Email = ClaimTypes.Email;// ClaimsExtensions.GetId(identity);
-
-            //if (identity == null)
-            //{
-            //    return RedirectToAction("Login");
-            //}
-
-            //// Get the claims values
-            Applicant applicant = await _Applicant.GetByEmail(Email);
+            Applicant applicant = await _Applicant.GetByEmail(Email.ToString());
 
             if (applicant != null)
             {
@@ -311,27 +305,6 @@ namespace Lok.Controllers
         {
             ResetPasswordVM reset = new ResetPasswordVM();
             return View(reset);
-            //if (!string.IsNullOrEmpty(id))
-            //{
-            //    Applicant applicant = await _Applicant.GetById(id);
-            //    if (applicant == null)
-            //    {
-            //        ViewBag.Error = "Error";
-            //        ModelState.AddModelError(string.Empty, "Please try Again!");
-            //        return View();
-            //    }
-            //    else
-            //    {
-            //        ResetPasswordVM reset = new ResetPasswordVM();
-            //        reset.Id = applicant.Id.ToString();
-            //        reset.Name = applicant.PersonalInformation.FirstName + " " + applicant.PersonalInformation.MiddleName + " " + applicant.PersonalInformation.LastName;
-            //        return View(reset);
-            //    }
-            //}
-            //else
-            //{
-            //    return RedirectToAction("ApplicantLogin");
-            //}
         }
         [AllowAnonymous]
         [HttpPost]
@@ -354,43 +327,6 @@ namespace Lok.Controllers
                     return View(reset);
 
                 }
-                //    if (userLogin != null)
-                //    {
-                //        if (Base64Decode(userLogin.RandomPass) == reset.RandPassword)
-                //        {
-
-                //        }
-                //    }
-
-                //    Applicant applicant = await _Applicant.GetById(reset.Id);
-                //    if (applicant != null)
-                //    {
-                //        if (applicant.RandomPassword == Base64Encode(reset.RandPassword))
-                //        {
-                //            applicant.EmailVerification = true;
-                //            applicant.RandomPassword = "";
-
-                //            applicant.Password = new Passwords { Hash = reset.Password, Salt = reset.Password };
-
-                //            applicant.QuestionAnswer = _mapper.Map<SecurityQA>(reset);
-
-                //            _Applicant.Update(applicant, reset.Id);
-                //            await _uow.Commit();
-
-                //            TempData["Message"] = "Successfully Reset Password. Login using new password.";
-                //            return View(reset);
-                //        }
-                //        else
-                //        {
-                //            ModelState.AddModelError(string.Empty, "Reset Password doesnot match.");
-                //            ViewBag.Error = "Error";
-                //            return View();
-                //        }
-                //    }
-                //}
-                //ViewBag.Error = "Error";
-                //ModelState.AddModelError(string.Empty, "Please try Again!");
-                //return View(reset);
             }
             else
             {
@@ -399,6 +335,7 @@ namespace Lok.Controllers
                 return View(reset);
             }
         }
+
 
 
         [AllowAnonymous]
@@ -434,13 +371,17 @@ namespace Lok.Controllers
 
                     var userPrincipal = new ClaimsPrincipal(userIdentity);
 
-                    await HttpContext.SignInAsync("AdminCookie", userPrincipal,
+                    await HttpContext.SignInAsync("UserCookie", userPrincipal,
                                                    new AuthenticationProperties
                                                    {
                                                        ExpiresUtc = DateTime.UtcNow.AddMinutes(100),
                                                        IsPersistent = false,
                                                        AllowRefresh = false
                                                    });
+                    Thread.CurrentPrincipal = userPrincipal;
+                    //var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+
+
 
                     return RedirectToAction("Index");
 
@@ -456,58 +397,109 @@ namespace Lok.Controllers
             return View();
 
 
-            //    Applicant applicant = await _Applicant.GetByEmail(login.Email);
-            //    if (applicant != null)
-            //    {
-            //        if (applicant.EmailVerification)
-            //        {
-            //            if (applicant.Password.Hash == login.Password)
-            //            {
-            //                CookieOptions mycookie = new CookieOptions();
+        }
 
-            //                if (Response.Cookies != null)
-            //                {
-            //                    Response.Cookies.Delete("Id");
-            //                }
 
-            //                mycookie.Expires = DateTime.Now.AddMinutes(5);
+        public async Task<ActionResult<ChangePasswordVM>> ChangePassword(string id)
+        {
+            var identity = User.Identity;
 
-            //                Response.Cookies.Append("Id", applicant.Id.ToString(), mycookie);
-            //                //Response.Cookies.Delete(key);
+            var Email = IdentityExtension.GetEmail(identity);
+            Applicant applicant = await _Applicant.GetByEmail(Email);
 
-            //                return RedirectToAction("Index");
-            //            }
-            //            else
-            //            {
-            //                ViewBag.Error = "Error";
-            //                ModelState.AddModelError(string.Empty, "Email and Password not Matched.");
-            //                return View(login);
-            //            }
+            if (applicant == null)
+            {
+                return RedirectToAction("Login");
 
-            //        }
-            //        else
-            //        {
-            //            ViewBag.Error = "Error";
-            //            ModelState.AddModelError(String.Empty, "Check your mail and reset your password");
-            //            return View(login);
-            //            // TempData["ErrorMessage"] = "Check your mail and reset your password.";
-            //            //  return RedirectToAction("ResetPassword",new { Id = applicant.Id.ToString() });
-            //        }
-            //    }
-            //    else
-            //    {
-            //        ViewBag.Error = "Error";
-            //        ModelState.AddModelError(string.Empty, "Please try Again.");
-            //        return View(login);
-            //    }
-            //}
-            // return View();
+            }
+
+            ChangePasswordVM change = new ChangePasswordVM();
+            return View(change);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<ChangePasswordVM>> ChangePassword(ChangePasswordVM changePassword)
+        {
+            var identity = User.Identity;
+
+            var Email = IdentityExtension.GetEmail(identity);
+            Applicant applicant = await _Applicant.GetByEmail(Email);
+
+            if (applicant == null)
+            {
+                return RedirectToAction("Login");
+
+            }
+
+            if (ModelState.IsValid)
+            {
+                Login userLogin = await _auth.GetUser(Email);
+                await _auth.ChangePass(userLogin, changePassword.NewPassword);
+                TempData["Message"] = "Successfully Reset Password. Login using new password.";
+                return RedirectToAction("Index");
+            }
+
+            else
+            {
+                ViewBag.Error = "Error";
+                ModelState.AddModelError("", "Please Try Again.");
+                return View(changePassword);
+            }
 
         }
 
+        [AllowAnonymous]
+        public async Task<ActionResult> ForgotPassword()
+        {
+            return View();
+        }
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<ActionResult> ForgotPassword(string Email)
+        {
+            if (String.IsNullOrEmpty(Email))
+            {
+                ViewBag.Error = "Error";
+                ModelState.AddModelError("", "Please Try Again.");
+                return View();
+            }
+            else
+            {
+                Login userLogin = await _auth.GetUser(Email);
+                Applicant applicant = await _Applicant.GetByEmail(Email);
+                    
+                if (userLogin != null && applicant != null)
+                {
+                    string randString = RandomString(6);
+                    string EmailBody = "Your Reset Password is " + randString + ".Password ReSet Link." + "<a href='http://localhost:5000/applicant/ResetPassword/'>Link</a>";
+                    try
+                    {
+                        SendEMail(Email, "Password Reset Code.", EmailBody);
+                        TempData["Message"] = "Successfully Registered. Please check your Email and reset your password.";
+                        return View("ResetPassword");
+
+                    }
+                    catch
+                    {
+                        ViewBag.Error = "Error";
+                        ModelState.AddModelError(string.Empty, "Failed to Send Mail.");
+                        return View();
+                    }
+
+                }
+                ViewBag.Error = "Error";
+                ModelState.AddModelError("", "Please Try Again.");
+                return View();
+            }
+        }
+
+
         public async Task<ActionResult<PersonalVM>> Personal()
         {
-            Applicant applicant = await _Applicant.GetByEmail(ClaimTypes.Email);
+            var identity = User.Identity;
+
+            var Email = IdentityExtension.GetEmail(identity);
+            Applicant applicant = await _Applicant.GetByEmail(Email);
 
             if (applicant == null)
             {
@@ -525,7 +517,10 @@ namespace Lok.Controllers
         [HttpPost]
         public async Task<ActionResult<PersonalVM>> Personal(PersonalVM personalVM)
         {
-            Applicant applicant = await _Applicant.GetByEmail(ClaimTypes.Email);
+            var identity = User.Identity;
+
+            var Email = IdentityExtension.GetEmail(identity);
+            Applicant applicant = await _Applicant.GetByEmail(Email);
 
             if (applicant == null)
             {
@@ -555,8 +550,10 @@ namespace Lok.Controllers
 
         public async Task<ActionResult<ExtraVM>> Extra()
         {
-            //Get the current claims principal
-            Applicant applicant = await _Applicant.GetByEmail(ClaimTypes.Email);
+            var identity = User.Identity;
+
+            var Email = IdentityExtension.GetEmail(identity);
+            Applicant applicant = await _Applicant.GetByEmail(Email);
 
             if (applicant == null)
             {
@@ -614,8 +611,10 @@ namespace Lok.Controllers
         [HttpPost]
         public async Task<ActionResult<ExtraVM>> Extra(ExtraVM extraVM)
         {
-            //Get the current claims principal
-            Applicant applicant = await _Applicant.GetByEmail(ClaimTypes.Email);
+            var identity = User.Identity;
+
+            var Email = IdentityExtension.GetEmail(identity);
+            Applicant applicant = await _Applicant.GetByEmail(Email);
 
             if (applicant == null)
             {
@@ -681,7 +680,10 @@ namespace Lok.Controllers
 
         public async Task<ActionResult<ContactVM>> Contact()
         {
-            Applicant applicant = await _Applicant.GetByEmail(ClaimTypes.Email);
+            var identity = User.Identity;
+
+            var Email = IdentityExtension.GetEmail(identity);
+            Applicant applicant = await _Applicant.GetByEmail(Email);
 
             if (applicant == null)
             {
@@ -720,7 +722,10 @@ namespace Lok.Controllers
         [HttpPost]
         public async Task<ActionResult<ContactVM>> Contact(ContactVM contactVM)
         {
-            Applicant applicant = await _Applicant.GetByEmail(ClaimTypes.Email);
+            var identity = User.Identity;
+
+            var Email = IdentityExtension.GetEmail(identity);
+            Applicant applicant = await _Applicant.GetByEmail(Email);
 
             if (applicant == null)
             {
@@ -758,7 +763,10 @@ namespace Lok.Controllers
 
         public async Task<ActionResult> EducationIndex()
         {
-            Applicant applicant = await _Applicant.GetByEmail(ClaimTypes.Email);
+            var identity = User.Identity;
+
+            var Email = IdentityExtension.GetEmail(identity);
+            Applicant applicant = await _Applicant.GetByEmail(Email);
 
             if (applicant == null)
             {
@@ -788,7 +796,10 @@ namespace Lok.Controllers
                                             }).ToList();
 
             // IEnumerable<EducationVM> edus = applicant.EducationInfos != null ? _mapper.Map<IEnumerable<EducationVM>>(applicant.EducationInfos) : null;
-
+            if (applicant.EducationInfos == null)
+            {
+                return View(null);
+            }
 
             IEnumerable<EducationVM> edus = (from e in applicant.EducationInfos
                                              from b in BoardNames
@@ -820,7 +831,10 @@ namespace Lok.Controllers
 
         public async Task<ActionResult<EducationVM>> EducationCreate()
         {
-            Applicant applicant = await _Applicant.GetByEmail(ClaimTypes.Email);
+            var identity = User.Identity;
+
+            var Email = IdentityExtension.GetEmail(identity);
+            Applicant applicant = await _Applicant.GetByEmail(Email);
 
             if (applicant == null)
             {
@@ -877,7 +891,10 @@ namespace Lok.Controllers
         [HttpPost]
         public async Task<ActionResult<EducationVM>> EducationCreate(EducationVM educationVM, IFormFile FileMain, IFormFile FileEquivalent)
         {
-            Applicant applicant = await _Applicant.GetByEmail(ClaimTypes.Email);
+            var identity = User.Identity;
+
+            var Email = IdentityExtension.GetEmail(identity);
+            Applicant applicant = await _Applicant.GetByEmail(Email);
 
             if (applicant == null)
             {
@@ -1004,7 +1021,10 @@ namespace Lok.Controllers
 
         public async Task<ActionResult<EducationVM>> EducationEdit(string EId)
         {
-            Applicant applicant = await _Applicant.GetByEmail(ClaimTypes.Email);
+            var identity = User.Identity;
+
+            var Email = IdentityExtension.GetEmail(identity);
+            Applicant applicant = await _Applicant.GetByEmail(Email);
 
             if (applicant == null)
             {
@@ -1102,7 +1122,10 @@ namespace Lok.Controllers
         [HttpPost]
         public async Task<ActionResult<EducationVM>> EducationEdit(EducationVM educationVM, IFormFile FileMain, IFormFile FileEquivalent)
         {
-            Applicant applicant = await _Applicant.GetByEmail(ClaimTypes.Email);
+            var identity = User.Identity;
+
+            var Email = IdentityExtension.GetEmail(identity);
+            Applicant applicant = await _Applicant.GetByEmail(Email);
 
             if (applicant == null)
             {
@@ -1251,7 +1274,10 @@ namespace Lok.Controllers
 
         public async Task<ActionResult> TrainingIndex()
         {
-            Applicant applicant = await _Applicant.GetByEmail(ClaimTypes.Email);
+            var identity = User.Identity;
+
+            var Email = IdentityExtension.GetEmail(identity);
+            Applicant applicant = await _Applicant.GetByEmail(Email);
 
             if (applicant == null)
             {
@@ -1281,7 +1307,10 @@ namespace Lok.Controllers
 
         public async Task<ActionResult<TrainingVM>> TrainingCreate()
         {
-            Applicant applicant = await _Applicant.GetByEmail(ClaimTypes.Email);
+            var identity = User.Identity;
+
+            var Email = IdentityExtension.GetEmail(identity);
+            Applicant applicant = await _Applicant.GetByEmail(Email);
 
             if (applicant == null)
             {
@@ -1299,7 +1328,10 @@ namespace Lok.Controllers
         [HttpPost]
         public async Task<ActionResult<TrainingVM>> TrainingCreate(TrainingVM trainVM, IFormFile FileMain)
         {
-            Applicant applicant = await _Applicant.GetByEmail(ClaimTypes.Email);
+            var identity = User.Identity;
+
+            var Email = IdentityExtension.GetEmail(identity);
+            Applicant applicant = await _Applicant.GetByEmail(Email);
 
             if (applicant == null)
             {
@@ -1380,7 +1412,10 @@ namespace Lok.Controllers
 
         public async Task<ActionResult<TrainingVM>> TrainingEdit(string TId)
         {
-            Applicant applicant = await _Applicant.GetByEmail(ClaimTypes.Email);
+            var identity = User.Identity;
+
+            var Email = IdentityExtension.GetEmail(identity);
+            Applicant applicant = await _Applicant.GetByEmail(Email);
 
             if (applicant == null)
             {
@@ -1438,7 +1473,10 @@ namespace Lok.Controllers
         [HttpPost]
         public async Task<ActionResult<TrainingVM>> TrainingEdit(TrainingVM trainVM, IFormFile FileMain)
         {
-            Applicant applicant = await _Applicant.GetByEmail(ClaimTypes.Email);
+            var identity = User.Identity;
+
+            var Email = IdentityExtension.GetEmail(identity);
+            Applicant applicant = await _Applicant.GetByEmail(Email);
 
             if (applicant == null)
             {
@@ -1495,7 +1533,10 @@ namespace Lok.Controllers
 
         public async Task<ActionResult> CouncilIndex()
         {
-            Applicant applicant = await _Applicant.GetByEmail(ClaimTypes.Email);
+            var identity = User.Identity;
+
+            var Email = IdentityExtension.GetEmail(identity);
+            Applicant applicant = await _Applicant.GetByEmail(Email);
 
             if (applicant == null)
             {
@@ -1537,7 +1578,10 @@ namespace Lok.Controllers
 
         public async Task<ActionResult<ProfessionalCouncilVM>> CouncilCreate()
         {
-            Applicant applicant = await _Applicant.GetByEmail(ClaimTypes.Email);
+            var identity = User.Identity;
+
+            var Email = IdentityExtension.GetEmail(identity);
+            Applicant applicant = await _Applicant.GetByEmail(Email);
 
             if (applicant == null)
             {
@@ -1561,7 +1605,10 @@ namespace Lok.Controllers
         [HttpPost]
         public async Task<ActionResult<ProfessionalCouncilVM>> CouncilCreate(ProfessionalCouncilVM councilVM, IFormFile FileMain)
         {
-            Applicant applicant = await _Applicant.GetByEmail(ClaimTypes.Email);
+            var identity = User.Identity;
+
+            var Email = IdentityExtension.GetEmail(identity);
+            Applicant applicant = await _Applicant.GetByEmail(Email);
 
             if (applicant == null)
             {
@@ -1641,7 +1688,10 @@ namespace Lok.Controllers
         }
         public async Task<ActionResult<ProfessionalCouncilVM>> CouncilEdit(string PId)
         {
-            Applicant applicant = await _Applicant.GetByEmail(ClaimTypes.Email);
+            var identity = User.Identity;
+
+            var Email = IdentityExtension.GetEmail(identity);
+            Applicant applicant = await _Applicant.GetByEmail(Email);
 
             if (applicant == null)
             {
@@ -1696,7 +1746,10 @@ namespace Lok.Controllers
         [HttpPost]
         public async Task<ActionResult<ProfessionalCouncilVM>> CouncilEdit(ProfessionalCouncilVM councilVM, IFormFile FileMain)
         {
-            Applicant applicant = await _Applicant.GetByEmail(ClaimTypes.Email);
+            var identity = User.Identity;
+
+            var Email = IdentityExtension.GetEmail(identity);
+            Applicant applicant = await _Applicant.GetByEmail(Email);
 
             if (applicant == null)
             {
@@ -1752,7 +1805,10 @@ namespace Lok.Controllers
 
         public async Task<ActionResult<ExperienceVM>> ExperienceIndex()
         {
-            Applicant applicant = await _Applicant.GetByEmail(ClaimTypes.Email);
+            var identity = User.Identity;
+
+            var Email = IdentityExtension.GetEmail(identity);
+            Applicant applicant = await _Applicant.GetByEmail(Email);
 
             if (applicant == null)
             {
@@ -1841,7 +1897,10 @@ namespace Lok.Controllers
 
         public async Task<ActionResult<GovernmentExperienceVM>> Government()
         {
-            Applicant applicant = await _Applicant.GetByEmail(ClaimTypes.Email);
+            var identity = User.Identity;
+
+            var Email = IdentityExtension.GetEmail(identity);
+            Applicant applicant = await _Applicant.GetByEmail(Email);
 
             if (applicant == null)
             {
@@ -1895,7 +1954,10 @@ namespace Lok.Controllers
         [HttpPost]
         public async Task<ActionResult<GovernmentExperienceVM>> Government(GovernmentExperienceVM governmentVM, IFormFile FileMain)
         {
-            Applicant applicant = await _Applicant.GetByEmail(ClaimTypes.Email);
+            var identity = User.Identity;
+
+            var Email = IdentityExtension.GetEmail(identity);
+            Applicant applicant = await _Applicant.GetByEmail(Email);
 
             if (applicant == null)
             {
@@ -2010,7 +2072,10 @@ namespace Lok.Controllers
 
         public async Task<ActionResult<GovernmentExperienceVM>> GovernmentEdit(string GId)
         {
-            Applicant applicant = await _Applicant.GetByEmail(ClaimTypes.Email);
+            var identity = User.Identity;
+
+            var Email = IdentityExtension.GetEmail(identity);
+            Applicant applicant = await _Applicant.GetByEmail(Email);
 
             if (applicant == null)
             {
@@ -2094,7 +2159,10 @@ namespace Lok.Controllers
         [HttpPost]
         public async Task<ActionResult<GovernmentExperienceVM>> GovernmentEdit(GovernmentExperienceVM governmentVM, IFormFile FileMain)
         {
-            Applicant applicant = await _Applicant.GetByEmail(ClaimTypes.Email);
+            var identity = User.Identity;
+
+            var Email = IdentityExtension.GetEmail(identity);
+            Applicant applicant = await _Applicant.GetByEmail(Email);
 
             if (applicant == null)
             {
@@ -2184,7 +2252,10 @@ namespace Lok.Controllers
 
         public async Task<ActionResult<NonGovernmentExperienceVM>> NonGovernment()
         {
-            Applicant applicant = await _Applicant.GetByEmail(ClaimTypes.Email);
+            var identity = User.Identity;
+
+            var Email = IdentityExtension.GetEmail(identity);
+            Applicant applicant = await _Applicant.GetByEmail(Email);
 
             if (applicant == null)
             {
@@ -2222,7 +2293,10 @@ namespace Lok.Controllers
         [HttpPost]
         public async Task<ActionResult<GovernmentExperienceVM>> NonGovernment(NonGovernmentExperienceVM nonGovVM, IFormFile FileMain)
         {
-            Applicant applicant = await _Applicant.GetByEmail(ClaimTypes.Email);
+            var identity = User.Identity;
+
+            var Email = IdentityExtension.GetEmail(identity);
+            Applicant applicant = await _Applicant.GetByEmail(Email);
 
             if (applicant == null)
             {
@@ -2318,7 +2392,10 @@ namespace Lok.Controllers
 
         public async Task<ActionResult<NonGovernmentExperienceVM>> NonGovernmentEdit(string GId)
         {
-            Applicant applicant = await _Applicant.GetByEmail(ClaimTypes.Email);
+            var identity = User.Identity;
+
+            var Email = IdentityExtension.GetEmail(identity);
+            Applicant applicant = await _Applicant.GetByEmail(Email);
 
             if (applicant == null)
             {
@@ -2386,7 +2463,10 @@ namespace Lok.Controllers
         [HttpPost]
         public async Task<ActionResult<NonGovernmentExperienceVM>> NonGovernmentEdit(NonGovernmentExperienceVM nonGovVM, IFormFile FileMain)
         {
-            Applicant applicant = await _Applicant.GetByEmail(ClaimTypes.Email);
+            var identity = User.Identity;
+
+            var Email = IdentityExtension.GetEmail(identity);
+            Applicant applicant = await _Applicant.GetByEmail(Email);
 
             if (applicant == null)
             {
@@ -2460,7 +2540,10 @@ namespace Lok.Controllers
         }
         public async Task<ActionResult<UploadVM>> Upload()
         {
-            Applicant applicant = await _Applicant.GetByEmail(ClaimTypes.Email);
+            var identity = User.Identity;
+
+            var Email = IdentityExtension.GetEmail(identity);
+            Applicant applicant = await _Applicant.GetByEmail(Email);
 
             if (applicant == null)
             {
@@ -2496,7 +2579,10 @@ namespace Lok.Controllers
         public async Task<ActionResult<UploadVM>> Upload(UploadVM uploadVM, IFormFile PhotographFile,
                                                        IFormFile SignatureFile, IFormFile CitizenshipFile, IFormFile InclusionGroupFile)
         {
-            Applicant applicant = await _Applicant.GetByEmail(ClaimTypes.Email);
+            var identity = User.Identity;
+
+            var Email = IdentityExtension.GetEmail(identity);
+            Applicant applicant = await _Applicant.GetByEmail(Email);
 
             if (applicant == null)
             {
@@ -2602,7 +2688,10 @@ namespace Lok.Controllers
 
         public async Task<ActionResult<PreviewVM>> Preview()
         {
-            Applicant applicant = await _Applicant.GetByEmail(ClaimTypes.Email);
+            var identity = User.Identity;
+
+            var Email = IdentityExtension.GetEmail(identity);
+            Applicant applicant = await _Applicant.GetByEmail(Email);
 
             if (applicant == null)
             {
@@ -2828,7 +2917,10 @@ namespace Lok.Controllers
         //Delete the Education Record
         public async Task<ActionResult> DeleteEducation(string EId)
         {
-            Applicant applicant = await _Applicant.GetByEmail(ClaimTypes.Email);
+            var identity = User.Identity;
+
+            var Email = IdentityExtension.GetEmail(identity);
+            Applicant applicant = await _Applicant.GetByEmail(Email);
 
             if (applicant == null)
             {
@@ -2905,7 +2997,10 @@ namespace Lok.Controllers
         //Delete the Training Record
         public async Task<ActionResult> DeleteTraining(string TId)
         {
-            Applicant applicant = await _Applicant.GetByEmail(ClaimTypes.Email);
+            var identity = User.Identity;
+
+            var Email = IdentityExtension.GetEmail(identity);
+            Applicant applicant = await _Applicant.GetByEmail(Email);
 
             if (applicant == null)
             {
@@ -2962,7 +3057,10 @@ namespace Lok.Controllers
         //Delete the Council Record
         public async Task<ActionResult> DeleteCouncil(string PId)
         {
-            Applicant applicant = await _Applicant.GetByEmail(ClaimTypes.Email);
+            var identity = User.Identity;
+
+            var Email = IdentityExtension.GetEmail(identity);
+            Applicant applicant = await _Applicant.GetByEmail(Email);
 
             if (applicant == null)
             {
@@ -3019,7 +3117,10 @@ namespace Lok.Controllers
         //Delete the Government Record
         public async Task<ActionResult> DeleteGovernment(string GId)
         {
-            Applicant applicant = await _Applicant.GetByEmail(ClaimTypes.Email);
+            var identity = User.Identity;
+
+            var Email = IdentityExtension.GetEmail(identity);
+            Applicant applicant = await _Applicant.GetByEmail(Email);
 
             if (applicant == null)
             {
@@ -3076,7 +3177,10 @@ namespace Lok.Controllers
         //Delete the Government Record
         public async Task<ActionResult> DeleteNonGovernment(string GId)
         {
-            Applicant applicant = await _Applicant.GetByEmail(ClaimTypes.Email);
+            var identity = User.Identity;
+
+            var Email = IdentityExtension.GetEmail(identity);
+            Applicant applicant = await _Applicant.GetByEmail(Email);
 
             if (applicant == null)
             {
@@ -3179,7 +3283,10 @@ namespace Lok.Controllers
         [HttpGet]
         public async Task<ActionResult> Delete(string id)
         {
-            Applicant applicant = await _Applicant.GetByEmail(ClaimTypes.Email);
+            var identity = User.Identity;
+
+            var Email = IdentityExtension.GetEmail(identity);
+            Applicant applicant = await _Applicant.GetByEmail(Email);
 
             if (applicant == null)
             {
@@ -3238,12 +3345,14 @@ namespace Lok.Controllers
 
         public async Task<ActionResult> Application()
         {
-            Applicant applicant = await _Applicant.GetByEmail(ClaimTypes.Email);
+            var identity = User.Identity;
+
+            var Email = IdentityExtension.GetEmail(identity);
+            Applicant applicant = await _Applicant.GetByEmail(Email);
 
             if (applicant == null)
             {
                 return RedirectToAction("Login");
-
             }
             ApplicationVM appVM = new ApplicationVM();
             List<DropDownItem> Faculties = (from f in await _Faculty.GetAll()
@@ -3254,21 +3363,24 @@ namespace Lok.Controllers
                                             }).ToList();
             Faculties.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
             appVM.Faculties = new SelectList(Faculties, "Id", "Name");
+            appVM.Id = applicant.Id.ToString();
+
             IEnumerable<Advertisiment> Ads = await _Advertisement.GetAll();
             appVM.Advertisements = Ads;
-            appVM.Id = applicant.Id.ToString();
             return View(appVM);
         }
 
         [HttpPost]
         public async Task<ActionResult<ApplicationVM>> Application(ApplicationVM appVM)
         {
-            Applicant applicant = await _Applicant.GetByEmail(ClaimTypes.Email);
+            var identity = User.Identity;
+
+            var Email = IdentityExtension.GetEmail(identity);
+            Applicant applicant = await _Applicant.GetByEmail(Email);
 
             if (applicant == null)
             {
                 return RedirectToAction("Login");
-
             }
             List<DropDownItem> Faculties = (from f in await _Faculty.GetAll()
                                             select new DropDownItem
@@ -3279,6 +3391,10 @@ namespace Lok.Controllers
             Faculties.Insert(0, new DropDownItem { Id = "", Name = "--Select--" });
             appVM.Faculties = new SelectList(Faculties, "Id", "Name");
             IEnumerable<Advertisiment> Ads = await _Advertisement.GetAll();
+            if (Ads == null)
+            {
+                return View(null);
+            }
             appVM.Advertisements = Ads;
             if (ModelState.IsValid)
             {
@@ -3317,18 +3433,29 @@ namespace Lok.Controllers
 
         public async Task<ActionResult> Payment()
         {
-            Applicant applicant = await _Applicant.GetByEmail(ClaimTypes.Email);
+            var identity = User.Identity;
+
+            var Email = IdentityExtension.GetEmail(identity);
+            Applicant applicant = await _Applicant.GetByEmail(Email);
             if (applicant == null)
             {
                 return RedirectToAction("Login");
-
             }
             string id = applicant.Id.ToString();
 
             PaymentVM payVM = new PaymentVM();
-            // string id = Request.Cookies != null ? Request.Cookies["Id"] : null;
+            payVM.Applicant = applicant;
             var applications = await _Applications.GetAll();
+            if (!applications.Any(m => m.Applicant == id))
+            {
+
+                return View(payVM);
+            }
+
             var advertisements = await _Advertisement.GetAll();
+
+
+
 
             IEnumerable<ApplicationPay> apps = (from a in applications
                                                 from ad in advertisements
@@ -3342,7 +3469,6 @@ namespace Lok.Controllers
 
                                                 }).AsEnumerable();
             payVM.Applications = apps.ToList();
-            payVM.Applicant = applicant;
             return View(payVM);
 
         }

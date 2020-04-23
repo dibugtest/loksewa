@@ -1,106 +1,131 @@
 ﻿@model Lok.ViewModel.ExperienceVM
-
 @{
-    ViewData["Title"] = "ExperienceIndex";
+    ViewData["Title"] = "Experience Info";
+    ViewData["HeaderMain"] = "Experience Information";
+    ViewData["HeaderLink"] = "Experience";
+    Layout = "_layoutUser";
 }
+<partial name="_HeaderPartialIndex" />
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="mt-0 header-title">Government Experience</h4>
+                <p>
+                    <a asp-action="Government" class="btn btn-primary">Create New</a>
+                </p>
+                <div>
+                    @if (TempData["Message"] != null)
+                    {
+                        <div class="alert alert-success">
+                            @TempData["Message"]
+                        </div>
+                    }
 
-<h2>ExperienceIndex</h2>
+                </div>
+                <table class="table table-bordered table-responsive">
+                    <thead>
+                        <tr>
+                            <th>Office</th>
+                            <th>Office Address</th>
+                            <th>Post</th>
+                            <th>Sewa</th>
+                            <th>Shreni</th>
+                            <th>Awastha</th>
+                            <th>Start</th>
+                            <th>End</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.GovernmentExperience != null)
+                        {
+                            foreach (var item in Model.GovernmentExperience)
+                            {
+                        <tr>
+                            <td>@item.OfficeName</td>
+                            <td>@item.OfficeAddress</td>
+                            <td>@item.Post</td>
+                            <td>@item.Sewa</td>
+                            <td>@item.TahaShreni</td>
+                            <td>@item.Awastha</td>
+                            <td>@item.StartDate</td>
+                            <td>@item.EndDate</td>
+                            <td style="white-space: nowrap;">
+                                <div class="tabledit-toolbar btn-toolbar" style="text-align: left;">
+                                    <div class="btn-group btn-group-sm" style="float: none;">
+                                        <a href='@Url.Action("GovernmentEdit", "Applicant")?GId=@item.GId' type="button" class="tabledit-edit-button btn btn-sm btn-info" style="float: none; margin: 5px;"><span class="ti-pencil"></span></a>
+                                        <a href="@Url.Action("DeleteGovernment","Applicant")?GId=@item.GId" onclick="return confirm('Are you sure you want to delete this record?');" type="button" class="tabledit-delete-button btn btn-sm btn-info" style="float: none; margin: 5px;"><span class="ti-trash"></span></a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                            }
 
-<div>
-    <h4>Government ExperienceVM</h4>
-    <hr />
-    <a asp-action="Government">Add New</a>
-    <table class="table table-bordered table-responsive">
-        <thead>
-            <tr>
-                <th>Office</th>
-                <th>Office Address</th>
-                <th>Post</th>
-                <th>Sewa</th>
-                <th>Shreni</th>
-                <th>Awastha</th>
-                <th>Start</th>
-                <th>End</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (Model.GovernmentExperience != null)
-            {
-                foreach (var item in Model.GovernmentExperience)
-                {
-            <tr>
-                <td>@item.OfficeName</td>
-                <td>@item.OfficeAddress</td>
-                <td>@item.Post</td>
-                <td>@item.Sewa</td>
-                <td>@item.TahaShreni</td>
-                <td>@item.Awastha</td>
-                <td>@item.StartDate</td>
-                <td>@item.EndDate</td>
-                <td>
-                    <a href="@Url.Action("GovernmentEdit","Applicant")?GId=@item.GId">
-                        Edit
-                    </a>|
-                    <a href="@Url.Action("DeleteGovernment","Applicant")?GId=@item.GId" onclick="return confirm('Are you sure you want to delete this record?');">Delete</a>
-                </td>
-            </tr>
-                }
-                
-            }
-            else
-            {
-                <tr><td colspan="9">No Records found.</td></tr>
-            }
+                        }
+                        else
+                        {
+                            <tr><td colspan="9">No Records found.</td></tr>
+                        }
 
-        </tbody>
-    </table>
-   
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 <div class="row">
-    <h4>Non Government ExperienceVM</h4>
-    <hr />
-    <a asp-action="NonGovernment">Add New</a>
-    <table class="table table-bordered table-responsive">
-        <thead>
-            <tr>
-                <th>Office</th>
-                <th>Post</th>
-                <th>Job Type</th>               
-                <th>Start</th>
-                <th>End</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (Model.NonGovernmentExperience != null)
-            {
-                foreach (var item in Model.NonGovernmentExperience)
-                {
-            <tr>
-                <td>@item.OfficeName</td>
-                <td>@item.Post</td>
-                <td>@item.JobType</td>
-                <td>@item.JobStartDate</td>
-                <td>@item.JobEndDate</td>
-                <td>
-                    <a href="@Url.Action("NonGovernmentEdit","Applicant")?GId=@item.GId">Edit</a>
-                        |
-                        <a href="@Url.Action("DeleteNonGovernment","Applicant")?GId=@item.GId" onclick="return confirm('Are you sure you want to delete this record?');">Delete</a>
-                        
-                    
-                </td>
-            </tr>
-                }
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <h4  class="mt-0 header-title">Non Government Experience</h4>
+                <p>
+                    <a asp-action="NonGovernment" class="btn btn-primary">Create New</a>
+                </p>
+                <table class="table table-bordered table-responsive">
+                    <thead>
+                        <tr>
+                            <th>Office</th>
+                            <th>Post</th>
+                            <th>Job Type</th>
+                            <th>Start</th>
+                            <th>End</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.NonGovernmentExperience != null)
+                        {
+                            foreach (var item in Model.NonGovernmentExperience)
+                            {
+                        <tr>
+                            <td>@item.OfficeName</td>
+                            <td>@item.Post</td>
+                            <td>@item.JobType</td>
+                            <td>@item.JobStartDate</td>
+                            <td>@item.JobEndDate</td>
+                            <td style="white-space: nowrap;">
+                                <div class="tabledit-toolbar btn-toolbar" style="text-align: left;">
+                                    <div class="btn-group btn-group-sm" style="float: none;">
+                                        <a href='@Url.Action("NonGovernmentEdit", "Applicant")?GId=@item.GId' type="button" class="tabledit-edit-button btn btn-sm btn-info" style="float: none; margin: 5px;"><span class="ti-pencil"></span></a>
+                                        <a href="@Url.Action("DeleteNonGovernment","Applicant")?GId=@item.GId" onclick="return confirm('Are you sure you want to delete this record?');" type="button" class="tabledit-delete-button btn btn-sm btn-info" style="float: none; margin: 5px;"><span class="ti-trash"></span></a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                            }
 
-            }
-            else
-            {
-                <tr><td colspan="6">No Records found.</td></tr>
-            }
+                        }
+                        else
+                        {
+                            <tr><td colspan="6">No Records found.</td></tr>
+                        }
 
-        </tbody>
-    </table>
+                    </tbody>
+                </table>
 
+            </div>
+        </div>
+    </div>
 </div>
 

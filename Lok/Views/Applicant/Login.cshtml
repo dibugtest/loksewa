@@ -1,44 +1,111 @@
 ﻿@model Lok.ViewModel.LoginVM
-
 @{
-    ViewData["Title"] = "Login";
+    Layout = null;
 }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <title>Zoter - Responsive Bootstrap 4 Admin Dashboard</title>
+    <meta content="Admin Dashboard" name="description" />
+    <meta content="Mannatthemes" name="author" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-<h2>Login</h2>
+    <link rel="shortcut icon" href="assets/images/favicon.ico">
 
-<h4>LoginVM</h4>
-<hr />
-<div class="row">
-    <div class="col-md-12">
-        @*@if (ViewBag.Error != null)
-        {*@
-            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+    <link href="~/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="~/assets/css/icons.css" rel="stylesheet" type="text/css">
+    <link href="~/assets/css/style.css" rel="stylesheet" type="text/css">
 
-        @*}*@
+</head>
+<body>
+
+
+    <!-- Begin page -->
+    <div class="accountbg"></div>
+    <div class="wrapper-page">
+
+        <div class="card">
+            <div class="card-body">
+
+                <div class="text-center">
+                    <a asp-action="index" asp-controller="Applicant" class="logo logo-admin"><img src="~/assets/images/e-logo.png" height="20" alt="logo"></a>
+                    <br />
+                    @if (ViewBag.Error != null)
+                    {
+                        <div class="alert alert-danger">
+                            @Html.ValidationSummary()
+                        </div>
+                    }
+                </div>
+
+                <div class="px-3 pb-3">
+                    <form class="form-horizontal m-t-20" asp-action="Login" method="Post">
+
+                        <div class="form-group row">
+                            <div class="col-12">
+                                <input class="form-control" type="text" required="Required" placeholder="Email" asp-for="Email">
+                                <span asp-validation-for="Email" class="text-danger"></span>
+
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-12">
+                                <input class="form-control" type="password" required="Required" placeholder="Password" asp-for="Password">
+                                <span asp-validation-for="Password" class="text-danger"></span>
+
+                            </div>
+                        </div>
+
+                        @*<div class="form-group row">
+                                <div class="col-12">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="customCheck1">
+                                        <label class="custom-control-label" for="customCheck1">Remember me</label>
+                                    </div>
+                                </div>
+                            </div>*@
+
+                        <div class="form-group text-center row m-t-20">
+                            <div class="col-12">
+                                <button class="btn btn-danger btn-block waves-effect waves-light" type="submit">Log In</button>
+                            </div>
+                        </div>
+
+                        <div class="form-group m-t-10 mb-0 row">
+                            <div class="col-sm-7 m-t-20">
+                                <a asp-action="ForgotPassword" asp-controller="Applicant" class="text-muted"><i class="mdi mdi-lock"></i> <small>Forgot your password ?</small></a>
+                            </div>
+                            <div class="col-sm-5 m-t-20">
+                                <a asp-action="RegisterApplicant" asp-controller="Applicant" class="text-muted"><i class="mdi mdi-account-circle"></i> <small>Create an account ?</small></a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
     </div>
-    <div class="col-md-4">
-        <form asp-action="Login">
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Password" class="control-label"></label>
-                <input asp-for="Password" class="form-control" type="password"/>
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-default" />
-            </div>
-        </form>
-    </div>
-</div>
+    <!-- jQuery  -->
+    <script src="~/assets/js/jquery.min.js"></script>
+    <script src="~/assets/js/popper.min.js"></script>
+    <script src="~/assets/js/bootstrap.min.js"></script>
+    <script src="~/assets/js/modernizr.min.js"></script>
+    <script src="~/assets/js/detect.js"></script>
+    <script src="~/assets/js/fastclick.js"></script>
+    <script src="~/assets/js/jquery.blockUI.js"></script>
+    <script src="~/assets/js/waves.js"></script>
+    <script src="~/assets/js/jquery.nicescroll.js"></script>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+    <!-- App js -->
+    <script src="~/assets/js/app.js"></script>
+    @section Scripts {
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    }
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+</body>
+</html>
+

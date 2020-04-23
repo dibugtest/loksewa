@@ -1,0 +1,34 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using System.Security.Claims
+@{
+    string Role = User.Claims.Where(c => c.Type == ClaimTypes.Role)
+                                            .Select(c => c.Value).SingleOrDefault();
+}
+@if (Role == "Applicant")
+{
+
+    <li> <a asp-controller="applicant" asp-action="Personal"><i class="mdi mdi-clipboard-outline"></i><span>Personal</span></a></li><li>
+        <a asp-controller="applicant" asp-action="Extra"><i class="mdi mdi-clipboard-outline"></i><span>Extra</span></a>
+    </li><li>
+        <a asp-controller="applicant" asp-action="Contact"><i class="mdi mdi-clipboard-outline"></i><span>Contact</span></a>
+    </li><li>
+        <a asp-controller="applicant" asp-action="EducationIndex"><i class="mdi mdi-clipboard-outline"></i><span>Educatoin</span></a>
+    </li><li>
+        <a asp-controller="applicant" asp-action="TrainingIndex"><i class="mdi mdi-clipboard-outline"></i><span>Training</span></a>
+    </li><li>
+        <a asp-controller="applicant" asp-action="CouncilIndex"><i class="mdi mdi-clipboard-outline"></i><span>Professional Council</span></a>
+    </li><li>
+        <a asp-controller="applicant" asp-action="ExperienceIndex"><i class="mdi mdi-clipboard-outline"></i><span>Experience</span></a>
+    </li><li>
+        <a asp-controller="applicant" asp-action="Upload"><i class="mdi mdi-clipboard-outline"></i><span>Upload</span></a>
+
+    </li>
+<li>
+        <a asp-controller="applicant" asp-action="Application"><i class="mdi mdi-clipboard-outline"></i><span>Application</span></a>
+    </li><li>
+        <a asp-controller="applicant" asp-action="Payment"><i class="mdi mdi-clipboard-outline"></i><span>Payment</span></a>
+    </li>
+    <li>
+        <a asp-controller="applicant" asp-action="Preview"><i class="mdi mdi-clipboard-outline"></i><span>Preview</span></a>
+    </li>
+}

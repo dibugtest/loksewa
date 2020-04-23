@@ -1,0 +1,34 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using System.Security.Claims
+@{
+    string Role = User.Claims.Where(c => c.Type == ClaimTypes.Role)
+                                            .Select(c => c.Value).SingleOrDefault();
+}
+@if (Role == "Applicant")
+{
+
+<div class="dropdown-menu dropdown-menu-right profile-dropdown ">
+    <!-- item-->
+    <div class="dropdown-item noti-title">
+        <h5>Welcome</h5>
+    </div>
+        <a asp-controller="Applicant" asp-action="ChangePassword" class="dropdown-item"><i class="mdi mdi-lock-open-outline m-r-5 text-muted"></i>Change Password</a>
+        <div class="dropdown-divider"></div>
+        <a asp-controller="Applicant" asp-action="Logout" class="dropdown-item"><i class="mdi mdi-logout m-r-5 text-muted"></i> Logout</a>
+   
+</div>
+
+}
+else
+{
+<div class="dropdown-menu dropdown-menu-right profile-dropdown ">
+    <!-- item-->
+    <div class="dropdown-item noti-title">
+        <h5>Welcome</h5>
+    </div>
+    <a asp-controller="Applicant" asp-action="Login" class="dropdown-item"><i class="mdi mdi-lock-open-outline m-r-5 text-muted"></i>Login</a>
+    <a asp-controller="Applicant" asp-action="ResetPassword" class="dropdown-item"><i class="mdi mdi-logout m-r-5 text-muted"></i> Reset Password</a>
+
+</div>
+}
+

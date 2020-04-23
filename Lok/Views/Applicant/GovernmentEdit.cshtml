@@ -1,105 +1,129 @@
 ﻿@model Lok.ViewModel.GovernmentExperienceVM
 
 @{
-    ViewData["Title"] = "GovernmentEdit";
+    ViewData["Title"] = "Government";
+    ViewData["HeaderMain"] = "Government Information";
+    ViewData["HeaderLink"] = "Government";
+    Layout = "_layoutUser";
+
 }
+<partial name="_HeaderPartial" />
 
-<h2>GovernmentEdit</h2>
-
-<h4>GovernmentExperienceVM</h4>
-<hr />
-<div class="row">
+<form asp-action="GovernmentEdit" class="row form-material" enctype="multipart/form-data">
+    <input asp-for="Id" type="hidden" />
+    <input asp-for="GId" type="hidden" />
     <div class="col-md-4">
-        <form asp-action="GovernmentEdit" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Id" class="control-label"></label>
-                <input asp-for="Id" class="form-control" />
-                <span asp-validation-for="Id" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="GId" class="control-label"></label>
-                <input asp-for="GId" class="form-control" />
-                <span asp-validation-for="GId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="OfficeAddress" class="control-label"></label>
-                <input asp-for="OfficeAddress" class="form-control" />
-                <span asp-validation-for="OfficeAddress" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="OfficeName" class="control-label"></label>
-                <input asp-for="OfficeName" class="form-control" />
-                <span asp-validation-for="OfficeName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Post" class="control-label"></label>
-                <input asp-for="Post" class="form-control" />
-                <span asp-validation-for="Post" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Sewa" class="control-label"></label>
-                <select asp-for="Sewa" asp-items="Model.Sewas" class="form-control"></select>
-                <span asp-validation-for="Sewa" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Samuha" class="control-label"></label>
-                <input asp-for="Samuha" class="form-control" />
-                <span asp-validation-for="Samuha" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="UpaSamuha" class="control-label"></label>
-                <input asp-for="UpaSamuha" class="form-control" />
-                <span asp-validation-for="UpaSamuha" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TahaShreni" class="control-label"></label>
-                <select asp-for="TahaShreni" asp-items="Model.ShreniTahas"  class="form-control"></select>
-                <span asp-validation-for="TahaShreni" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Remarks" class="control-label"></label>
-                <select asp-for="Remarks" asp-items="Model.RemarkItems"  class="form-control"></select>
-                <span asp-validation-for="Remarks" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="StartDate" class="control-label"></label>
-                <input asp-for="StartDate" class="form-control" />
-                <span asp-validation-for="StartDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="EndDate" class="control-label"></label>
-                <input asp-for="EndDate" class="form-control" />
-                <span asp-validation-for="EndDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Awastha" class="control-label"></label>
-                <select asp-for="Awastha" asp-items="Model.Awasthas"  class="form-control"></select>
-                <span asp-validation-for="Awastha" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="JobType" class="control-label"></label>
-                <select asp-for="JobType" asp-items="Model.JobTypes"  class="form-control"></select>
-                <span asp-validation-for="JobType" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FileName" class="control-label"></label>
-                <input asp-for="FileMain" class="form-control" />
-                <span asp-validation-for="FileName" class="text-danger"></span>
-                @if (!String.IsNullOrEmpty(Model.FileMainLink))
-                {
-                    <a href="@Url.Content(Model.FileMainLink)">@Model.FileName</a>
-                }
-            </div>
-           
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-default" />
-            </div>
-        </form>
+        <div class="form-group">
+            <label asp-for="OfficeAddress" class="control-label"></label>
+            <input asp-for="OfficeAddress" class="form-control" />
+            <span asp-validation-for="OfficeAddress" class="text-danger"></span>
+        </div>
     </div>
-</div>
+    <div class="col-md-4">
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+        <div class="form-group">
+            <label asp-for="OfficeName" class="control-label"></label>
+            <input asp-for="OfficeName" class="form-control" />
+            <span asp-validation-for="OfficeName" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="col-md-4">
 
+        <div class="form-group">
+            <label asp-for="Post" class="control-label"></label>
+            <input asp-for="Post" class="form-control" />
+            <span asp-validation-for="Post" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="col-md-4">
+
+        <div class="form-group">
+            <label asp-for="Sewa" class="control-label"></label>
+            <select asp-for="Sewa" asp-items="Model.Sewas" class="form-control"></select>
+            <span asp-validation-for="Sewa" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="col-md-4">
+
+        <div class="form-group">
+            <label asp-for="Samuha" class="control-label"></label>
+            <input asp-for="Samuha" class="form-control" />
+            <span asp-validation-for="Samuha" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="col-md-4">
+
+        <div class="form-group">
+            <label asp-for="UpaSamuha" class="control-label"></label>
+            <input asp-for="UpaSamuha" class="form-control" />
+            <span asp-validation-for="UpaSamuha" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="col-md-4">
+
+        <div class="form-group">
+            <label asp-for="TahaShreni" class="control-label"></label>
+            <select asp-for="TahaShreni" asp-items="Model.ShreniTahas" class="form-control"></select>
+            <span asp-validation-for="TahaShreni" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="col-md-4">
+
+        <div class="form-group">
+            <label asp-for="Remarks" class="control-label"></label>
+            <select asp-for="Remarks" asp-items="Model.RemarkItems" class="form-control"></select>
+            <span asp-validation-for="Remarks" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="col-md-4">
+
+        <div class="form-group">
+            <label asp-for="StartDate" class="control-label"></label>
+            <input asp-for="StartDate" class="form-control" />
+            <span asp-validation-for="StartDate" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="col-md-4">
+
+        <div class="form-group">
+            <label asp-for="EndDate" class="control-label"></label>
+            <input asp-for="EndDate" class="form-control" />
+            <span asp-validation-for="EndDate" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="col-md-4">
+
+        <div class="form-group">
+            <label asp-for="Awastha" class="control-label"></label>
+            <select asp-for="Awastha" asp-items="Model.Awasthas" class="form-control"></select>
+            <span asp-validation-for="Awastha" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="col-md-4">
+
+        <div class="form-group">
+            <label asp-for="JobType" class="control-label"></label>
+            <select asp-for="JobType" asp-items="Model.JobTypes" class="form-control"></select>
+            <span asp-validation-for="JobType" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="col-md-4">
+
+        <div class="form-group">
+            <label asp-for="FileName" class="control-label"></label>
+            <input asp-for="FileMain" class="form-control" />
+            <span asp-validation-for="FileName" class="text-danger"></span>
+            @if (!String.IsNullOrEmpty(Model.FileMainLink))
+            {
+                <a href="@Url.Content(Model.FileMainLink)" target="_blank"><i class="fa fa-pdf"></i> @Model.FileName</a>
+            }
+        </div>
+    </div>
+    <div class="col-md-12">
+
+        <div class="form-group">
+            <input type="submit" value="Save" class="btn btn-primary" />
+        </div>
+    </div>
+</form>
+<partial name="_FooterPartial" />
