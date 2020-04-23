@@ -1,23 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using Lok.Data.Interface;
 using Lok.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 
 namespace Lok.Controllers
 {
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
+    [Authorize("Admin", AuthenticationSchemes = "AdminCookie")]
 
     public class PostController : Controller
     {
         
             private readonly IPostRepository _Post;
             private readonly IUnitOfWork _uow;
-
+        
             public PostController(IPostRepository Post, IUnitOfWork uow)
             {
                 _Post = Post;
@@ -27,10 +31,14 @@ namespace Lok.Controllers
             [Authorize("Admin", AuthenticationSchemes = "AdminCookie")]
             public async Task<ActionResult> Index()
             {
-                var Posts = await _Post.GetAll();
+
+            var a = HttpContext.User;
+            string name= a.Claims.Where(c => c.Type == ClaimTypes.Name)
+                                           .Select(c => c.Value).SingleOrDefault();
+
+            var Posts = await _Post.GetAll();
                 return View(Posts);
             }
-        [Authorize("Admin")]
 
         public ActionResult<Post> Create()
             {

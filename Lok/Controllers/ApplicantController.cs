@@ -76,14 +76,21 @@ namespace Lok.Controllers
 
         public async Task<ActionResult> Index()
         {
-            var userIdentity = new ClaimsIdentity("Debugsoft");
-            var userPrincipal = new ClaimsPrincipal(userIdentity);
-            Thread.CurrentPrincipal = userPrincipal;
-            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+            var identity = (ClaimsPrincipal)Thread.CurrentPrincipal.Identity;
 
             // Get the claims values
-            var Email = ClaimTypes.Email;// identity.Claims.Where(c => c.Type == ClaimTypes.Email)
-                              //.Select(c => c.Value).SingleOrDefault();
+            var Email = identity.Claims.Where(c => c.Type == ClaimTypes.Email)
+                               .Select(c => c.Value).SingleOrDefault();
+
+
+            // var Email = ClaimTypes.Email;
+
+
+
+
+
+            // identity.Claims.Where(c => c.Type == ClaimTypes.Email)
+            //.Select(c => c.Value).SingleOrDefault();
             //var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
 
             //// Get the claims values
@@ -97,7 +104,7 @@ namespace Lok.Controllers
             //string fullname1 = identity.Claims.FirstOrDefault(c => c.Type == "FullName").Value;
             //Get the current claims principal
             // var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
-           // string Email = ClaimTypes.Email;// ClaimsExtensions.GetId(identity);
+            // string Email = ClaimTypes.Email;// ClaimsExtensions.GetId(identity);
 
             //if (identity == null)
             //{
@@ -441,6 +448,7 @@ namespace Lok.Controllers
                                                        IsPersistent = false,
                                                        AllowRefresh = false
                                                    });
+                    Thread.CurrentPrincipal = userPrincipal;
 
                     return RedirectToAction("Index");
 

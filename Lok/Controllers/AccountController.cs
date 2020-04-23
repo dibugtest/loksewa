@@ -35,6 +35,7 @@ namespace Lok.Controllers
 
 
 
+
         public ActionResult Index()
         {
             return View();
@@ -103,6 +104,7 @@ namespace Lok.Controllers
                         // Set current principal
                         Thread.CurrentPrincipal = userPrincipal;
                         var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+                        var a = Thread.CurrentPrincipal.Identity.Name;
 
                         // Get the claims values
                         var name = identity.Claims.Where(c => c.Type == ClaimTypes.Name)

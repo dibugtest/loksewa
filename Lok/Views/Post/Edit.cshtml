@@ -1,35 +1,44 @@
 ﻿@model Lok.Models.Post
-@{ 
-        Layout = "_LayoutAdmin";
+@{
+    Layout = "_LayoutAdmin";
 
 }
 
 
-<h4>Post</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            @Html.HiddenFor(m=>m.Id)
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+<h3>Edit Post</h3>
+<form asp-action="Edit">
+    <div class="row">
+
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        @Html.HiddenFor(m => m.Id)
+        <div class="col-md-4">
+
             <div class="form-group">
-                <label asp-for="PostName" class="control-label"></label>
+                <label class="control-label">Post Name</label>
                 <input asp-for="PostName" class="form-control" />
                 <span asp-validation-for="PostName" class="text-danger"></span>
             </div>
+        </div>
+        <div class="col-md-4">
+
             <div class="form-group">
                 <label asp-for="Description" class="control-label"></label>
                 <input asp-for="Description" class="form-control" />
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-default" />
-            </div>
-        </form>
-    </div>
-</div>
+        </div>
+        <div class="col-md-12">
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+            <div class="form-group">
+                <center>
+                    <input type="submit" value="Edit" class="btn btn-primary" />
+                    <a asp-action="Index">Back to List</a>
+                </center>
+
+            </div>
+        </div>
+</form>
+
+
 

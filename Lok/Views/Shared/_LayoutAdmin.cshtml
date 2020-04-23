@@ -289,7 +289,6 @@
     </div>
     <!-- END wrapper -->
     <!-- jQuery  -->
-    @RenderSection("scripts", required: false)
 
     <script src="~/assets/js/jquery.min.js"></script>
     <script src="~/assets/plugins/datatables/jquery.dataTables.min.js"></script>
@@ -317,7 +316,11 @@
 
     <!-- App js -->
     <script src="~/assets/js/app.js"></script>
+    <script type="text/javascript">
+        var RootUrl = '@Url.Content("~/")';
+    </script>
     @RenderSection("Scripts", required: false)
+
 
 </body>
 </html>

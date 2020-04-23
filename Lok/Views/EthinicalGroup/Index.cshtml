@@ -2,16 +2,16 @@
 
 @{
     ViewData["Title"] = "Index";
-            Layout = "_LayoutAdmin";
+    Layout = "_LayoutAdmin";
 
 }
 
-<h2>Index</h2>
+<h3>Ethinic Group</h3>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-primary"><i class="ion-plus"></i> Create New</a>
 </p>
-<table class="table">
+<table class="table" id="tbl">
     <thead>
         <tr>
             <th>
@@ -27,23 +27,38 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Code)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new {  id=item.Id  }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Code)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                    @Html.ActionLink("Details", "Details", new { id=item.Id  }) 
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+<script src="~/assets/js/jquery.min.js"></script>
+<script>
+    $(function () {
+        $("#tbl").DataTable(
+            {
+                "columnDefs": [
+
+                    { "orderable": false, "targets": 2 },
+
+
+
+                ],
+            });
+    })
+</script>

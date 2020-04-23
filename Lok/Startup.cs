@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using AutoMapper;
+using System.Security.Claims;
 
 namespace Lok
 {
@@ -29,6 +30,7 @@ namespace Lok
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
@@ -66,6 +68,8 @@ namespace Lok
             services.AddScoped<IAuthinterface, AuthRepository>();
             services.AddScoped<IEmailSender, EmailSender>();
             services.AddScoped<IAdminRepository, AdminRepository>();
+
+            
             services.Configure<CookieTempDataProviderOptions>(options =>
             {
                 options.Cookie.IsEssential = true;
