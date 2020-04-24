@@ -93,7 +93,19 @@
     <Content Update="Views\Faculty\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\Shared\_LayoutAdmin - Copy.cshtml">
+    <Content Update="Views\Shared\_FooterPartialIndex.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Shared\_FooterPartial.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Shared\_HeaderPartialIndex.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Shared\_LayoutUser.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Shared\_ChangePasswordPartial.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\ShreniTaha\Create.cshtml">
@@ -1174,6 +1186,9 @@
     <None Include="wwwroot\jquery-ui-1.12.1.custom\external\jquery\jquery.js" />
     <None Include="wwwroot\jquery-ui-1.12.1.custom\jquery-ui.js" />
     <None Include="wwwroot\jquery-ui-1.12.1.custom\jquery-ui.min.js" />
+    <None Include="wwwroot\Transliteration\jsapi.js" />
+    <None Include="wwwroot\Transliteration\transliteration.I.js" />
+    <None Include="wwwroot\Transliteration\transliteration.js" />
   </ItemGroup>
 
 </Project>

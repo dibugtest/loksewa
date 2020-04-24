@@ -1,644 +1,652 @@
 ﻿@model Lok.ViewModel.PreviewVM
-
 @{
     ViewData["Title"] = "Preview";
+    ViewData["HeaderMain"] = "Preview";
+    ViewData["HeaderLink"] = "Preview";
+    Layout = "_layoutUser";
 }
+<partial name="_HeaderPartialIndex" />
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
 
-<h2>Preview</h2>
+                <table width="100%">
+                    <tbody>
+                        <tr>
+                            <td colspan="3">
+                                <table width="100%">
+                                    <tbody>
+                                        <tr>
+                                            <td valign="top">
+                                                <img src="@Url.Content("~/images/nepal_logo.png")" alt="" width="200" height="160">
+                                            </td>
+                                            <td align="left" valign="top">
+                                                <h4>Lok Sewa Aayog</h4>
+                                            </td>
+                                            <td align="center">
+                                                <img src="@Url.Content(Model.Upload.PhotographLink)" alt="" width="190" height="180">
+                                                <br><img src="@Url.Content(Model.Upload.SignatureLink)" alt="" width="190" height="60">
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                            </td>
+                        </tr>
+
+
+                    </tbody>
+                </table>
+                </div>
+            </div>
+        </div>
+    </div>
 
 <div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <table width="100%">
 
-    <table width="100%">
-        <tbody>
-            <tr>
-                <td colspan="3">
-                    <table width="100%">
-                        <tbody>
-                            <tr>
-                                <td valign="top">
-                                    <img  src="@Url.Content("~/images/nepal_logo.png")" alt="" width="200" height="160">
-                                </td>
-                                <td align="left" valign="top">
-                                    <h4>Lok Sewa Aayog</h4>
-                                </td>
-                                <td align="center">
-                                    <img  src="@Url.Content(Model.Upload.PhotographLink)" alt="" width="190" height="180">
-                                    <br><img src="@Url.Content(Model.Upload.SignatureLink)" alt="" width="190" height="60">
-
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                </td>
-            </tr>
-
+                    <tbody>
+                        <tr>
+                            <td colspan="3">
+                                मास्टर आईडी : <label>
+                                    000000
+                                </label>
+                            </td>
+                        </tr>
+
+
+
+                        <tr>
+                            <td colspan="3">
+                                <br>Name(English)<hr>
+                            </td>
+                        </tr>
+                        <tr>
+
+                            <td>
+                                <br>First :<label>
+                                    @Model.Personal.FirstName
+                                </label>
+                            </td>
+                            <td>
+                                @Model.Personal.MiddleName
+                                <br>Middle :<label>
+                                </label>
+                            </td>
+                            <td>
+                                <br>Last :<label>
+                                    @Model.Personal.LastName
 
-        </tbody>
-    </table>
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
 
+                            <td colspan="3">
+                                <br>नाम (नेपालीमा)<hr>
+                            </td>
+                        </tr>
 
+                        <tr>
 
+                            <td>
+                                <br>पहिलो :<label>
+                                    @Model.Personal.FirstNameNep
 
-    <table width="100%">
+                                </label>
+                            </td>
+                            <td>
+                                <br>बीचको :<label>
+                                    @Model.Personal.MiddleName
 
-        <tbody>
-            <tr>
-                <td colspan="3">
-                    मास्टर आईडी : <label>
-                        000000
-                    </label>
-                </td>
-            </tr>
+                                </label>
+                            </td>
+                            <td>
+                                <br>अन्तिम  अर्थात् थर :<label>
+                                    @Model.Personal.LastNameNep
 
+                                </label>
+                            </td>
+                        </tr>
 
+                        <tr>
 
-            <tr>
-                <td colspan="3">
-                    <br>Name(English)<hr>
-                </td>
-            </tr>
-            <tr>
+                            <td colspan="3">
+                                <br>जन्म मिति<hr>
+                            </td>
+                        </tr>
 
-                <td>
-                    <br>First :<label>
-                        @Model.Personal.FirstName
-                    </label>
-                </td>
-                <td>
-                    @Model.Personal.MiddleName
-                    <br>Middle :<label>
-                    </label>
-                </td>
-                <td>
-                    <br>Last :<label>
-                        @Model.Personal.LastName
 
-                    </label>
-                </td>
-            </tr>
-            <tr>
 
-                <td colspan="3">
-                    <br>नाम (नेपालीमा)<hr>
-                </td>
-            </tr>
+                        <tr>
+                            <td>
+                                <br>वि.सं.मा :@Model.Personal.DOBNep
+
+                            </td>
+                            <td>
+                                <br>ईस्वी सम्वत्  :@Model.Personal.DOB
+                            </td>
+                            <td>
+                                <br>
+                                <br>लिङ्ग :@Model.Personal.Sex
 
-            <tr>
+                            </td>
+                        </tr>
 
-                <td>
-                    <br>पहिलो :<label>
-                        @Model.Personal.FirstNameNep
 
-                    </label>
-                </td>
-                <td>
-                    <br>बीचको :<label>
-                        @Model.Personal.MiddleName
 
-                    </label>
-                </td>
-                <td>
-                    <br>अन्तिम  अर्थात् थर :<label>
-                        @Model.Personal.LastNameNep
 
-                    </label>
-                </td>
-            </tr>
 
-            <tr>
+                        <tr>
 
-                <td colspan="3">
-                    <br>जन्म मिति<hr >
-                </td>
-            </tr>
+                            <td colspan="3">
+                                <br>बाबुको नाम  <hr>
+                            </td>
+                        </tr>
 
 
 
-            <tr>
-                <td>
-                    <br>वि.सं.मा :@Model.Personal.DOBNep
+                        <tr>
+                            <td>
+                                <br>पहिलो :<label>
+                                    @Model.Personal.FatherFirstName
+                                </label>
+                            </td>
+                            <td>
+                                <br>बीचको :<label>
+                                    @Model.Personal.FatherMiddleName
 
-                </td>
-                <td>
-                    <br>ईस्वी सम्वत्  :@Model.Personal.DOB
-                </td>
-                <td>
-                    <br>
-                    <br>लिङ्ग :@Model.Personal.Sex
+                                </label>
+                            </td>
+                            <td>
+                                <br>अन्तिम  अर्थात् थर  :<label>
+                                    @Model.Personal.FatherLastName
 
-                </td>
-            </tr>
+                                </label>
+                            </td>
+                        </tr>
 
+                        <tr>
 
+                            <td colspan="3">
+                                <br>आमाको नाम<hr>
+                            </td>
+                        </tr>
 
 
 
-            <tr>
+                        <tr>
+                            <td>
+                                <br>पहिलो :<label>
+                                    @Model.Personal.MotherFirstName
 
-                <td colspan="3">
-                    <br>बाबुको नाम  <hr >
-                </td>
-            </tr>
+                                </label>
+                            </td>
+                            <td>
+                                <br>बीचको :<label>
+                                    @Model.Personal.MotherMiddleName
 
+                                </label>
+                            </td>
+                            <td>
+                                <br>अन्तिम  अर्थात् थर  :<label>
+                                    @Model.Personal.MotherLastName
 
+                                </label>
+                            </td>
+                        </tr>
 
-            <tr>
-                <td>
-                    <br>पहिलो :<label>
-                        @Model.Personal.FatherFirstName
-                    </label>
-                </td>
-                <td>
-                    <br>बीचको :<label>
-                        @Model.Personal.FatherMiddleName
+                        <tr>
 
-                    </label>
-                </td>
-                <td>
-                    <br>अन्तिम  अर्थात् थर  :<label>
-                        @Model.Personal.FatherLastName
+                            <td colspan="3">
+                                <br>बाजेको नाम<hr>
+                            </td>
+                        </tr>
 
-                    </label>
-                </td>
-            </tr>
 
-            <tr>
 
-                <td colspan="3">
-                    <br>आमाको नाम<hr>
-                </td>
-            </tr>
-
-
-
-            <tr>
-                <td>
-                    <br>पहिलो :<label>
-                        @Model.Personal.MotherFirstName
-
-                    </label>
-                </td>
-                <td>
-                    <br>बीचको :<label>
-                        @Model.Personal.MotherMiddleName
-
-                    </label>
-                </td>
-                <td>
-                    <br>अन्तिम  अर्थात् थर  :<label>
-                        @Model.Personal.MotherLastName
-
-                    </label>
-                </td>
-            </tr>
-
-            <tr>
-
-                <td colspan="3">
-                    <br>बाजेको नाम<hr >
-                </td>
-            </tr>
-
-
-
-            <tr>
-                <td>
-                    <br>पहिलो :<label>
-                        @Model.Personal.GrandFatherFirstName
-
-                    </label>
-                </td>
-                <td>
-                    <br>बीचको  :<label>
-                        @Model.Personal.GrandFatherMiddleName
-
-                    </label>
-                </td>
-                <td>
-                    अन्तिम  अर्थात् थर  :<label>
-                        @Model.Personal.GrandFatherLastName
-
-                    </label>
-                </td>
-            </tr>
-
-            <tr>
-
-                <td colspan="3">
-                    <br>पति/पत्नीको नाम<hr>
-                </td>
-            </tr>
-
-
-
-            <tr>
-                <td>
-                    <br>पहिलो :<label>
-                        @Model.Personal.SpouseFirstName
-
-                    </label>
-                </td>
-                <td>
-                    <br>बीचको :<label>
-                        @Model.Personal.SpouseMiddleName
-
-                    </label>
-                </td>
-                <td>
-                    <br>अन्तिम  अर्थात् थर : <label>
-                        @Model.Personal.SpouseLastName
-
-                    </label>
-                </td>
-            </tr>
-
-
-
-            <tr>
-                <td colspan="3">
-                    <br>नागरिकता <hr >
-
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <br>नागरिकता नं. :<label>
-                        @Model.Personal.CitizenshipNo
-
-                    </label>
-                </td>
-                <td>
-                    <br>जारी गर्ने जिल्ला : <label>
-                        @Model.Personal.CitizenshipValidDistrict
-
-                    </label>
-                </td>
-                <td>
-                    <br>जारी  मिति : <label>
-                        @Model.Personal.CitizenshipValidDate
-
-                    </label>
-
-
-                </td>
-            </tr>
-
-
-            <tr>
-                <td colspan="3">
-                    <br>
-                    <br><fieldset >
-                        <legend><span></span>शैक्षिक योग्यता</legend>
-                        <div class="row">
-                            <div  style="text-align:center;width:98%">
-
-                                <table class="table table-bordered table-responsive">
-                                    <thead>
-                                        <tr>
-                                            <th>
-                                                विश्वविद्यालय/बोर्डको नाम
-                                            </th>
-                                            <th>शैक्षिक उपाधि</th>
-                                            <th>संकाय</th>
-                                            <th>श्रेणी/प्रतिशत</th>
-                                            <th>मूल</th>
-                                            <th>TYpe of education</th>
-                                            <th>उत्तीर्ण गरेको साल</th>
-                                            <th>शैक्षिक योग्यताको उपाधिको विवरण</th>
-
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @if (Model.Educations != null)
-                                        {
-                                            foreach (var item in Model.Educations)
-                                            {
-                                                <tr>
-                                                    <td>@item.BoardName</td>
-                                                    <td>@item.Level</td>
-                                                    <td>@item.Faculty</td>
-                                                    <td>@item.DivisionPercentage</td>
-                                                    <td>@item.MainSubject</td>
-                                                    <td>@item.EducationType</td>
-                                                    <td>@item.CompletedDate</td>
-                                                    <td>@item.DegreeName</td>
-
-                                                </tr>
-                                            }
-
-                                        }
-                                        else
-                                        {
-                                            <tr><td colspan="8">No Records Found.</td></tr>
-                                        }
-
-                                    </tbody>
-                                </table>
-
-
-                            </div>
-                        </div><input type="hidden" name="j_idt2986_collapsed" value="false">
-                    </fieldset>
-                </td>
-
-            </tr>
-
-
-
-
-            <tr>
-                <td colspan="3">
-                    <br><fieldset>
-                        <legend><span></span>तालिम</legend>
-                        <div class="row">
-                            <div style="text-align:center;width:98%">
-                                <table class="table table-bordered table-responsive">
-                                    <thead>
-                                        <tr role="row">
-                                            <th>
-                                                तालिम दिने संस्था
-                                            </th>
-                                            <th>तालिम</th>
-                                            <th>श्रेणी/प्रतिशत</th>
-                                            <th>अवधि देखि</th>
-                                            <th>अवधि सम्म</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @if (Model.Trainings != null)
-                                        {
-                                            foreach (var item in Model.Trainings)
-                                            {
-                                                <tr>
-                                                    <td>@item.OrganizationName</td>
-                                                    <td>@item.TrainingName</td>
-                                                    <td>@item.DivisionPercentage</td>
-                                                    <td>@item.StartDateNep</td>
-                                                    <td>@item.EndDateNep</td>
-                                                </tr>
-                                            }
-                                        }
-                                        else
-
-                                        {
-                                            <tr><td colspan="5">No Records found.</td></tr>
-                                        }
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div><input type="hidden" value="false">
-                    </fieldset>
-                </td>
-
-            </tr>
-            <tr>
-                <td colspan="3">
-                    <br><fieldset>
-                        <legend><span></span>चिकित्सा परिषद सूचना </legend><div class="row">
-                            <div style="text-align:center;width:98%">
-                                <table class="table table-responsive table-bordered">
-                                    <thead>
-                                        <tr role="row">
-                                            <th>प्रमाणपत्र दिने काउन्सिलको नाम</th>
-                                            <th>किसिम</th>
-                                            <th>दर्ता नं.</th>
-                                            <th>जारि मिति</th>
-                                            <th>नविकरण मिति</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @if (Model.Councils != null)
-                                        {
-                                            foreach (var item in Model.Councils)
-                                            {
-                                                <tr>
-                                                    <td>@item.ProviderName</td>
-                                                    <td>@item.Type</td>
-                                                    <td>@item.RegistrationNo</td>
-                                                    <td>@item.ValidateFrom</td>
-                                                    <td>@item.RenewDate</td>
-                                                </tr>
-                                            }
-                                        }
-                                        else
-
-                                        {
-                                            <tr><td colspan="5">No Records found.</td></tr>
-                                        }
-                                    </tbody>
-
-                                </table>
-                            </div>
-                        </div><input type="hidden" value="false">
-                    </fieldset>
-
-                    <br>
-
-                </td>
-            </tr>
-            <tr>
-                <td colspan="3">
-                    <br>
-                    <br><fieldset>
-                        <legend><span></span>अनुभव  सम्बन्धी विवरण </legend><div class="row">
-                            <div style="text-align:center;width:98%">
-                                <table class="table table-responsive table-bordered">
-                                    <thead>
-                                        <tr >
-                                            <th>
-                                                कार्यालय
-                                            </th>
-                                            <th>कार्यालयको ठेगाना</th>
-                                            <th>पद </th>
-                                            <th>सेवा/समूह/उपसमूह </th>
-                                            <th>श्रेणी/तह</th>
-                                            <th>स्थायी/अस्थायी/करार</th>
-                                            <th>अवधि देखि</th>
-                                            <th>अवधि सम्म</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @if (Model.Governments != null)
-                                        {
-                                            foreach (var item in Model.Governments)
-                                            {
-                                                <tr>
-                                                    <td>@item.OfficeName</td>
-                                                    <td>@item.OfficeAddress</td>
-                                                    <td>@item.Post</td>
-                                                    <td>@item.Sewa</td>
-                                                    <td>@item.TahaShreni</td>
-                                                    <td>@item.JobType</td>
-                                                    <td>@item.StartDate</td>
-                                                    <td>@item.EndDate</td>
-                                                </tr>
-                                            }
-                                        }
-                                        else
-
-                                        {
-                                            <tr><td colspan="8">No Records found.</td></tr>
-                                        }
-                                    </tbody>
-                                </table>
-                            </div>
-
-
-                            <br><div style="text-align:center;width:98%">
-                                <table class="table table-responsive table-bordered">
-                                    <thead>
-                                        <tr role="row">
-                                            <th>कार्यालय </th>
-                                            <th>पद </th>
-                                            <th>श्रेणी/तह</th>
-                                            <th>स्थायी/अस्थायी/करार</th>
-                                            <th>अवधि देखि</th>
-                                            <th>अवधि सम्म</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @if (Model.NonGovernments != null)
-                                        {
-                                            foreach (var item in Model.NonGovernments)
-                                            {
-                                                <tr>
-                                                    <td>@item.OfficeName</td>
-                                                    <td>@item.Post</td>
-                                                    <td>@item.Level</td>
-                                                    <td>@item.JobType</td>
-                                                    <td>@item.JobStartDate</td>
-                                                    <td>@item.JobEndDate</td>
-                                                </tr>
-                                            }
-                                        }
-                                        else
-
-                                        {
-                                            <tr><td colspan="6">No Records found.</td></tr>
-                                        }
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div><input type="hidden" value="false">
-                    </fieldset>
-                </td>
-
-            </tr>
-
-            <tr>
-
-                <td colspan="3">
-                    <br><fieldset id="j_idt3069" class="ui-fieldset ui-widget ui-widget-content ui-corner-all ui-fieldset-toggleable">
-                        <legend class="ui-fieldset-legend ui-corner-all ui-state-default"><span class="ui-fieldset-toggler ui-icon ui-icon-minusthick"></span>ठेगाना विवरण </legend><div class="ui-fieldset-content">
-                            <div id="j_idt3070" class="ui-panel ui-widget ui-widget-content ui-corner-all" style="border:0px">
-                                <div id="j_idt3070_content" class="ui-panel-content ui-widget-content">
-                                    <label>
-                                        स्थायी ठेगाना
-                                    </label><hr id="j_idt3073" class="ui-separator ui-state-default ui-corner-all">
-
-
-                                    <table width="100%">
-
-                                        <tbody>
-                                            <tr>
-
-                                                <td>
-                                                    जिल्ला
-                                                    <br><label onblur="value=value.toUpperCase()" onkeyup="value=value.toUpperCase()">
-                                                        @Model.Contact.District
-                                                    </label>
-                                                </td>
-                                                <td>
-                                                    स्थानिय तहको प्रकार
-                                                    <br><label onblur="value=value.toUpperCase()" onkeyup="value=value.toUpperCase()">
-                                                        @Model.Contact.MunicipalityType
-
-                                                    </label>
-                                                </td>
-                                                <td>
-                                                    न.पा/गा.वि.स.
-                                                    <br><label onblur="value=value.toUpperCase()" onkeyup="value=value.toUpperCase()">
-                                                        @Model.Contact.MunicipalityName
-
-                                                    </label>
-                                                </td>
-                                                <td>
-                                                    वडा नं
-                                                    <br><label onblur="value=value.toUpperCase()" onkeyup="value=value.toUpperCase()">
-                                                        @Model.Contact.WardNo
-
-                                                    </label>
-                                                </td>
-                                                <td>
-                                                    प्रदेश
-                                                    <br><label onblur="value=value.toUpperCase()" onkeyup="value=value.toUpperCase()">
-                                                        @Model.Contact.WardNo
-
-                                                    </label>
-                                                </td>
-
-
-                                                <td>
-                                                    टोल
-                                                    <br><label onblur="value=value.toUpperCase()" onkeyup="value=value.toUpperCase()">
-                                                        @Model.Contact.Tole
-
-                                                    </label>
-                                                </td>
-                                                <td>
-                                                    मार्ग
-                                                    <br><label onblur="value=value.toUpperCase()" onkeyup="value=value.toUpperCase()">
-                                                        @Model.Contact.Marga
-                                                    </label>
-                                                </td>
-                                                <td>
-                                                    घर नं.
-                                                    <br><label onblur="value=value.toUpperCase()" onkeyup="value=value.toUpperCase()">
-
-                                                        @Model.Contact.HouseNo
-                                                    </label>
-                                                </td>
-                                                <td>
-                                                    फोन नम्बर
-                                                    <br><label>
-                                                        @Model.Contact.PhoneNo
-                                                    </label>
-                                                </td>
-                                                <td>
-                                                    मोबाइल नम्बर
-                                                    <br><label>
-                                                        @Model.Contact.MobileNo
-                                                    </label>
-                                                </td>
-
-                                                <td>
-                                                    ईमेल
-                                                    <br><label>
-                                                        @Model.Contact.Email
-
-                                                    </label>
-
-                                                </td>
-                                            </tr>
-
-                                        </tbody>
-                                    </table>
-
-
-                                    <br><label>
-                                        पत्राचार गर्ने ठेगाना
-                                    </label><hr id="j_idt3136" class="ui-separator ui-state-default ui-corner-all"><textarea id="j_idt3137" name="j_idt3137" cols="70" rows="3" disabled="disabled" class="ui-inputfield ui-inputtextarea ui-widget ui-state-default ui-corner-all ui-state-disabled ui-inputtextarea-resizable" role="textbox" aria-disabled="true" aria-readonly="false" aria-multiline="true">    @Model.Contact.Address
+                        <tr>
+                            <td>
+                                <br>पहिलो :<label>
+                                    @Model.Personal.GrandFatherFirstName
+
+                                </label>
+                            </td>
+                            <td>
+                                <br>बीचको  :<label>
+                                    @Model.Personal.GrandFatherMiddleName
+
+                                </label>
+                            </td>
+                            <td>
+                                अन्तिम  अर्थात् थर  :<label>
+                                    @Model.Personal.GrandFatherLastName
+
+                                </label>
+                            </td>
+                        </tr>
+
+                        <tr>
+
+                            <td colspan="3">
+                                <br>पति/पत्नीको नाम<hr>
+                            </td>
+                        </tr>
+
+
+
+                        <tr>
+                            <td>
+                                <br>पहिलो :<label>
+                                    @Model.Personal.SpouseFirstName
+
+                                </label>
+                            </td>
+                            <td>
+                                <br>बीचको :<label>
+                                    @Model.Personal.SpouseMiddleName
+
+                                </label>
+                            </td>
+                            <td>
+                                <br>अन्तिम  अर्थात् थर : <label>
+                                    @Model.Personal.SpouseLastName
+
+                                </label>
+                            </td>
+                        </tr>
+
+
+
+                        <tr>
+                            <td colspan="3">
+                                <br>नागरिकता <hr>
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <br>नागरिकता नं. :<label>
+                                    @Model.Personal.CitizenshipNo
+
+                                </label>
+                            </td>
+                            <td>
+                                <br>जारी गर्ने जिल्ला : <label>
+                                    @Model.Personal.CitizenshipValidDistrict
+
+                                </label>
+                            </td>
+                            <td>
+                                <br>जारी  मिति : <label>
+                                    @Model.Personal.CitizenshipValidDate
+
+                                </label>
+
+
+                            </td>
+                        </tr>
+
+
+                        <tr>
+                            <td colspan="3">
+                                <br>
+                                <br><fieldset>
+                                    <legend><span></span>शैक्षिक योग्यता</legend>
+                                    <div class="row">
+                                        <div style="text-align:center;width:98%">
+
+                                            <table class="table table-bordered table-responsive">
+                                                <thead>
+                                                    <tr>
+                                                        <th>
+                                                            विश्वविद्यालय/बोर्डको नाम
+                                                        </th>
+                                                        <th>शैक्षिक उपाधि</th>
+                                                        <th>संकाय</th>
+                                                        <th>श्रेणी/प्रतिशत</th>
+                                                        <th>मूल</th>
+                                                        <th>TYpe of education</th>
+                                                        <th>उत्तीर्ण गरेको साल</th>
+                                                        <th>शैक्षिक योग्यताको उपाधिको विवरण</th>
+
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @if (Model.Educations != null)
+                                                    {
+                                                        foreach (var item in Model.Educations)
+                                                        {
+                                                            <tr>
+                                                                <td>@item.BoardName</td>
+                                                                <td>@item.Level</td>
+                                                                <td>@item.Faculty</td>
+                                                                <td>@item.DivisionPercentage</td>
+                                                                <td>@item.MainSubject</td>
+                                                                <td>@item.EducationType</td>
+                                                                <td>@item.CompletedDate</td>
+                                                                <td>@item.DegreeName</td>
+
+                                                            </tr>
+                                                        }
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <tr><td colspan="8">No Records Found.</td></tr>
+                                                    }
+
+                                                </tbody>
+                                            </table>
+
+
+                                        </div>
+                                    </div><input type="hidden" name="j_idt2986_collapsed" value="false">
+                                </fieldset>
+                            </td>
+
+                        </tr>
+
+
+
+
+                        <tr>
+                            <td colspan="3">
+                                <br><fieldset>
+                                    <legend><span></span>तालिम</legend>
+                                    <div class="row">
+                                        <div style="text-align:center;width:98%">
+                                            <table class="table table-bordered table-responsive">
+                                                <thead>
+                                                    <tr role="row">
+                                                        <th>
+                                                            तालिम दिने संस्था
+                                                        </th>
+                                                        <th>तालिम</th>
+                                                        <th>श्रेणी/प्रतिशत</th>
+                                                        <th>अवधि देखि</th>
+                                                        <th>अवधि सम्म</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @if (Model.Trainings != null)
+                                                    {
+                                                        foreach (var item in Model.Trainings)
+                                                        {
+                                                            <tr>
+                                                                <td>@item.OrganizationName</td>
+                                                                <td>@item.TrainingName</td>
+                                                                <td>@item.DivisionPercentage</td>
+                                                                <td>@item.StartDateNep</td>
+                                                                <td>@item.EndDateNep</td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                    else
+
+                                                    {
+                                                        <tr><td colspan="5">No Records found.</td></tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div><input type="hidden" value="false">
+                                </fieldset>
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <td colspan="3">
+                                <br><fieldset>
+                                    <legend><span></span>चिकित्सा परिषद सूचना </legend><div class="row">
+                                        <div style="text-align:center;width:98%">
+                                            <table class="table table-responsive table-bordered">
+                                                <thead>
+                                                    <tr role="row">
+                                                        <th>प्रमाणपत्र दिने काउन्सिलको नाम</th>
+                                                        <th>किसिम</th>
+                                                        <th>दर्ता नं.</th>
+                                                        <th>जारि मिति</th>
+                                                        <th>नविकरण मिति</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @if (Model.Councils != null)
+                                                    {
+                                                        foreach (var item in Model.Councils)
+                                                        {
+                                                            <tr>
+                                                                <td>@item.ProviderName</td>
+                                                                <td>@item.Type</td>
+                                                                <td>@item.RegistrationNo</td>
+                                                                <td>@item.ValidateFrom</td>
+                                                                <td>@item.RenewDate</td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                    else
+
+                                                    {
+                                                        <tr><td colspan="5">No Records found.</td></tr>
+                                                    }
+                                                </tbody>
+
+                                            </table>
+                                        </div>
+                                    </div><input type="hidden" value="false">
+                                </fieldset>
+
+                                <br>
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">
+                                <br>
+                                <br><fieldset>
+                                    <legend><span></span>अनुभव  सम्बन्धी विवरण </legend><div class="row">
+                                        <div style="text-align:center;width:98%">
+                                            <table class="table table-responsive table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th>
+                                                            कार्यालय
+                                                        </th>
+                                                        <th>कार्यालयको ठेगाना</th>
+                                                        <th>पद </th>
+                                                        <th>सेवा/समूह/उपसमूह </th>
+                                                        <th>श्रेणी/तह</th>
+                                                        <th>स्थायी/अस्थायी/करार</th>
+                                                        <th>अवधि देखि</th>
+                                                        <th>अवधि सम्म</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @if (Model.Governments != null)
+                                                    {
+                                                        foreach (var item in Model.Governments)
+                                                        {
+                                                            <tr>
+                                                                <td>@item.OfficeName</td>
+                                                                <td>@item.OfficeAddress</td>
+                                                                <td>@item.Post</td>
+                                                                <td>@item.Sewa</td>
+                                                                <td>@item.TahaShreni</td>
+                                                                <td>@item.JobType</td>
+                                                                <td>@item.StartDate</td>
+                                                                <td>@item.EndDate</td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                    else
+
+                                                    {
+                                                        <tr><td colspan="8">No Records found.</td></tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+
+                                        <br><div style="text-align:center;width:98%">
+                                            <table class="table table-responsive table-bordered">
+                                                <thead>
+                                                    <tr role="row">
+                                                        <th>कार्यालय </th>
+                                                        <th>पद </th>
+                                                        <th>श्रेणी/तह</th>
+                                                        <th>स्थायी/अस्थायी/करार</th>
+                                                        <th>अवधि देखि</th>
+                                                        <th>अवधि सम्म</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @if (Model.NonGovernments != null)
+                                                    {
+                                                        foreach (var item in Model.NonGovernments)
+                                                        {
+                                                            <tr>
+                                                                <td>@item.OfficeName</td>
+                                                                <td>@item.Post</td>
+                                                                <td>@item.Level</td>
+                                                                <td>@item.JobType</td>
+                                                                <td>@item.JobStartDate</td>
+                                                                <td>@item.JobEndDate</td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                    else
+
+                                                    {
+                                                        <tr><td colspan="6">No Records found.</td></tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div><input type="hidden" value="false">
+                                </fieldset>
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <td colspan="3">
+                                <br><fieldset id="j_idt3069" class="ui-fieldset ui-widget ui-widget-content ui-corner-all ui-fieldset-toggleable">
+                                    <legend class="ui-fieldset-legend ui-corner-all ui-state-default"><span class="ui-fieldset-toggler ui-icon ui-icon-minusthick"></span>ठेगाना विवरण </legend><div class="ui-fieldset-content">
+                                        <div id="j_idt3070" class="ui-panel ui-widget ui-widget-content ui-corner-all" style="border:0px">
+                                            <div id="j_idt3070_content" class="ui-panel-content ui-widget-content">
+                                                <label>
+                                                    स्थायी ठेगाना
+                                                </label><hr id="j_idt3073" class="ui-separator ui-state-default ui-corner-all">
+
+
+                                                <table width="100%">
+
+                                                    <tbody>
+                                                        <tr>
+
+                                                            <td>
+                                                                जिल्ला
+                                                                <br><label onblur="value=value.toUpperCase()" onkeyup="value=value.toUpperCase()">
+                                                                    @Model.Contact.District
+                                                                </label>
+                                                            </td>
+                                                            <td>
+                                                                स्थानिय तहको प्रकार
+                                                                <br><label onblur="value=value.toUpperCase()" onkeyup="value=value.toUpperCase()">
+                                                                    @Model.Contact.MunicipalityType
+
+                                                                </label>
+                                                            </td>
+                                                            <td>
+                                                                न.पा/गा.वि.स.
+                                                                <br><label onblur="value=value.toUpperCase()" onkeyup="value=value.toUpperCase()">
+                                                                    @Model.Contact.MunicipalityName
+
+                                                                </label>
+                                                            </td>
+                                                            <td>
+                                                                वडा नं
+                                                                <br><label onblur="value=value.toUpperCase()" onkeyup="value=value.toUpperCase()">
+                                                                    @Model.Contact.WardNo
+
+                                                                </label>
+                                                            </td>
+                                                            <td>
+                                                                प्रदेश
+                                                                <br><label onblur="value=value.toUpperCase()" onkeyup="value=value.toUpperCase()">
+                                                                    @Model.Contact.WardNo
+
+                                                                </label>
+                                                            </td>
+
+
+                                                            <td>
+                                                                टोल
+                                                                <br><label onblur="value=value.toUpperCase()" onkeyup="value=value.toUpperCase()">
+                                                                    @Model.Contact.Tole
+
+                                                                </label>
+                                                            </td>
+                                                            <td>
+                                                                मार्ग
+                                                                <br><label onblur="value=value.toUpperCase()" onkeyup="value=value.toUpperCase()">
+                                                                    @Model.Contact.Marga
+                                                                </label>
+                                                            </td>
+                                                            <td>
+                                                                घर नं.
+                                                                <br><label onblur="value=value.toUpperCase()" onkeyup="value=value.toUpperCase()">
+
+                                                                    @Model.Contact.HouseNo
+                                                                </label>
+                                                            </td>
+                                                            <td>
+                                                                फोन नम्बर
+                                                                <br><label>
+                                                                    @Model.Contact.PhoneNo
+                                                                </label>
+                                                            </td>
+                                                            <td>
+                                                                मोबाइल नम्बर
+                                                                <br><label>
+                                                                    @Model.Contact.MobileNo
+                                                                </label>
+                                                            </td>
+
+                                                            <td>
+                                                                ईमेल
+                                                                <br><label>
+                                                                    @Model.Contact.Email
+
+                                                                </label>
+
+                                                            </td>
+                                                        </tr>
+
+                                                    </tbody>
+                                                </table>
+
+
+                                                <br><label>
+                                                    पत्राचार गर्ने ठेगाना
+                                                </label><hr id="j_idt3136" class="ui-separator ui-state-default ui-corner-all"><textarea id="j_idt3137" name="j_idt3137" cols="70" rows="3" disabled="disabled" class="ui-inputfield ui-inputtextarea ui-widget ui-state-default ui-corner-all ui-state-disabled ui-inputtextarea-resizable" role="textbox" aria-disabled="true" aria-readonly="false" aria-multiline="true">    @Model.Contact.Address
 </textarea>
-                                    <br>
-                                </div>
-                            </div>
-                        </div><input type="hidden" id="j_idt3069_collapsed" name="j_idt3069_collapsed" value="false">
-                    </fieldset>
-                </td>
+                                                <br>
+                                            </div>
+                                        </div>
+                                    </div><input type="hidden" id="j_idt3069_collapsed" name="j_idt3069_collapsed" value="false">
+                                </fieldset>
+                            </td>
 
-            </tr>
+                        </tr>
 
-        </tbody>
-    </table>
-</div>
+                    </tbody>
+                </table>
+            </div>

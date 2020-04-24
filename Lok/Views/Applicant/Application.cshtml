@@ -4,147 +4,179 @@
     ViewData["Title"] = "Application";
 }
 
-<h2>Application</h2>
+@{
+    ViewData["Title"] = "Application";
+    Layout = "_LayoutUser";
+}
+<div class="row">
+    <div class="col-sm-12">
+        <div class="page-title-box">
+            <div class="btn-group float-right">
+                <ol class="breadcrumb hide-phone p-0 m-0">
+                    <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Applicant">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Application</li>
+                </ol>
+            </div>
+            <h4 class="page-title">Application</h4>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+</div>
 
-<h4>ApplicationVM</h4>
-<hr />
 <div class="row">
     <div class="col-md-12">
-        @if (Model.Advertisements != null)
-        {
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>विज्ञापन कोड</th>
-                        <th>श्रेणी/तह</th>
-                        <th>पद</th>
-                        <th>सेवा/समूह/उपसमूह</th>
-                        <th>दरखास्त दिने अन्तिम मिति</th>
-                        <th>दोब्बर दस्तुर तिरी दरखास्त दिने अन्तिम मिति</th>
-                        <th>विज्ञापन गर्ने कार्यालय</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model.Advertisements)
-                    {
-                        <tr>
-                            <td>@item.AdvertisimentNo</td>
-                            <td>@item.Service.ServiceName</td>
-                            <td>@item.Post.PostName</td>
-                            <td>@item.Group.GroupName/@item.SubGroup.SubGroupName</td>
-                            <td>@item.DatePublished</td>
-                            <td>@item.DatePublished</td>
-                            <td>@item.Office</td>
-                            <td><button id="btnApply" class="btn btn-default" data-id="@item.Id">Apply</button></td>
+        <div class="card">
+            <div class="card-body bootstrap-select-1">
+                @if (Model.Advertisements != null)
+                {
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>विज्ञापन कोड</th>
+                                <th>श्रेणी/तह</th>
+                                <th>पद</th>
+                                <th>सेवा/समूह/उपसमूह</th>
+                                <th>दरखास्त दिने अन्तिम मिति</th>
+                                <th>दोब्बर दस्तुर तिरी दरखास्त दिने अन्तिम मिति</th>
+                                <th>विज्ञापन गर्ने कार्यालय</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Advertisements)
+                            {
+                                <tr>
+                                    <td>@item.AdvertisimentNo</td>
+                                    <td>@item.Service.ServiceName</td>
+                                    <td>@item.Post.PostName</td>
+                                    <td>@item.Group.GroupName/@item.SubGroup.SubGroupName</td>
+                                    <td>@item.DatePublished</td>
+                                    <td>@item.DatePublished</td>
+                                    <td>@item.Office</td>
+                                    <td><button id="btnApply" class="btn btn-default" data-id="@item.Id">Apply</button></td>
 
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        }
-    </div>
-    <div class="col-md-12">
-        <form asp-action="Application">
-            <div id="divAdvertisement">
-                <table class="table table-bordered" id="tblAdvertisement">
-                    <thead>
-                        <tr>
-                            <th>विज्ञापन कोड</th>
-                            <th>श्रेणी/तह</th>
-                            <th>पद</th>
-                            <th>सेवा/समूह/उपसमूह</th>
-                            <th>दरखास्त दिने अन्तिम मिति</th>
-                            <th>दोब्बर दस्तुर तिरी दरखास्त दिने अन्तिम मिति</th>
-                            <th>विज्ञापन गर्ने कार्यालय</th>
-                        </tr>
-                   </thead>
-                    <tbody></tbody>
+                                </tr>
+                            }
+                        </tbody>
                     </table>
+                }
 
-            </div>
-            <div id="divEthnical">
-                <table  class="table table-bordered" id="tblEthnical"> 
-                    <thead>
-                        <tr>
-                            <th>Select</th>
-                            <th>Group Name</th>
-                            <th>Price</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
+                <form asp-action="Application" class="row form-material">
+                    <div class="col-md-12">
+                        <div id="divAdvertisement">
+                            <table class="table table-bordered" id="tblAdvertisement">
+                                <thead>
+                                    <tr>
+                                        <th>विज्ञापन कोड</th>
+                                        <th>श्रेणी/तह</th>
+                                        <th>पद</th>
+                                        <th>सेवा/समूह/उपसमूह</th>
+                                        <th>दरखास्त दिने अन्तिम मिति</th>
+                                        <th>दोब्बर दस्तुर तिरी दरखास्त दिने अन्तिम मिति</th>
+                                        <th>विज्ञापन गर्ने कार्यालय</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
 
-            </div>
-            <div id="divTotal">
-                <label>Total:</label><input asp-for="TotalAmount" class="form-control" id="txtTotal" type="text" value="0.0"/>
-            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div id="divEthnical">
+                            <table class="table table-bordered" id="tblEthnical">
+                                <thead>
+                                    <tr>
+                                        <th>Select</th>
+                                        <th>Group Name</th>
+                                        <th>Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
 
-            <input type="hidden" asp-for="Advertisement" id="txtAdvertisement"/>
-            <input type="hidden" asp-for="Id" />
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="MinQualification" class="control-label"></label>
-                <select asp-for="MinQualification" asp-items="@Model.MinQualifications" class="form-control"></select>
-                <span asp-validation-for="MinQualification" class="text-danger"></span>
+                    <div class="col-md-push-8 col-md-4">
+                        <div id="divTotal" class="form-group">
+                            <label>Total:</label><input asp-for="TotalAmount" class="form-control" id="txtTotal" type="text" value="0.0" />
+                        </div>
+                    </div>
+
+                    <input type="hidden" asp-for="Advertisement" id="txtAdvertisement" />
+                    <input type="hidden" asp-for="Id" />
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label asp-for="MinQualification" class="control-label"></label>
+                            <select asp-for="MinQualification" asp-items="@Model.MinQualifications" class="form-control"></select>
+                            <span asp-validation-for="MinQualification" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label asp-for="Faculty" class="control-label"></label>
+                            <select asp-for="Faculty" asp-items="@Model.Faculties" class="form-control"></select>
+                            <span asp-validation-for="Faculty" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label asp-for="MainSubject" class="control-label"></label>
+                            <input asp-for="MainSubject" class="form-control" />
+                            <span asp-validation-for="MainSubject" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label asp-for="ExamCenter" class="control-label"></label>
+                            <input asp-for="ExamCenter" class="form-control" />
+                            <span asp-validation-for="ExamCenter" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <label>
+                                    <input asp-for="Status" />  I have read understand and agree to the terms conditions of PSC *
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <input type="submit" value="Submit" class="btn btn-primary" id="btnSubmit" />
+                        </div>
+                    </div>
+                </form>
             </div>
-            <div class="form-group">
-                <label asp-for="Faculty" class="control-label"></label>
-                <select asp-for="Faculty" asp-items="@Model.Faculties" class="form-control"></select>
-                <span asp-validation-for="Faculty" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="MainSubject" class="control-label"></label>
-                <input asp-for="MainSubject" class="form-control" />
-                <span asp-validation-for="MainSubject" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ExamCenter" class="control-label"></label>
-               <input asp-for="ExamCenter" class="form-control"/>
-                <span asp-validation-for="ExamCenter" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <div class="checkbox">
-                    <label>
-                        <input asp-for="Status" />  I have read understand and agree to the terms conditions of PSC *
-                    </label>
-                </div>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-default" id="btnSubmit" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-@section Scripts{ 
+@section Scripts{
     <script>
         $(document).ready(function () {
 
             var Advertisemnt = null;
-            var ethnicalGrps=[];
+            var ethnicalGrps = [];
 
             $("#btnSubmit").click(function (e) {
                 //e.preventDefault();
-                
+
                 if (!confirm(Advertisemnt + "\n" + ethnicalGrps.join(" , "))) {
                     e.preventDefault();
                 }
-              
+
             })
 
 
             function AddTableData(data) {
                 $("div#divEthnical #tblEthnical tbody").empty();
                 var html = "";
-                
+
                 for (var i = 0; i < data.length; i++) {
-                    
+
                     html = html + `<tr><td><input type="checkbox" name="EthnicalGroups" class="Ethinical" value="` + data[i].id + `"/></td>
-                                    <td>`+ data[i].name + `</td><td>`+data[i].code+`</td><tr>`;
+                                                                                            <td>`+ data[i].name + `</td><td>` + data[i].code + `</td><tr>`;
 
                 }
 
@@ -184,25 +216,25 @@
                 $("div#divAdvertisement #tblAdvertisement tbody").empty();
                 $("div#divAdvertisement #tblAdvertisement tbody").html('<tr>' + row.html() + '</tr>');
 
-             
+
                 $.ajax({
                     async: false,
                     type: "POST",
                     dataType: "json",
                     data: '{"AdNo":"' + id + '"}',
                     contentType: "application/json; charset=utf-8",
-                    url: "/api/lokSewaApi/getEthnical/"+id,//RootUrl +
+                    url: "/api/lokSewaApi/getEthnical/" + id,//RootUrl +
                     success: function (response) {
                         if (response != null) {
-                           
+
                             AddTableData(response);
                         }
                     }
                 });
             });
         })
-           
-              
+
+
 
     </script>
 
