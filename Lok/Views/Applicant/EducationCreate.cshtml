@@ -69,17 +69,18 @@
     <div class="col-md-4">
         <div class="form-group">
             <label asp-for="CompletedDate" class="control-label"></label>
-            <input asp-for="CompletedDate" class="form-control" />
+            <input asp-for="CompletedDate" class="form-control" type="date" id="txtCompleteDate" placeholder="Completed Date AD" />
+            <input asp-for="CompletedDateNep" class="form-control" id="txtCompleteDateNep" placeholder="Completed Date BS" />
             <span asp-validation-for="CompletedDate" class="text-danger"></span>
         </div>
     </div>
-    <div class="col-md-4">
+    @*<div class="col-md-4">
         <div class="form-group">
             <label asp-for="DateType" class="control-label"></label>
             <input asp-for="DateType" class="form-control" />
             <span asp-validation-for="DateType" class="text-danger"></span>
         </div>
-    </div>
+    </div>*@
     <div class="col-md-4">
         <div class="form-group">
             <label asp-for="FileName" class="control-label"></label>
@@ -106,3 +107,25 @@
     </div>
 </form>
 <partial name="_FooterPartial" />
+
+@section Scripts {
+   
+   
+    <script>
+    $(function () {
+        $("body #txtCompleteDateNep").nepaliDatePicker({
+            onChange: function () {
+                $('#txtCompleteDateNep').val();
+                $('#txtCompleteDate').val(BS2AD($('#txtCompleteDateNep').val()));
+            }
+        });
+
+        $('#txtCompleteDate').change(function () {
+            $('#txtCompleteDateNep').val(AD2BS($('#txtCompleteDate').val()));
+        });
+
+      
+        })
+    </script>
+
+}

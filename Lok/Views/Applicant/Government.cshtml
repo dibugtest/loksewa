@@ -67,28 +67,30 @@
             <select asp-for="Remarks" asp-items="Model.RemarkItems" class="form-control"></select>
             <span asp-validation-for="Remarks" class="text-danger"></span>
         </div>
-    </div>
-    <div class="col-md-4">
-        <div class="form-group">
-            <label asp-for="StartDate" class="control-label"></label>
-            <input asp-for="StartDate" class="form-control" />
-            <span asp-validation-for="StartDate" class="text-danger"></span>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="form-group">
-            <label asp-for="EndDate" class="control-label"></label>
-            <input asp-for="EndDate" class="form-control" />
-            <span asp-validation-for="EndDate" class="text-danger"></span>
-        </div>
-    </div>
-    <div class="col-md-4">
+    </div> <div class="col-md-4">
         <div class="form-group">
             <label asp-for="Awastha" class="control-label"></label>
             <select asp-for="Awastha" asp-items="Model.Awasthas" class="form-control"></select>
             <span asp-validation-for="Awastha" class="text-danger"></span>
         </div>
     </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label asp-for="StartDate" class="control-label"></label>
+            <input asp-for="StartDate" class="form-control" type="date" id="txtStartDate" />
+            <input asp-for="StartDateNep" class="form-control" id="txtStartDateNep" />
+            <span asp-validation-for="StartDate" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label asp-for="EndDate" class="control-label"></label>
+            <input asp-for="EndDate" class="form-control" type="date" id="txtEndDate" />
+            <input asp-for="EndDateNep" class="form-control" id="txtEndDateNep" />
+            <span asp-validation-for="EndDate" class="text-danger"></span>
+        </div>
+    </div>
+
     <div class="col-md-4">
         <div class="form-group">
             <label asp-for="JobType" class="control-label"></label>
@@ -112,3 +114,33 @@
 </form>
 <partial name="_FooterPartial" />
 
+@section Scripts{
+    <script>
+    $(function () {
+        $("#txtStartDateNep").nepaliDatePicker({
+            onChange: function () {
+                $('#txtStartDateNep').val();
+                $('#txtStartDate').val(BS2AD($('#txtStartDateNep').val()));
+            }
+        });
+
+        $('#txtStartDate').change(function () {
+            $('#txtStartDateNep').val(AD2BS($('#txtStartDate').val()));
+        });
+
+
+        $("#txtEndDateNep").nepaliDatePicker({
+            onChange: function () {
+                $('#txtEndDateNep').val();
+                $('#txtEndDate').val(BS2AD($('#txtEndDateNep').val()));
+            }
+        });
+
+        $('#txtEndDate').change(function () {
+            $('#txtEndDateNep').val(AD2BS($('#txtEndDate').val()));
+        });
+
+        })
+    </script>
+
+}

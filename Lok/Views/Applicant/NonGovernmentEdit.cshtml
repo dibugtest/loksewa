@@ -53,7 +53,7 @@
 
         <div class="form-group">
             <label asp-for="JobStartDate" class="control-label"></label>
-            <input asp-for="JobStartDate" class="form-control" />
+            <input asp-for="JobStartDate" class="form-control" id="txtStartDate" type="date"/>
             <span asp-validation-for="JobStartDate" class="text-danger"></span>
         </div>
 
@@ -62,7 +62,7 @@
 
         <div class="form-group">
             <label asp-for="JobEndDate" class="control-label"></label>
-            <input asp-for="JobEndDate" class="form-control" />
+            <input asp-for="JobEndDate" class="form-control" id="txtEndDate" type="date"/>
             <span asp-validation-for="JobEndDate" class="text-danger"></span>
         </div>
 

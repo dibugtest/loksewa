@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Lok.Models;
 using Lok.Data.Interface;
 using AutoMapper;
+using Lok.Extension;
 
 namespace Lok.Controllers
 {
@@ -27,22 +28,25 @@ namespace Lok.Controllers
         //private readonly ISewaRepository _Sewa;
         //private readonly IShreniTahaRepository _Shreni;
         //private readonly IAwasthaRepository _Awastha;
-        //private readonly IApplicationRepository _Applications;
+        private readonly IApplicationRepository _Applications;
         private readonly IAdvertisiment _Advertisement;
+        private readonly IApplicantRepository _Applicant;
 
         private readonly IUnitOfWork _uow;
         public readonly IMapper _mapper;
 
 
         public LokSewaApiController(
-            //IApplicantRepository Applicant, IReligionRepository Religion
+            IApplicantRepository Applicant
+            //,IReligionRepository Religion
             //                        , IEmploymentRepository Employment, IOccupationRepository Occupation,
             //                        IVargaRepository Varga, IDistrictRepository District, IBoardNameRepository BoardName, IEducationLevelRepository EducationLevel
             //                        , IFacultyRepository Faculty, ISewaRepository Sewa, IAwasthaRepository Awastha, IAuthinterface auth,
-            //                        IShreniTahaRepository Shreni, IApplicationRepository Application, 
-                                    IAdvertisiment Advertisement, IUnitOfWork uow, IMapper mapper)
+            //                        IShreniTahaRepository Shreni
+            , IApplicationRepository Application
+                                    ,IAdvertisiment Advertisement, IUnitOfWork uow, IMapper mapper)
         {
-            //_Applicant = Applicant;
+            _Applicant = Applicant;
             //_Religion = Religion;
             //_Employment = Employment;
             //_Occupation = Occupation;
@@ -57,7 +61,7 @@ namespace Lok.Controllers
             //_uow = uow;
             //_auth = auth;
             _Advertisement = Advertisement;
-            _Advertisement = Advertisement;
+          _Applications = Application;
             _mapper = mapper;
         }
 
@@ -73,11 +77,21 @@ namespace Lok.Controllers
             return groups;
           
         }
-        [Route("/api/LokSewaApi/GetAd/{id}")]
+        [Route("/api/LokSewaApi/GetApp/{id}")]
         [HttpPost]
-        public async Task<Advertisiment> GetAdvertisement(string id)
+        public async Task<Advertisiment> GetApplication(string id)
         {
-            Advertisiment ads = await _Advertisement.GetById(id);
+            var identity = User.Identity;
+
+            var Email = IdentityExtension.GetEmail(identity);
+            Applicant applicant = await _Applicant.GetByEmail(Email);
+           
+
+            Applications apps = await _Applications.GetById(id);
+
+            Advertisiment ads = await _Advertisement.GetById(apps.Advertisement);
+
+            ads.EthinicalGroups = ads.EthinicalGroups.Where(m => apps.EthnicalGroup.Contains(m.Id.ToString())).ToList();
 
             return ads;
 

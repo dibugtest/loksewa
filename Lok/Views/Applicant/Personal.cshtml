@@ -38,9 +38,9 @@
         <div class="card">
             <div class="card-body bootstrap-select-1">
                 @*<h4 class="header-title mt-0"></h4>
-                <p class="text-muted mb-4 font-14">An example of Bootstrap Material DatePicker.</p>*@
+                    <p class="text-muted mb-4 font-14">An example of Bootstrap Material DatePicker.</p>*@
                 <form asp-action="Personal" class="row form-material">
-                   
+
                     <input asp-for="Id" type="hidden" />
 
                     <div class="form-group col-md-4">
@@ -65,38 +65,34 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label asp-for="FirstNameNep"></label>
-                            <input asp-for="FirstNameNep" class="form-control" />
+                            <input asp-for="FirstNameNep" class="form-control" id="txtFirstNameNep" />
                             <span asp-validation-for="FirstNameNep" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label asp-for="MiddleNameNep"></label>
-                            <input asp-for="MiddleNameNep" class="form-control" />
+                            <input asp-for="MiddleNameNep" class="form-control" id="txtMiddleNameNep" />
                             <span asp-validation-for="MiddleNameNep" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label asp-for="LastNameNep"></label>
-                            <input asp-for="LastNameNep" class="form-control" />
+                            <input asp-for="LastNameNep" class="form-control" id="txtLastNameNep" />
                             <span asp-validation-for="LastNameNep" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label asp-for="DOB"></label>
-                            <input asp-for="DOB" class="form-control" />
+                            <input asp-for="DOB" class="form-control" id="txtDOB" type="date"/>
+                            <input asp-for="DOBNep" class="form-control" id="txtDOBNep" />
+                            <span asp-validation-for="DOBNep" class="text-danger"></span>
                             <span asp-validation-for="DOB" class="text-danger"></span>
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label asp-for="DOBNep"></label>
-                            <input asp-for="DOBNep" class="form-control" />
-                            <span asp-validation-for="DOBNep" class="text-danger"></span>
-                        </div>
-                    </div>
+
                     <div class="col-md-4">
                         <div class="form-group">
                             <label asp-for="Sex"></label>
@@ -107,84 +103,84 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label asp-for="FatherFirstName"></label>
-                            <input asp-for="FatherFirstName" class="form-control" />
+                            <input asp-for="FatherFirstName" class="form-control" id="txtFatherFirst" />
                             <span asp-validation-for="FatherFirstName" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label asp-for="FatherMiddleName"></label>
-                            <input asp-for="FatherMiddleName" class="form-control" />
+                            <input asp-for="FatherMiddleName" class="form-control" id="txtFatherMiddle" />
                             <span asp-validation-for="FatherMiddleName" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label asp-for="FatherLastName"></label>
-                            <input asp-for="FatherLastName" class="form-control" />
+                            <input asp-for="FatherLastName" class="form-control" id="txtFatherLast" />
                             <span asp-validation-for="FatherLastName" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label asp-for="MotherFirstName"></label>
-                            <input asp-for="MotherFirstName" class="form-control" />
+                            <input asp-for="MotherFirstName" class="form-control" id="txtMotherFirst" />
                             <span asp-validation-for="MotherFirstName" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label asp-for="MotherMiddleName"></label>
-                            <input asp-for="MotherMiddleName" class="form-control" />
+                            <input asp-for="MotherMiddleName" class="form-control" id="txtMotherMiddle" />
                             <span asp-validation-for="MotherMiddleName" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label asp-for="MotherLastName"></label>
-                            <input asp-for="MotherLastName" class="form-control" />
+                            <input asp-for="MotherLastName" class="form-control" id="txtMotherLast" />
                             <span asp-validation-for="MotherLastName" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label asp-for="GrandFatherFirstName"></label>
-                            <input asp-for="GrandFatherFirstName" class="form-control" />
+                            <input asp-for="GrandFatherFirstName" class="form-control" id="txtGrandFatherFirst" />
                             <span asp-validation-for="GrandFatherFirstName" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label asp-for="GrandFatherMiddleName"></label>
-                            <input asp-for="GrandFatherMiddleName" class="form-control" />
+                            <input asp-for="GrandFatherMiddleName" class="form-control" id="txtGrandFatherMiddle" />
                             <span asp-validation-for="GrandFatherMiddleName" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label asp-for="GrandFatherLastName"></label>
-                            <input asp-for="GrandFatherLastName" class="form-control" />
+                            <input asp-for="GrandFatherLastName" class="form-control" id="txtGrandFatherLast" />
                             <span asp-validation-for="GrandFatherLastName" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label asp-for="SpouseFirstName"></label>
-                            <input asp-for="SpouseFirstName" class="form-control" />
+                            <input asp-for="SpouseFirstName" class="form-control" id="txtSpouseFirst" />
                             <span asp-validation-for="SpouseFirstName" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label asp-for="SpouseMiddleName"></label>
-                            <input asp-for="SpouseMiddleName" class="form-control" />
+                            <input asp-for="SpouseMiddleName" class="form-control" id="txtSpouseMiddle" />
                             <span asp-validation-for="SpouseMiddleName" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label asp-for="SpouseLastName"></label>
-                            <input asp-for="SpouseLastName" class="form-control" />
+                            <input asp-for="SpouseLastName" class="form-control" id="txtSpouseLast" />
                             <span asp-validation-for="SpouseLastName" class="text-danger"></span>
                         </div>
                     </div>
@@ -205,7 +201,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label asp-for="CitizenshipValidDate"></label>
-                            <input asp-for="CitizenshipValidDate" class="form-control" />
+                            <input asp-for="CitizenshipValidDate" class="form-control" id="txtCitiValidDate" />
                             <span asp-validation-for="CitizenshipValidDate" class="text-danger"></span>
                         </div>
                     </div>
@@ -238,4 +234,62 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+   
+    <script src="~/js/NepaliUnicode.js"></script>
+    <script src="~/Transliteration/jsapi.js"></script>
+    <script>
+        $(function () {
+           
+            $("body #txtDOBNep").nepaliDatePicker({
+                onChange: function () {
+                    $('#txtDOBNep').val();
+                    $('#txtDOB').val(BS2AD($('#txtDOBNep').val()));
+                },
+            });
+
+            $('#txtDOB').change(function () {
+                $('#txtDOBNep').val(AD2BS($('#txtDOB').val()));
+            });
+
+            $("body #txtCitiValidDate").nepaliDatePicker();
+
+
+            var ele1 = $("#txtFirstNameNep");
+            var ele2 = $("#txtMiddleNameNep");
+            var ele3 = $("#txtLastNameNep");
+            var ele4 = $("#txtFatherFirst");
+            var ele5 = $("#txtFatherMiddle");
+            var ele6 = $("#txtFatherLast");
+            var ele7 = $("#txtMotherFirst");
+            var ele8 = $("#txtMotherMiddle");
+            var ele9 = $("#txtMotherLast");
+            var ele10 = $("#txtGrandFatherFirst");
+            var ele11 = $("#txtGrandFatherMiddle");
+            var ele12 = $("#txtGrandFatherLast");
+            var ele13 = $("#txtSpouseFirst");
+            var ele14 = $("#txtSpouseMiddle");
+            var ele15 = $("#txtSpouseLast");
+
+            AddUnicode(ele1);
+            AddUnicode(ele2);
+            AddUnicode(ele3);
+            AddUnicode(ele4);
+            AddUnicode(ele5);
+            AddUnicode(ele6);
+            AddUnicode(ele7);
+            AddUnicode(ele8);
+            AddUnicode(ele9);
+            AddUnicode(ele10);
+            AddUnicode(ele11);
+            AddUnicode(ele12);
+            AddUnicode(ele13);
+            AddUnicode(ele14);
+            AddUnicode(ele15);
+        })
+
+    </script>
+    <script src="~/Transliteration/transliteration.js"></script>
+    <link href="~/Transliteration/transliteration.css" rel="stylesheet" />
+    <script src="~/Transliteration/transliteration.I.js"></script>
+
 }

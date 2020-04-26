@@ -38,7 +38,8 @@ namespace Lok.ViewModel
         public string EducationType { get; set; }
         [Required(ErrorMessage = "Complition Date is Required")]
 
-        public string CompletedDate { get; set; }
+        public DateTime CompletedDate { get; set; }
+        public string CompletedDateNep { get; set; }
         public string DateType { get; set; }
         public string FileName { get; set; }
         public string EquivalentFileName { get; set; }
@@ -56,6 +57,9 @@ namespace Lok.ViewModel
         public List<SelectListItem> EducationTypes = new List<SelectListItem> {new SelectListItem{Text="--Select--",Value="" },
                                                                                 new SelectListItem {Text="Government",Value="Government" },
                                                                                 new SelectListItem {Text="Non-government",Value="Non-government" } };
+        public List<SelectListItem> DateTypes = new List<SelectListItem> {new SelectListItem{Text="--Select--",Value="" },
+                                                                                new SelectListItem {Text="BS",Value="BS" },
+                                                                                new SelectListItem {Text="AD",Value="AD" } };
 
     }
 }

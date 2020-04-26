@@ -48,6 +48,9 @@ namespace Lok.ViewModel
         [Required(ErrorMessage = "End Date is Required")]
 
         public DateTime EndDate { get; set; }
+
+        public string StartDateNep { get; set; }
+        public string EndDateNep { get; set; }
         [Required(ErrorMessage = "Awastha is Required")]
 
         public string Awastha { get; set; }

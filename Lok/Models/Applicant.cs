@@ -107,7 +107,8 @@ namespace Lok.Models
         public string MainSubject { get; set; }
         public string DegreeName { get; set; }
         public string EducationType { get; set; }
-        public string CompletedDate { get; set; }
+        public DateTime CompletedDate { get; set; }
+        public string CompletedDateNep { get; set; }
         public string DateType { get; set; }
         public string FileName { get; set; }
         public string EquivalentFileName { get; set; }
@@ -158,6 +159,8 @@ namespace Lok.Models
         public string Remarks { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
+        public string StartDateNep { get; set; }
+        public string EndDateNep { get; set; }
         public string Awastha { get; set; }
         public string JobType { get; set; }
         public string FileName { get; set; }

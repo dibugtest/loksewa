@@ -14,7 +14,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using MongoDB.Bson;
-using System.IO;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
@@ -301,7 +300,7 @@ namespace Lok.Controllers
         }
 
         [AllowAnonymous]
-        public async Task<ActionResult<ResetPasswordVM>> ResetPassword(string id)
+        public async Task<ActionResult<ResetPasswordVM>> ResetPassword()
         {
             ResetPasswordVM reset = new ResetPasswordVM();
             return View(reset);
@@ -435,7 +434,7 @@ namespace Lok.Controllers
             {
                 Login userLogin = await _auth.GetUser(Email);
                 await _auth.ChangePass(userLogin, changePassword.NewPassword);
-                TempData["Message"] = "Successfully Reset Password. Login using new password.";
+                TempData["Message"] = "Successfully Password Changed. Login using new password.";
                 return RedirectToAction("Index");
             }
 
@@ -467,16 +466,19 @@ namespace Lok.Controllers
             {
                 Login userLogin = await _auth.GetUser(Email);
                 Applicant applicant = await _Applicant.GetByEmail(Email);
-                    
+                
                 if (userLogin != null && applicant != null)
                 {
                     string randString = RandomString(6);
                     string EmailBody = "Your Reset Password is " + randString + ".Password ReSet Link." + "<a href='http://localhost:5000/applicant/ResetPassword/'>Link</a>";
                     try
                     {
+                        applicant.RandomPassword = randString;
+                        await _uow.Commit();
+
                         SendEMail(Email, "Password Reset Code.", EmailBody);
-                        TempData["Message"] = "Successfully Registered. Please check your Email and reset your password.";
-                        return View("ResetPassword");
+                        TempData["Message"] = "Successfully Sent the Reset Code. Please check your Email and reset your password.";
+                        return RedirectToAction("ResetPassword");
 
                     }
                     catch
@@ -1158,18 +1160,17 @@ namespace Lok.Controllers
 
             if (ModelState.IsValid)
             {
+                // Applicant applicant = await _Applicant.GetById(educationVM.Id);
+                EducationInfo eduInfo = _mapper.Map<EducationInfo>(educationVM);
+                eduInfo.FileName = eduInfo.EId + ".pdf";
+                eduInfo.EquivalentFileName = eduInfo.EId + ".pdf";
+                applicant.EditedDate = DateTime.Now;
+                _Applicant.UpdateEducationInfo(eduInfo, educationVM.Id, educationVM.EId);
+                await _uow.Commit();
+
+                //File Upload
                 if (FileMain != null || FileEquivalent != null)
                 {
-                    // Applicant applicant = await _Applicant.GetById(educationVM.Id);
-                    EducationInfo eduInfo = _mapper.Map<EducationInfo>(educationVM);
-                    eduInfo.FileName = eduInfo.EId + ".pdf";
-                    eduInfo.EquivalentFileName = eduInfo.EId + ".pdf";
-                    applicant.EditedDate = DateTime.Now;
-                    _Applicant.UpdateEducationInfo(eduInfo, educationVM.Id, educationVM.EId);
-                    await _uow.Commit();
-
-                    //File Upload
-
                     string directoryMain = Path.Combine(
                                     Directory.GetCurrentDirectory(), "wwwroot", "images",
                                     "applicant", applicant.Id.ToString(), "Education", "Main"
@@ -1208,9 +1209,6 @@ namespace Lok.Controllers
                             await FileEquivalent.CopyToAsync(stream);
                         }
                     }
-
-                    TempData["Message"] = "Successfully Updated education Information.";
-                    return RedirectToAction("EducationIndex");
                 }
                 else
                 {
@@ -1236,11 +1234,10 @@ namespace Lok.Controllers
                     educationVM.BoardNames = new SelectList(BoardNames, "Id", "Name");
                     educationVM.EducationLevels = new SelectList(EducationLevels, "Id", "Name");
                     educationVM.Faculties = new SelectList(Faculties, "Id", "Name");
-                    ViewBag.Error = "Error";
-                    ModelState.AddModelError(string.Empty, "File is necessary.");
-                    return View(educationVM);
-                }
 
+                }
+                TempData["Message"] = "Successfully Updated education Information.";
+                return RedirectToAction("EducationIndex");
             }
             else
             {
@@ -3399,7 +3396,7 @@ namespace Lok.Controllers
             if (ModelState.IsValid)
             {
                 Applications app = _mapper.Map<Applications>(appVM);
-                app.Applicant = Request.Cookies != null ? Request.Cookies["Id"] : null;
+                app.Applicant = applicant.Id.ToString();// Request.Cookies != null ? Request.Cookies["Id"] : null;
                 app.EthnicalGroup = appVM.EthnicalGroups;
                 app.AppliedDate = DateTime.Now;
 

@@ -45,7 +45,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label asp-for="FirstName" class="control-label"></label>
-                            <input asp-for="FirstName" class="form-control" />
+                            <input asp-for="FirstName" class="form-control" id="txtFirst" />
                             <span asp-validation-for="FirstName" class="text-danger"></span>
                         </div>
                     </div>
@@ -53,7 +53,7 @@
 
                         <div class="form-group">
                             <label asp-for="MiddleName" class="control-label"></label>
-                            <input asp-for="MiddleName" class="form-control" />
+                            <input asp-for="MiddleName" class="form-control" id="txtMiddle" />
                             <span asp-validation-for="MiddleName" class="text-danger"></span>
                         </div>
                     </div>
@@ -61,7 +61,7 @@
 
                         <div class="form-group">
                             <label asp-for="LastName" class="control-label"></label>
-                            <input asp-for="LastName" class="form-control" />
+                            <input asp-for="LastName" class="form-control" id="txtLast" />
                             <span asp-validation-for="LastName" class="text-danger"></span>
                         </div>
                     </div>
@@ -76,7 +76,7 @@
 
                         <div class="form-group">
                             <label asp-for="MiddleNameNep" class="control-label"></label>
-                            <input asp-for="MiddleNameNep" class="form-control" id="txtMiddelNameNep" />
+                            <input asp-for="MiddleNameNep" class="form-control" id="txtMiddleNameNep" />
                             <span asp-validation-for="MiddleNameNep" class="text-danger"></span>
                         </div>
                     </div>
@@ -92,19 +92,14 @@
 
                         <div class="form-group">
                             <label asp-for="DOB" class="control-label"></label>
-                            <input asp-for="DOB" class="form-control" id="txtDOB" />
+                            <input asp-for="DOB" class="form-control" type="date" id="txtDOB" placeholder="English DOB" />
+                            <input asp-for="DOBNep" class="form-control" id="txtDOBNep" placeholder="Nepali DOB" />
+                            <span asp-validation-for="DOBNep" class="text-danger"></span>
                             <span asp-validation-for="DOB" class="text-danger"></span>
                         </div>
 
                     </div>
-                    <div class="col-md-4">
 
-                        <div class="form-group">
-                            <label asp-for="DOBNep" class="control-label"></label>
-                            <input asp-for="DOBNep" class="form-control" id="txtDOBNep" />
-                            <span asp-validation-for="DOBNep" class="text-danger"></span>
-                        </div>
-                    </div>
                     <div class="col-md-4">
 
                         <div class="form-group">
@@ -409,19 +404,57 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-   
-    <script src="~/js/nepali.datepicker.v2.2.min.js"></script>
+
+  
     <script src="~/js/NepaliUnicode.js"></script>
     <script src="~/Transliteration/jsapi.js"></script>
     <script>
         $(function () {
-            var ele1 = $("#txtBaSirsak");
-            var ele2 = $("#txtBaUSiNo");
-            var ele3 = $("#txtRemarks");
+            $("body #txtDOBNep").nepaliDatePicker({
+                onChange: function () {
+                    $('#txtDOBNep').val();
+                    $('#txtDOB').val(BS2AD($('#txtDOBNep').val()));
+                },
+            });
+
+            $('#txtDOB').change(function () {
+                $('#txtDOBNep').val(AD2BS($('#txtDOB').val()));
+            });
+
+            $("body #txtCitiValidDate").nepaliDatePicker();
+
+
+            var ele1 = $("#txtFirstNameNep");
+            var ele2 = $("#txtMiddleNameNep");
+            var ele3 = $("#txtLastNameNep");
+            var ele4 = $("#txtFatherFirst");
+            var ele5 = $("#txtFatherMiddle");
+            var ele6 = $("#txtFatherLast");
+            var ele7 = $("#txtMotherFirst");
+            var ele8 = $("#txtMotherMiddle");
+            var ele9 = $("#txtMotherLast");
+            var ele10 = $("#txtGrandFatherFirst");
+            var ele11 = $("#txtGrandFatherMiddle");
+            var ele12 = $("#txtGrandFatherLast");
+            var ele13 = $("#txtSpouseFirst");
+            var ele14 = $("#txtSpouseMiddle");
+            var ele15 = $("#txtSpouseLast");
+
             AddUnicode(ele1);
             AddUnicode(ele2);
             AddUnicode(ele3);
-
+            AddUnicode(ele4);
+            AddUnicode(ele5);
+            AddUnicode(ele6);
+            AddUnicode(ele7);
+            AddUnicode(ele8);
+            AddUnicode(ele9);
+            AddUnicode(ele10);
+            AddUnicode(ele11);
+            AddUnicode(ele12);
+            AddUnicode(ele13);
+            AddUnicode(ele14);
+            AddUnicode(ele15);
         })
 
     </script>

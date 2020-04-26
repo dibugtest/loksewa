@@ -52,7 +52,7 @@
                                         }
                                         else
                                         {
-                                            <button data-id="@item.ObjAd.Id" data-toggle="modal" data-target="#myModal" id="btnPay" class="btn btn-default">Pay</button>
+                                            <button data-id="@item.Id" data-toggle="modal" data-target="#myModal" id="btnPay" class="btn btn-default">Pay</button>
                                         }
                                     </td>
                                 </tr>
@@ -385,7 +385,7 @@
                         dataType: "json",
                         data: '{"AdNo":"' + id + '"}',
                         contentType: "application/json; charset=utf-8",
-                        url: "/api/lokSewaApi/getAd/" + id,//RootUrl +
+                        url: "/api/lokSewaApi/getApp/" + id,//RootUrl +
                         success: function (response) {
                             if (response != null) {
                                 ad = response;

@@ -67,25 +67,20 @@
     <div class="col-md-4">
         <div class="form-group">
             <label asp-for="CompletedDate" class="control-label"></label>
-            <input asp-for="CompletedDate" class="form-control" />
+            <input asp-for="CompletedDate" class="form-control" type="date" id="txtCompleteDate" />
+            <input asp-for="CompletedDateNep" class="form-control" id="txtCompleteDateNep" />
             <span asp-validation-for="CompletedDate" class="text-danger"></span>
         </div>
     </div>
     <div class="col-md-4">
         <div class="form-group">
-            <label asp-for="DateType" class="control-label"></label>
-            <input asp-for="DateType" class="form-control" />
-            <span asp-validation-for="DateType" class="text-danger"></span>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="form-group">
             <label asp-for="FileName" class="control-label"></label>
+            <input asp-for="FileName" type="hidden"/>
             <input asp-for="FileMain" />
             <span asp-validation-for="FileName" class="text-danger"></span>
             @if (Model.FileMainLink != null)
             {
-             <br />   <a href="@Url.Content(Model.FileMainLink)" target="_blank"><i class="fa fa-file-pdf"></i> @Model.FileName</a>
+                <br /> <a href="@Url.Content(Model.FileMainLink)" target="_blank"><i class="fa fa-file-pdf"></i> @Model.FileName</a>
 
 
             }
@@ -96,22 +91,41 @@
 
         <div class="form-group">
             <label asp-for="EquivalentFileName" class="control-label"></label>
-
+            <input asp-for="EquivalentFileName" type="hidden"/>
             <input asp-for="FileEquivalent" />
             <span asp-validation-for="EquivalentFileName" class="text-danger"></span>
             @if (Model.FileEquivalentLink != null)
             {
 
-            <br />   <a href="@Url.Content(Model.FileEquivalentLink)" target="_blank"><i class="fa fa-file"></i> @Model.EquivalentFileName</a>
+                <br /> <a href="@Url.Content(Model.FileEquivalentLink)" target="_blank"><i class="fa fa-file"></i> @Model.EquivalentFileName</a>
 
             }
         </div>
     </div>
-    
-        <div class="col-md-12">
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
+
+    <div class="col-md-12">
+        <div class="form-group">
+            <input type="submit" value="Save" class="btn btn-primary" />
         </div>
+    </div>
 </form>
 <partial name="_FooterPartial" />
+@section Scripts{
+    <script>
+    $(function () {
+        $("body #txtCompleteDateNep").nepaliDatePicker({
+            onChange: function () {
+                $('#txtCompleteDateNep').val();
+                $('#txtCompleteDate').val(BS2AD($('#txtCompleteDateNep').val()));
+            }
+        });
+
+        $('#txtCompleteDate').change(function () {
+            $('#txtCompleteDateNep').val(AD2BS($('#txtCompleteDate').val()));
+        });
+
+
+        })
+    </script>
+
+}
