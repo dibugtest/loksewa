@@ -23,7 +23,7 @@ using Lok.Extension;
 
 namespace Lok.Controllers
 {
-    [Authorize("Applicant")]
+   // [Authorize("Applicant")]
     public class ApplicantController : Controller
     {
         private readonly IAuthinterface _auth;
