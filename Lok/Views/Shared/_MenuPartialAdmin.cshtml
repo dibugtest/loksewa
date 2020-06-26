@@ -1,0 +1,71 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using System.Security.Claims
+@{
+    string Role = User.Claims.Where(c => c.Type == ClaimTypes.Role)
+                                            .Select(c => c.Value).SingleOrDefault();
+}
+@if (Role == "SuperAdmin")
+{
+<li> <a asp-controller="Advertisiment" asp-action="Index"><i class="mdi mdi-clipboard-outline"></i><span>Advertisiment</span></a></li>
+<li>
+    <a asp-controller="Awastha" asp-action="Index"><i class="mdi mdi-clipboard-outline"></i><span>Awastha</span></a>
+</li>
+<li>
+    <a asp-controller="BoardName" asp-action="Index"><i class="mdi mdi-clipboard-outline"></i><span>BoardName</span></a>
+</li>
+<li>
+    <a asp-controller="Category" asp-action="Index"><i class="mdi mdi-clipboard-outline"></i><span>Category</span></a>
+</li>
+<li>
+    <a asp-controller="District" asp-action="Index"><i class="mdi mdi-clipboard-outline"></i><span>District</span></a>
+</li>
+<li>
+    <a asp-controller="EducationLevel" asp-action="Index"><i class="mdi mdi-clipboard-outline"></i><span>Education Level</span></a>
+</li>
+<li>
+    <a asp-controller="Employment" asp-action="Index"><i class="mdi mdi-clipboard-outline"></i><span>Employment</span></a>
+</li>
+<li>
+    <a asp-controller="EthinicalGroup" asp-action="Index"><i class="mdi mdi-clipboard-outline"></i><span>Ethnic Group</span></a>
+
+</li>
+<li>
+    <a asp-controller="Faculty" asp-action="Index"><i class="mdi mdi-clipboard-outline"></i><span>Faculty</span></a>
+</li>
+<li>
+    <a asp-controller="Group" asp-action="Index"><i class="mdi mdi-clipboard-outline"></i><span>Group</span></a>
+</li>
+<li>
+    <a asp-controller="Occupation" asp-action="Index"><i class="mdi mdi-clipboard-outline"></i><span>Occupation</span></a>
+</li>
+<li>
+    <a asp-controller="Post" asp-action="Index"><i class="mdi mdi-clipboard-outline"></i><span>Post</span></a>
+</li>
+<li>
+    <a asp-controller="Religion" asp-action="Index"><i class="mdi mdi-clipboard-outline"></i><span>Religion</span></a>
+</li>
+<li>
+    <a asp-controller="Service" asp-action="Index"><i class="mdi mdi-clipboard-outline"></i><span>Service</span></a>
+</li>
+<li>
+    <a asp-controller="Sewa" asp-action="Index"><i class="mdi mdi-clipboard-outline"></i><span>Sewa</span></a>
+</li>
+<li>
+    <a asp-controller="ShreniTaha" asp-action="Index"><i class="mdi mdi-clipboard-outline"></i><span>Shreni Taha</span></a>
+</li>
+<li>
+    <a asp-controller="SubGroup" asp-action="Index"><i class="mdi mdi-clipboard-outline"></i><span>Sub Group</span></a>
+</li>
+<li>
+    <a asp-controller="Varga" asp-action="Index"><i class="mdi mdi-clipboard-outline"></i><span>Barga</span></a>
+</li>
+}
+@*<li class="has_sub">
+        <a href="javascript:void(0);" class="waves-effect"><i class="mdi mdi-layers"></i> <span> Advanced UI </span> <span class="float-right"><i class="mdi mdi-chevron-right"></i></span></a>
+        <ul class="list-unstyled">
+            <li><a href="advanced-highlight.html">Highlight</a></li>
+            <li><a href="advanced-rating.html">Rating</a></li>
+            <li><a href="advanced-alertify.html">Alertify</a></li>
+            <li><a href="advanced-rangeslider.html">Range Slider</a></li>
+        </ul>
+    </li>*@

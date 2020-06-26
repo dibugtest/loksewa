@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
-    <title>LokSewa, Hetauda</title>
+    <title>PSC, Hetauda</title>
     <meta content="Admin Dashboard" name="description" />
     <meta content="Mannatthemes" name="author" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -45,7 +45,7 @@
                 <div class="text-center">
                     <!--<a href="index.html" class="logo"><i class="mdi mdi-assistant"></i>Zoter</a>-->
                     <a asp-controller="Applicant" asp-action="index" class="logo">
-                        <img src="/assets/images/logo-lg.png" alt="" class="logo-large">
+                        <img src="/images/logo.png" alt="" >
                     </a>
                 </div>
             </div>
@@ -54,7 +54,7 @@
 
                 <div id="sidebar-menu">
                     <ul class="navigation-menu text-center">
-                        <li class="menu-title">LokSewa Online Application</li>
+                        <li class="menu-title">Online Application</li>
 
                         <li>
                             <a asp-action="index" asp-controller="Applicant" class="waves-effect">
@@ -68,7 +68,7 @@
 
                         <li class="has_sub">
                             <a href="javascript:void(0);" class="waves-effect"><i class="mdi mdi-layers"></i> <span> Menus </span> <span class="float-right"><i class="mdi mdi-chevron-right"></i></span></a>
-                            <ul class="list-unstyled">
+                            <ul style="text-align:left;" class="list-unstyled">
                                 @*<li><a href="advanced-highlight.html">Highlight</a></li>*@
                                 <partial name="_MenuPartial" />
                             </ul>
@@ -76,7 +76,7 @@
 
                         <li class="has_sub">
                             <a href="javascript:void(0);" class="waves-effect"><i class="mdi mdi-account"></i><span> Account </span> <span class="float-right"><i class="mdi mdi-chevron-right"></i></span></a>
-                            <ul class="list-unstyled">
+                            <ul style="text-align:left;" class="list-unstyled">
                                 <partial name="_ChangePasswordPartial" />
 
                             </ul>
@@ -332,7 +332,7 @@
             </div> <!-- content -->
 
             <footer class="footer">
-                © 2019 Zoter by Mannatthemes.
+                © @DateTime.Now.Year PSC Online Application 
             </footer>
 
         </div>

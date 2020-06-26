@@ -23,7 +23,7 @@ using Lok.Extension;
 
 namespace Lok.Controllers
 {
-   // [Authorize("Applicant")]
+    // [Authorize("Applicant")]
     public class ApplicantController : Controller
     {
         private readonly IAuthinterface _auth;
@@ -271,15 +271,16 @@ namespace Lok.Controllers
                             try
                             {
                                 SendEMail(register.Email, "Email Verification Link.", EmailBody);
-                                TempData["Message"] = "Successfully Registered. Please check your Email and reset your password.";
-                                return View("ResetPassword", new { id = register.Id });
+                                TempData["Message"] = "Successfully Registered. Please check your Email and reset your password. Random Password: " + randString;
+                                return RedirectToAction("ResetPassword");
+                                // return View("ResetPassword", new { id = register.Id });
 
                             }
                             catch
                             {
                                 register.Id = applicant.Id.ToString();
                                 ViewBag.Error = "Error";
-                                ModelState.AddModelError(string.Empty, "Failed to send mail.");
+                                ModelState.AddModelError(string.Empty, "Failed to send mail. Your Random Password is " + randString + ".");
                                 return View(register);
                             }
 
@@ -288,7 +289,7 @@ namespace Lok.Controllers
                         {
                             ViewBag.Error = "Error";
                             TempData["Message"] = "Successfully Registered. Email not sent.Your Random Password is " + randString + ".";
-                            return View("ResetPassword");
+                            return RedirectToAction("ResetPassword");
 
                         }
                     }
@@ -300,12 +301,12 @@ namespace Lok.Controllers
         }
 
         [AllowAnonymous]
-        public async Task<ActionResult<ResetPasswordVM>> ResetPassword()
+        public ActionResult<ResetPasswordVM> ResetPassword()
         {
             ResetPasswordVM reset = new ResetPasswordVM();
             return View(reset);
         }
-        [AllowAnonymous]
+        //[AllowAnonymous]
         [HttpPost]
         public async Task<ActionResult<ResetPasswordVM>> ResetPassword(ResetPasswordVM reset)
         {
@@ -338,7 +339,7 @@ namespace Lok.Controllers
 
 
         [AllowAnonymous]
-        public async Task<ActionResult<LoginVM>> Login()
+        public ActionResult<LoginVM> Login()
         {
             return View();
         }
@@ -448,7 +449,7 @@ namespace Lok.Controllers
         }
 
         [AllowAnonymous]
-        public async Task<ActionResult> ForgotPassword()
+        public ActionResult ForgotPassword()
         {
             return View();
         }
@@ -466,7 +467,7 @@ namespace Lok.Controllers
             {
                 Login userLogin = await _auth.GetUser(Email);
                 Applicant applicant = await _Applicant.GetByEmail(Email);
-                
+
                 if (userLogin != null && applicant != null)
                 {
                     string randString = RandomString(6);
