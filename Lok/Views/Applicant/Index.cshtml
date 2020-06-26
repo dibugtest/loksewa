@@ -1,325 +1,311 @@
 ﻿@model Lok.Models.Applicant
 @{
-    ViewData["Title"] = "Index";
-    Layout = "_LayoutUser";
+    ViewData["Title"] = "User Dashboard";
+    ViewData["HeaderMain"] = "User Dashboard";
+    ViewData["HeaderLink"] = "User Dashboard";
+    Layout = "_layoutUser";
+
 }
-<div class="row">
-    <div class="col-sm-12">
-        <div class="page-title-box">
-
-            <h4 class="page-title">Dashboard</h4>
-        </div>
-    </div>
-    <div class="clearfix"></div>
-</div>
-<div class="row">
-    <div class="col-md-12">
-        @if (TempData["Message"] != null)
-        {
-            <div class="alert alert-success">
-                @TempData["Message"]
-            </div>
-        }
-    </div>
-
-</div>
-<div class="row">
-    <a asp-controller="applicant" asp-action="Personal" class="btn btn-primary">Personal</a>&nbsp;
-    <a asp-controller="applicant" asp-action="Extra" class="btn btn-primary">Extra</a>&nbsp;
-    <a asp-controller="applicant" asp-action="Contact" class="btn btn-primary">Contact</a>&nbsp;
-    <a asp-controller="applicant" asp-action="EducationIndex" class="btn btn-primary">Educatoin</a>&nbsp;
-    <a asp-controller="applicant" asp-action="TrainingIndex" class="btn btn-primary">Training</a>&nbsp;
-    <a asp-controller="applicant" asp-action="CouncilIndex" class="btn btn-primary">Professional Council</a>&nbsp;
-    <a asp-controller="applicant" asp-action="ExperienceIndex" class="btn btn-primary">Experience</a>&nbsp;
-    <a asp-controller="applicant" asp-action="Upload" class="btn btn-primary">Upload</a>&nbsp;
-    <a asp-controller="applicant" asp-action="Payment" class="btn btn-primary">Payment</a>&nbsp;
-
-
-</div>
-<div class="row">&nbsp;</div>
-<div class="row">
-    <table width="100%">
-        <tbody>
-            <tr>
-                <td colspan="3">
-                    <table width="100%">
-                        <tbody>
-                            <tr>
-                                <td valign="top">
-                                    <img src="@Url.Content("~/images/nepal_logo.png")" alt="" width="200" height="160">
-                                </td>
-                                <td align="left" valign="top">
-                                    <h4>Lok Sewa Aayog</h4>
-                                </td>
-                                <td align="center">
-                                    <img src="@Url.Content("~/images/applicant/"+Model.Id.ToString()+"/Upload/Photo.jpg")" alt="" width="190" height="180">
-                                    <br><img src="@Url.Content("~/images/applicant/"+Model.Id.ToString()+"/Upload/Signature.jpg")" alt="" width="190" height="60">
-
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                </td>
-            </tr>
-
-
-        </tbody>
-    </table>
-
-
-
-
-    <table width="100%">
-
-        <tbody>
-            <tr>
-                <td colspan="3">
-                    मास्टर आईडी : <label>
-                        000000
-                    </label>
-                </td>
-            </tr>
-
-
-
-            <tr>
-                <td colspan="3">
-                    <br>Name(English)<hr>
-                </td>
-            </tr>
-            <tr>
-
-                <td>
-                    <br>First :<label>
-                        @Model.PersonalInformation.FirstName
-                    </label>
-                </td>
-                <td>
-                    @Model.PersonalInformation.MiddleName
-                    <br>Middle :<label>
-                    </label>
-                </td>
-                <td>
-                    <br>Last :<label>
-                        @Model.PersonalInformation.LastName
-
-                    </label>
-                </td>
-            </tr>
-            <tr>
+<partial name="_HeaderPartial" />
+
+
+        @*<div class="row">
+                <a asp-controller="applicant" asp-action="Personal" class="btn btn-primary">Personal</a>&nbsp;
+                <a asp-controller="applicant" asp-action="Extra" class="btn btn-primary">Extra</a>&nbsp;
+                <a asp-controller="applicant" asp-action="Contact" class="btn btn-primary">Contact</a>&nbsp;
+                <a asp-controller="applicant" asp-action="EducationIndex" class="btn btn-primary">Educatoin</a>&nbsp;
+                <a asp-controller="applicant" asp-action="TrainingIndex" class="btn btn-primary">Training</a>&nbsp;
+                <a asp-controller="applicant" asp-action="CouncilIndex" class="btn btn-primary">Professional Council</a>&nbsp;
+                <a asp-controller="applicant" asp-action="ExperienceIndex" class="btn btn-primary">Experience</a>&nbsp;
+                <a asp-controller="applicant" asp-action="Upload" class="btn btn-primary">Upload</a>&nbsp;
+                <a asp-controller="applicant" asp-action="Payment" class="btn btn-primary">Payment</a>&nbsp;
+
+
+            </div>*@
+     
+            <table width="100%">
+                <tbody>
+                    <tr>
+                        <td colspan="3">
+                            <table width="100%">
+                                <tbody>
+                                    <tr>
+                                        <td valign="top">
+                                            <img src="@Url.Content("~/images/logo.png")" alt="">
+                                            @*width="200" height="160"*@
+                                        </td>
+                                        <td align="left" valign="top">
+                                            <h4>Lok Sewa Aayog</h4>
+                                        </td>
+                                        <td align="center">
+                                            <img src="@Url.Content("~/images/applicant/"+Model.Id.ToString()+"/Upload/Photo.jpg")" alt="" width="190" height="180">
+                                            <br><img src="@Url.Content("~/images/applicant/"+Model.Id.ToString()+"/Upload/Signature.jpg")" alt="" width="190" height="60">
+
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </td>
+                    </tr>
+
+
+                </tbody>
+            </table>
 
-                <td colspan="3">
-                    <br>नाम (नेपालीमा)<hr>
-                </td>
-            </tr>
 
-            <tr>
 
-                <td>
-                    <br>पहिलो :<label>
-                        @Model.PersonalInformation.FirstNameNep
+
+            <table width="100%">
 
-                    </label>
-                </td>
-                <td>
-                    <br>बीचको :<label>
-                        @Model.PersonalInformation.MiddleName
+                <tbody>
+                    <tr>
+                        <td colspan="3">
+                            मास्टर आईडी : <label>
+                                000000
+                            </label>
+                        </td>
+                    </tr>
 
-                    </label>
-                </td>
-                <td>
-                    <br>अन्तिम  अर्थात् थर :<label>
-                        @Model.PersonalInformation.LastNameNep
+
+
+                    <tr>
+                        <td colspan="3">
+                            <br>Name(English)<hr>
+                        </td>
+                    </tr>
+                    <tr>
+
+                        <td>
+                            <br>First :<label>
+                                @Model.PersonalInformation.FirstName
+                            </label>
+                        </td>
+                        <td>
+                            @Model.PersonalInformation.MiddleName
+                            <br>Middle :<label>
+                            </label>
+                        </td>
+                        <td>
+                            <br>Last :<label>
+                                @Model.PersonalInformation.LastName
 
-                    </label>
-                </td>
-            </tr>
+                            </label>
+                        </td>
+                    </tr>
+                    <tr>
 
-            <tr>
+                        <td colspan="3">
+                            <br>नाम (नेपालीमा)<hr>
+                        </td>
+                    </tr>
 
-                <td colspan="3">
-                    <br>जन्म मिति<hr>
-                </td>
-            </tr>
+                    <tr>
 
+                        <td>
+                            <br>पहिलो :<label>
+                                @Model.PersonalInformation.FirstNameNep
 
+                            </label>
+                        </td>
+                        <td>
+                            <br>बीचको :<label>
+                                @Model.PersonalInformation.MiddleName
 
-            <tr>
-                <td>
-                    <br>वि.सं.मा :@Model.PersonalInformation.DOBNep
+                            </label>
+                        </td>
+                        <td>
+                            <br>अन्तिम  अर्थात् थर :<label>
+                                @Model.PersonalInformation.LastNameNep
 
-                </td>
-                <td>
-                    <br>ईस्वी सम्वत्  :@Model.PersonalInformation.DOB
-                </td>
-                <td>
-                    <br>
-                    <br>लिङ्ग :@Model.PersonalInformation.Sex
+                            </label>
+                        </td>
+                    </tr>
 
-                </td>
-            </tr>
+                    <tr>
 
+                        <td colspan="3">
+                            <br>जन्म मिति<hr>
+                        </td>
+                    </tr>
 
 
 
+                    <tr>
+                        <td>
+                            <br>वि.सं.मा :@Model.PersonalInformation.DOBNep
 
-            <tr>
+                        </td>
+                        <td>
+                            <br>ईस्वी सम्वत्  :@Model.PersonalInformation.DOB
+                        </td>
+                        <td>
+                            <br>
+                            <br>लिङ्ग :@Model.PersonalInformation.Sex
 
-                <td colspan="3">
-                    <br>बाबुको नाम  <hr>
-                </td>
-            </tr>
+                        </td>
+                    </tr>
 
 
 
-            <tr>
-                <td>
-                    <br>पहिलो :<label>
-                        @Model.PersonalInformation.FatherFirstName
-                    </label>
-                </td>
-                <td>
-                    <br>बीचको :<label>
-                        @Model.PersonalInformation.FatherMiddleName
 
-                    </label>
-                </td>
-                <td>
-                    <br>अन्तिम  अर्थात् थर  :<label>
-                        @Model.PersonalInformation.FatherLastName
 
-                    </label>
-                </td>
-            </tr>
+                    <tr>
 
-            <tr>
+                        <td colspan="3">
+                            <br>बाबुको नाम  <hr>
+                        </td>
+                    </tr>
 
-                <td colspan="3">
-                    <br>आमाको नाम<hr>
-                </td>
-            </tr>
 
 
+                    <tr>
+                        <td>
+                            <br>पहिलो :<label>
+                                @Model.PersonalInformation.FatherFirstName
+                            </label>
+                        </td>
+                        <td>
+                            <br>बीचको :<label>
+                                @Model.PersonalInformation.FatherMiddleName
 
-            <tr>
-                <td>
-                    <br>पहिलो :<label>
-                        @Model.PersonalInformation.MotherFirstName
+                            </label>
+                        </td>
+                        <td>
+                            <br>अन्तिम  अर्थात् थर  :<label>
+                                @Model.PersonalInformation.FatherLastName
 
-                    </label>
-                </td>
-                <td>
-                    <br>बीचको :<label>
-                        @Model.PersonalInformation.MotherMiddleName
+                            </label>
+                        </td>
+                    </tr>
 
-                    </label>
-                </td>
-                <td>
-                    <br>अन्तिम  अर्थात् थर  :<label>
-                        @Model.PersonalInformation.MotherLastName
+                    <tr>
 
-                    </label>
-                </td>
-            </tr>
+                        <td colspan="3">
+                            <br>आमाको नाम<hr>
+                        </td>
+                    </tr>
 
-            <tr>
 
-                <td colspan="3">
-                    <br>बाजेको नाम<hr>
-                </td>
-            </tr>
 
+                    <tr>
+                        <td>
+                            <br>पहिलो :<label>
+                                @Model.PersonalInformation.MotherFirstName
 
+                            </label>
+                        </td>
+                        <td>
+                            <br>बीचको :<label>
+                                @Model.PersonalInformation.MotherMiddleName
 
-            <tr>
-                <td>
-                    <br>पहिलो :<label>
-                        @Model.PersonalInformation.GrandFatherFirstName
+                            </label>
+                        </td>
+                        <td>
+                            <br>अन्तिम  अर्थात् थर  :<label>
+                                @Model.PersonalInformation.MotherLastName
 
-                    </label>
-                </td>
-                <td>
-                    <br>बीचको  :<label>
-                        @Model.PersonalInformation.GrandFatherMiddleName
+                            </label>
+                        </td>
+                    </tr>
 
-                    </label>
-                </td>
-                <td>
-                    अन्तिम  अर्थात् थर  :<label>
-                        @Model.PersonalInformation.GrandFatherLastName
+                    <tr>
 
-                    </label>
-                </td>
-            </tr>
+                        <td colspan="3">
+                            <br>बाजेको नाम<hr>
+                        </td>
+                    </tr>
 
-            <tr>
 
-                <td colspan="3">
-                    <br>पति/पत्नीको नाम<hr>
-                </td>
-            </tr>
 
+                    <tr>
+                        <td>
+                            <br>पहिलो :<label>
+                                @Model.PersonalInformation.GrandFatherFirstName
 
+                            </label>
+                        </td>
+                        <td>
+                            <br>बीचको  :<label>
+                                @Model.PersonalInformation.GrandFatherMiddleName
 
-            <tr>
-                <td>
-                    <br>पहिलो :<label>
-                        @Model.PersonalInformation.SpouseFirstName
+                            </label>
+                        </td>
+                        <td>
+                            अन्तिम  अर्थात् थर  :<label>
+                                @Model.PersonalInformation.GrandFatherLastName
 
-                    </label>
-                </td>
-                <td>
-                    <br>बीचको :<label>
-                        @Model.PersonalInformation.SpouseMiddleName
+                            </label>
+                        </td>
+                    </tr>
 
-                    </label>
-                </td>
-                <td>
-                    <br>अन्तिम  अर्थात् थर : <label>
-                        @Model.PersonalInformation.SpouseLastName
+                    <tr>
 
-                    </label>
-                </td>
-            </tr>
+                        <td colspan="3">
+                            <br>पति/पत्नीको नाम<hr>
+                        </td>
+                    </tr>
 
 
 
-            <tr>
-                <td colspan="3">
-                    <br>नागरिकता <hr>
+                    <tr>
+                        <td>
+                            <br>पहिलो :<label>
+                                @Model.PersonalInformation.SpouseFirstName
 
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <br>नागरिकता नं. :<label>
-                        @Model.PersonalInformation.CitizenshipNo
+                            </label>
+                        </td>
+                        <td>
+                            <br>बीचको :<label>
+                                @Model.PersonalInformation.SpouseMiddleName
 
-                    </label>
-                </td>
-                <td>
-                    <br>जारी गर्ने जिल्ला : <label>
-                        @Model.PersonalInformation.CitizenshipValidDistrict
+                            </label>
+                        </td>
+                        <td>
+                            <br>अन्तिम  अर्थात् थर : <label>
+                                @Model.PersonalInformation.SpouseLastName
 
-                    </label>
-                </td>
-                <td>
-                    <br>जारी  मिति : <label>
-                        @Model.PersonalInformation.CitizenshipValidDate
+                            </label>
+                        </td>
+                    </tr>
 
-                    </label>
 
 
-                </td>
-            </tr>
+                    <tr>
+                        <td colspan="3">
+                            <br>नागरिकता <hr>
 
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <br>नागरिकता नं. :<label>
+                                @Model.PersonalInformation.CitizenshipNo
 
+                            </label>
+                        </td>
+                        <td>
+                            <br>जारी गर्ने जिल्ला : <label>
+                                @Model.PersonalInformation.CitizenshipValidDistrict
 
-        </tbody>
-    </table>
+                            </label>
+                        </td>
+                        <td>
+                            <br>जारी  मिति : <label>
+                                @Model.PersonalInformation.CitizenshipValidDate
 
-</div>
+                            </label>
+
+
+                        </td>
+                    </tr>
+
+
+
+                </tbody>
+            </table>
+
+        <partial name="_FooterPartial" />
 
 
 

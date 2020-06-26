@@ -389,6 +389,8 @@ namespace Lok.Controllers
                 else
                 {
                     ModelState.AddModelError("", "Invalid User or  Password");
+                    return View();
+
                 }
 
             }
@@ -2795,11 +2797,11 @@ namespace Lok.Controllers
 
                 preview.Personal = _mapper.Map<PersonalVM>(applicant.PersonalInformation);
                 preview.Extra = _mapper.Map<ExtraVM>(applicant.ExtraInformation);
-                preview.Contact = _mapper.Map<ContactVM>(applicant.ContactInformation);
-                preview.Contact.District = District.FirstOrDefault(m => m.Id == preview.Contact.District).Name;
+                preview.Contact =applicant.ContactInformation is null?new ContactVM(): _mapper.Map<ContactVM>(applicant.ContactInformation);
+                preview.Contact.District =applicant.ContactInformation is null? "":District.FirstOrDefault(m => m.Id == preview.Contact.District).Name;
 
                 //Uploaded documents
-                preview.Upload = _mapper.Map<UploadVM>(applicant.Uploads);
+                preview.Upload =applicant.Uploads is null? new UploadVM(): _mapper.Map<UploadVM>(applicant.Uploads);
                 preview.Upload.PhotographLink = "~/images/applicant/" + applicant.Id.ToString() + "/upload/photo.jpg";
                 preview.Upload.SignatureLink = "~/images/applicant/" + applicant.Id.ToString() + "/upload/signature.jpg";
 

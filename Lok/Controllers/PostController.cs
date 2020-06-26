@@ -30,7 +30,7 @@ namespace Lok.Controllers
                 var Posts = await _Post.GetAll();
                 return View(Posts);
             }
-        [Authorize("Admin")]
+        [Authorize("Admin", AuthenticationSchemes = "AdminCookie")]
 
         public ActionResult<Post> Create()
             {
@@ -54,7 +54,9 @@ namespace Lok.Controllers
 
                 return RedirectToAction("Index");
             }
-            public async Task<ActionResult> Details(string id)
+        [Authorize("Admin", AuthenticationSchemes = "AdminCookie")]
+
+        public async Task<ActionResult> Details(string id)
             {
                 if (!string.IsNullOrEmpty(id))
                 {
@@ -67,7 +69,9 @@ namespace Lok.Controllers
 
 
             }
-            [HttpGet]
+        [Authorize("Admin", AuthenticationSchemes = "AdminCookie")]
+
+        [HttpGet]
             public async Task<ActionResult<Post>> Edit(string id)
             {
                 if (!string.IsNullOrEmpty(id))
@@ -79,7 +83,9 @@ namespace Lok.Controllers
                     return BadRequest();
 
             }
-            [HttpPost]
+        [Authorize("Admin", AuthenticationSchemes = "AdminCookie")]
+
+        [HttpPost]
             public async Task<ActionResult<Post>> Edit(string id, Post value)
             {
                 // var product = new Product(value.Id);
@@ -90,8 +96,9 @@ namespace Lok.Controllers
 
                 return RedirectToAction("Index");
             }
+        [Authorize("Admin", AuthenticationSchemes = "AdminCookie")]
 
-            [HttpGet]
+        [HttpGet]
             public async Task<ActionResult> Delete(string id)
             {
                 _Post.Remove(id);

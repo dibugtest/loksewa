@@ -192,8 +192,8 @@
                     <label style="font-size:12px;">
                         फोन:
                     </label><label style="font-size:14px;" id="lblPhone">
-                        @Model.Applicant.ContactInformation.MobileNo
-                    </label>
+    @(Model.Applicant.ContactInformation!=null?Model.Applicant.ContactInformation.MobileNo:"")
+</label>
                 </td>
 
             </tr>

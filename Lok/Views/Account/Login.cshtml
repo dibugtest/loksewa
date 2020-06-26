@@ -14,7 +14,7 @@
     <meta content="Loksewa nepal" name="loksewa login" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-    <link rel="shortcut icon" href="/assets/images/favicon.ico">
+    <link rel="shortcut icon" href="~/assets/images/logo.ico">
 
     <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
     <link href="/assets/css/icons.css" rel="stylesheet" type="text/css">
@@ -33,10 +33,13 @@
             <div class="card-body">
 
                 <div class="text-center mt-2 mb-4">
-                    Loksewa Nepal
+                    PSC Hetauda | ONLINE APPLICATION
                     @*<a href="index.html" class="logo logo-admin"><img src="/assets/images/logo.png" height="20" alt="logo"></a>*@
+                    <br />
+                    <label class="text-danger">@Html.ValidationSummary()</label> 
                 </div>
-
+                
+                </div>
                 <div class="px-3 pb-3">
                     @using (Html.BeginForm("Login", "Account", FormMethod.Post, new { @class = "frm-single" }))
                     {
@@ -72,7 +75,7 @@
                                         <a href="@Url.Action("Forgetpass","Account")" class="text-muted"><i class="mdi mdi-lock"></i> <small>Forgot your password ?</small></a>
                                     </div>
                                     <div class="col-sm-5 m-t-20">
-                                        <a href="pages-register.html" class="text-muted"><i class="mdi mdi-account-circle"></i> <small>Create an account ?</small></a>
+                                        <a href="#" class="text-muted"><i class="mdi mdi-account-circle"></i> <small>Create an account ?</small></a>
                                     </div>
                                 </div>
                     }

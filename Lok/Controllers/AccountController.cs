@@ -18,10 +18,10 @@ namespace Lok.Controllers
     {
         private IAuthinterface auth;
         private IEmailSender sender;
-        private ILoginInterface  log;
+        private ILoginInterface log;
         private IUnitOfWork uow;
-      
-        public AccountController(IAuthinterface Auth,IEmailSender sender,IUnitOfWork uow,ILoginInterface log)
+
+        public AccountController(IAuthinterface Auth, IEmailSender sender, IUnitOfWork uow, ILoginInterface log)
         {
             this.auth = Auth;
             this.sender = sender;
@@ -29,7 +29,7 @@ namespace Lok.Controllers
             this.log = log;
         }
         // GET: Admin/Admins
-     
+
 
 
 
@@ -80,7 +80,7 @@ namespace Lok.Controllers
                     else
                     {
                         const string Issuer = "my issuer";
-                        
+
                         var claims = new List<Claim>();
                         claims.Add(new Claim(ClaimTypes.Name, l.Email, ClaimValueTypes.String, Issuer));
                         //   claims.Add(new Claim(Constants., user., ClaimValueTypes.String, Constants.Issuer));
@@ -92,26 +92,25 @@ namespace Lok.Controllers
 
                         var userPrincipal = new ClaimsPrincipal(userIdentity);
 
-                        await HttpContext.SignInAsync(
-              "AdminCookie", userPrincipal,
-               new AuthenticationProperties
-               {
-                   ExpiresUtc = DateTime.UtcNow.AddMinutes(100),
-                   IsPersistent = false,
-                   AllowRefresh = false
-               });
+                        await HttpContext.SignInAsync("AdminCookie", userPrincipal,
+                                                        new AuthenticationProperties
+                                                        {
+                                                            ExpiresUtc = DateTime.UtcNow.AddMinutes(100),
+                                                            IsPersistent = false,
+                                                            AllowRefresh = false
+                                                        });
 
                         if (user.Role == "SuperAdmin")
                         {
-                            return RedirectToAction("Index", "Post");
+                            return RedirectToAction("IndexAdmin", "home");
 
                         }
                         else
                         {
 
-                            return RedirectToAction("Index", "Post");
+                            return RedirectToAction("IndexAdmin", "home");
                         }
-                       
+
                     }
 
                 }
@@ -134,7 +133,8 @@ namespace Lok.Controllers
 
 
         }
-        public ActionResult ForgetPass(){
+        public ActionResult ForgetPass()
+        {
             return View();
         }
         [HttpPost]
@@ -153,17 +153,17 @@ namespace Lok.Controllers
                 login.RandomPass = password;
                 string id = Convert.ToString(login.Id);
                 log.Update(login, id);
-               await uow.Commit();
-               
+                await uow.Commit();
+
 
             }
             return RedirectToAction("Login");
-        
+
         }
 
         public ActionResult NewPassword()
         {
-
+                
             return PartialView();
 
         }
@@ -174,8 +174,8 @@ namespace Lok.Controllers
             {
                 string message = TempData["message"].ToString();
                 var query = await auth.GetUser(message);
-                    string password = pass.Password;
-                Login login =await auth.ChangePass(query, password);
+                string password = pass.Password;
+                Login login = await auth.ChangePass(query, password);
 
                 return RedirectToAction("Login");
 

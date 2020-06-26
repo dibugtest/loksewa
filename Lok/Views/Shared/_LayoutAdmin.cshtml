@@ -4,12 +4,12 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
-    <title>Zoter - Responsive Bootstrap 4 Admin Dashboard</title>
+    <title>PSC, Hetauda CMS</title>
     <meta content="Admin Dashboard" name="description" />
     <meta content="Mannatthemes" name="author" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-    <link rel="shortcut icon" href="assets/images/favicon.ico">
+    <link rel="shortcut icon" href="~/assets/images/logo.ico">
 
     <!-- jvectormap -->
     <link href="~/assets/plugins/jvectormap/jquery-jvectormap-2.0.2.css" rel="stylesheet">
@@ -31,7 +31,7 @@
 
     <!-- Begin page -->
     <div id="wrapper">
-
+                    
         <!-- ========== Left Sidebar Start ========== -->
         <div class="left side-menu">
             <button type="button" class="button-menu-mobile button-menu-mobile-topbar open-left waves-effect">
@@ -43,15 +43,14 @@
                 <div class="text-center">
                     <!--<a href="index.html" class="logo"><i class="mdi mdi-assistant"></i>Zoter</a>-->
                     <a href="index.html" class="logo">
-                        <img src="/assets/images/logo-lg.png" alt="" class="logo-large">
+                        <img src="/images/logo.png" alt="" >
                     </a>
-                </div>
-            </div>
+                </div>            </div>
 
             <div class="sidebar-inner niceScrollleft">
 
                 <div id="sidebar-menu">
-                    <ul class="navigation-menu text-center">
+                    <ul class="navigation-menu">
                         <li class="menu-title">LokSewa Online Application</li>
 
                       <partial name="_MenuPartialAdmin" />
@@ -75,7 +74,7 @@
 
                         <ul class="list-inline float-right mb-0">
                             <!-- language-->
-                            <li class="list-inline-item hide-phone app-search">
+                            @*<li class="list-inline-item hide-phone app-search">
                                 <form role="search" class="">
                                     <input type="text" placeholder="Search..." class="form-control">
                                     <a href=""><i class="fa fa-search"></i></a>
@@ -167,12 +166,12 @@
                                     </a>
 
                                 </div>
-                            </li>
+                            </li>*@
 
                             <li class="list-inline-item dropdown notification-list">
                                 <a class="nav-link dropdown-toggle arrow-none waves-effect nav-user" data-toggle="dropdown" href="#" role="button"
                                    aria-haspopup="false" aria-expanded="false">
-                                    <img src="assets/images/users/avatar-1.jpg" alt="user" class="rounded-circle">
+                                    <img src="/assets/images/users/avatar-1.jpg" alt="user" class="rounded-circle">
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-right profile-dropdown ">
                                     <!-- item-->
@@ -180,11 +179,11 @@
                                         <h5>Welcome</h5>
                                     </div>
                                     <a class="dropdown-item" href="#"><i class="mdi mdi-account-circle m-r-5 text-muted"></i> Profile</a>
-                                    <a class="dropdown-item" href="#"><i class="mdi mdi-wallet m-r-5 text-muted"></i> My Wallet</a>
-                                    <a class="dropdown-item" href="#"><span class="badge badge-success float-right">5</span><i class="mdi mdi-settings m-r-5 text-muted"></i> Settings</a>
-                                    <a class="dropdown-item" href="#"><i class="mdi mdi-lock-open-outline m-r-5 text-muted"></i> Lock screen</a>
+                                    <a class="dropdown-item" href="#"><i class="mdi mdi-key m-r-5 text-muted"></i> Change Password</a>
+                                    @*<a class="dropdown-item" href="#"><span class="badge badge-success float-right">5</span><i class="mdi mdi-settings m-r-5 text-muted"></i> Settings</a>
+                                    <a class="dropdown-item" href="#"><i class="mdi mdi-lock-open-outline m-r-5 text-muted"></i> Lock s</a>*@
                                     <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="#"><i class="mdi mdi-logout m-r-5 text-muted"></i> Logout</a>
+                                    <a class="dropdown-item" asp-controller="Account" asp-action="Logout"><i class="mdi mdi-logout m-r-5 text-muted"></i> Logout</a>
                                 </div>
                             </li>
 
@@ -215,7 +214,7 @@
             </div> <!-- content -->
 
             <footer class="footer">
-                © 2019 Zoter by Mannatthemes.
+                © @DateTime.Now.Year PSC-Hetauda ONLINE APPLICATION
             </footer>
 
         </div>

@@ -1,17 +1,18 @@
 ﻿@model IEnumerable<Lok.Models.Advertisiment>
 
 @{
-    ViewData["Title"] = "Index";
-        Layout = "_LayoutAdmin";
+    ViewData["Title"] = "Advertisement";
+    ViewData["HeaderMain"] = "Advertisement";
+    ViewData["HeaderLink"] = "Advertisement";
+    Layout = "_layoutAdmin";
 
 }
-
-<h2>Index</h2>
+<partial name="_HeaderPartial" />
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-primary">Create New</a>
 </p>
-<table class="table">
+<table class="table table-bordered">
     <thead>
         <tr>
             <th>
@@ -36,40 +37,42 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.AdvertisimentType)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SNo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Service.ServiceName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Group.GroupName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SubGroup.SubGroupName)
-            </td>
-            <td>
-                @{string a = "";}
-                @if (item.EthinicalGroups != null)
-                {
-                @foreach (var items in item.EthinicalGroups)
-                {
-                    a = a + items.Name + ' ';
-                }
-                }
-                @a
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                @Html.ActionLink("Details", "Details", new {  id=item.Id  }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AdvertisimentType)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SNo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Service.ServiceName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Group.GroupName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SubGroup.SubGroupName)
+                </td>
+                <td>
+                    @{string a = "";}
+                    @if (item.EthinicalGroups != null)
+                    {
+                        @foreach (var items in item.EthinicalGroups)
+                        {
+                            a = a + items.Name + ' ';
+                        }
+                    }
+                    @a
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                    @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+<partial name="_FooterPartialIndex" />
