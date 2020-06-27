@@ -267,7 +267,7 @@ namespace Lok.Controllers
                         if (applicant.Id != null && userLogin.Id != null)
                         {
                             //send Email for email verification
-                            string EmailBody = "Your Reset Password is " + randString + ".Email Verification and Password Setup link." + "<a href='" + "http://localhost:5000/applicant/ResetPassword/'" + applicant.Id + ">Link</a>";
+                            string EmailBody = "Your Reset Password is " + randString + ".Email Verification and Password Setup link." + "<a href='" + "http://202.45.146.174/onlineapplication/applicant/ResetPassword/'" + applicant.Id + ">Link</a>";
                             try
                             {
                                 SendEMail(register.Email, "Email Verification Link.", EmailBody);
@@ -314,7 +314,7 @@ namespace Lok.Controllers
             {
                 Login userLogin = await _auth.GetUser(reset.Email);
 
-                if (!String.IsNullOrEmpty(userLogin.RandomPass))
+                if (!String.IsNullOrEmpty(userLogin.RandomPass) && Base64Decode(userLogin.RandomPass) == reset.RandPassword)
                 {
                     await _auth.ChangePass(userLogin, reset.Password);
                     TempData["Message"] = "Successfully Reset Password. Login using new password.";
@@ -388,14 +388,20 @@ namespace Lok.Controllers
                 }
                 else
                 {
+                    ViewBag.Error = "error";
                     ModelState.AddModelError("", "Invalid User or  Password");
                     return View();
 
                 }
 
             }
-            ModelState.AddModelError("", "Invalid User or Password");
+            else
+            {
+                ViewBag.Error = "error";
 
+                ModelState.AddModelError("", "Invalid User or Password");
+
+            }
             return View();
 
 
@@ -2797,11 +2803,11 @@ namespace Lok.Controllers
 
                 preview.Personal = _mapper.Map<PersonalVM>(applicant.PersonalInformation);
                 preview.Extra = _mapper.Map<ExtraVM>(applicant.ExtraInformation);
-                preview.Contact =applicant.ContactInformation is null?new ContactVM(): _mapper.Map<ContactVM>(applicant.ContactInformation);
-                preview.Contact.District =applicant.ContactInformation is null? "":District.FirstOrDefault(m => m.Id == preview.Contact.District).Name;
+                preview.Contact = applicant.ContactInformation is null ? new ContactVM() : _mapper.Map<ContactVM>(applicant.ContactInformation);
+                preview.Contact.District = applicant.ContactInformation is null ? "" : District.FirstOrDefault(m => m.Id == preview.Contact.District).Name;
 
                 //Uploaded documents
-                preview.Upload =applicant.Uploads is null? new UploadVM(): _mapper.Map<UploadVM>(applicant.Uploads);
+                preview.Upload = applicant.Uploads is null ? new UploadVM() : _mapper.Map<UploadVM>(applicant.Uploads);
                 preview.Upload.PhotographLink = "~/images/applicant/" + applicant.Id.ToString() + "/upload/photo.jpg";
                 preview.Upload.SignatureLink = "~/images/applicant/" + applicant.Id.ToString() + "/upload/signature.jpg";
 

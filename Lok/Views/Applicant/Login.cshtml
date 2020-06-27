@@ -34,12 +34,12 @@
                     <a asp-action="index" asp-controller="Applicant" class="logo logo-admin">PSC-hetauda | Applicant Login</a>
                     @*<img src="~/assets/images/e-logo.png" height="20" alt="logo">*@
                     <br />
-                    @*@if (ViewBag.Error != null)
-                    {*@
+                    @if (ViewBag.Error != null)
+                    {
                         <div class="alert alert-danger">
                             @Html.ValidationSummary()
                         </div>
-                    @*}*@
+                    }
                 </div>
 
                 <div class="px-3 pb-3">
